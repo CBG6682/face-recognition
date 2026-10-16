@@ -81,7 +81,7 @@ class CameraController {
         this.setupLessonMenuDropdown();
         this.setupMinimalistCameraControls();
         this.startOverlayRenderLoop();
-        // mediapipe short-range detector disabled: server insightface handles distant and close faces flawlessly
+        this.initLocalDetector();
 
         const urlParams = new URLSearchParams(window.location.search);
         const lessonId = urlParams.get('lesson_id');
@@ -1322,16 +1322,23 @@ class CameraController {
         const loop = async () => {
             if (!this.autoEnabled) return;
             const isOpen = this.currentLesson && (this.currentLesson.trang_thai === 'open' || this.currentLesson.status === 'open');
-            if (!this.isProcessing && !this.scanCooldown && isOpen && this.video && this.video.readyState >= 2) {
+            const allCached = this.trackedFaces.length > 0 && this.trackedFaces.every((f) => f.isCached && f.opacity > 0.5);
+            const now = performance.now();
+            const shouldHeartbeat = !this.localFaceDetector && allCached && (now - (this.lastHeartbeatTime || 0) > 4000);
+
+            // pause sending frames to server when all faces in view are verified and cached
+            if ((!allCached || shouldHeartbeat) && !this.isProcessing && !this.scanCooldown && isOpen && this.video && this.video.readyState >= 2) {
+                if (shouldHeartbeat) this.lastHeartbeatTime = now;
                 await this.captureAndCheckin(false);
             }
+
             if (this.autoEnabled) {
-                // fast polling: 100ms when searching or unverified faces, 800ms when all tracked faces are cached
                 let delay = 100;
                 if (this.scanCooldown) {
                     delay = 1200;
-                } else if (this.trackedFaces.length > 0 && this.trackedFaces.every(f => f.isCached && f.opacity > 0.5)) {
-                    delay = 800;
+                } else if (allCached) {
+                    // check locally every 300ms if conditions change
+                    delay = 300;
                 }
                 this.autoTimeoutId = setTimeout(loop, delay);
             }
@@ -1410,6 +1417,37 @@ class CameraController {
             }
             const ctx = offscreen.getContext('2d');
             ctx.drawImage(this.video, 0, 0, sendW, sendH);
+
+            // mask cached faces when unverified faces are present so server focuses only on new faces
+            const hasUnverified = this.trackedFaces.some((f) => !f.isCached);
+            this.lastMaskedFaces = [];
+
+            if (hasUnverified) {
+                const canvasWidth = this.canvas.width || 1280;
+                for (let i = 0; i < this.trackedFaces.length; i++) {
+                    const face = this.trackedFaces[i];
+                    if (face.isCached && face.opacity > 0.5) {
+                        const [sx, sy, sw, sh] = face.currentRect;
+                        const rawX = canvasWidth - sx - sw;
+                        const rawY = sy;
+                        const rawW = sw;
+                        const rawH = sh;
+
+                        const padX = rawW * 0.15;
+                        const padY = rawH * 0.15;
+
+                        const maskX = Math.max(0, Math.round((rawX - padX) * scale));
+                        const maskY = Math.max(0, Math.round((rawY - padY) * scale));
+                        const maskW = Math.min(sendW - maskX, Math.round((rawW + padX * 2) * scale));
+                        const maskH = Math.min(sendH - maskY, Math.round((rawH + padY * 2) * scale));
+
+                        ctx.fillStyle = '#000000';
+                        ctx.fillRect(maskX, maskY, maskW, maskH);
+                        this.lastMaskedFaces.push(i);
+                    }
+                }
+            }
+
             offscreen.toBlob(resolve, 'image/jpeg', 0.75);
         });
     }
@@ -1422,13 +1460,18 @@ class CameraController {
             const wasmFileset = await vision.FilesetResolver.forVisionTasks(
                 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
             );
-            this.localFaceDetector = await vision.FaceDetector.createFromOptions(wasmFileset, {
-                baseOptions: {
-                    modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite',
-                    delegate: 'GPU'
-                },
-                runningMode: 'VIDEO'
-            });
+            const modelAssetPath = 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite';
+            try {
+                this.localFaceDetector = await vision.FaceDetector.createFromOptions(wasmFileset, {
+                    baseOptions: { modelAssetPath, delegate: 'GPU' },
+                    runningMode: 'VIDEO'
+                });
+            } catch (gpuErr) {
+                this.localFaceDetector = await vision.FaceDetector.createFromOptions(wasmFileset, {
+                    baseOptions: { modelAssetPath, delegate: 'CPU' },
+                    runningMode: 'VIDEO'
+                });
+            }
             this.lastVideoTimestamp = 0;
             console.log('[mediapipe] local face detector initialized');
         } catch (err) {
@@ -1788,9 +1831,14 @@ class CameraController {
             }, 1200);
         }
 
+        const maskedSet = new Set(this.lastMaskedFaces || []);
         for (let i = 0; i < this.trackedFaces.length; i++) {
             if (!matchedIndices.has(i)) {
-                this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+                if (maskedSet.has(i)) {
+                    this.trackedFaces[i].lastSeen = now;
+                } else {
+                    this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+                }
             }
         }
         this.faceCache = this.trackedFaces[0] || null;

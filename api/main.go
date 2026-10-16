@@ -78,7 +78,16 @@ func main() {
 			webDir = "./web"
 		}
 	}
-	app.Use("/", static.New(webDir))
+	app.Use("/", static.New(webDir, static.Config{
+		CacheDuration: -1,
+		MaxAge:        0,
+		ModifyResponse: func(c fiber.Ctx) error {
+			c.Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			c.Set("Pragma", "no-cache")
+			c.Set("Expires", "0")
+			return nil
+		},
+	}))
 
 	// public routes
 	app.Post("/login", authHandler.Login)
