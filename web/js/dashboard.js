@@ -514,6 +514,10 @@ class DashboardController {
     // Master-Detail View: Chi tiết Lớp học
     // ==========================================
     async openClassDetail(classId) {
+        if (this.currentMainTab !== 'classes') {
+            this.switchMainTab('classes');
+        }
+
         const cls = (this.classes || []).find((c) => c.id === classId);
         this.currentClass = cls || { id: classId, ten: `Lớp #${classId}` };
         this.currentView = 'detail';
