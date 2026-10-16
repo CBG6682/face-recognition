@@ -38,7 +38,7 @@ func main() {
 	app := fiber.New()
 	_, cancel := context.WithCancel(context.Background())
 	app.Hooks().OnPreStartupMessage(func(sm *fiber.PreStartupMessageData) error {
-		sm.BannerHeader = "API: localhost:" + utils.GetEnv("PORT", "8080")
+		sm.BannerHeader = "WEB: localhost:" + utils.GetEnv("PORT", "8080")
 		sm.ResetEntries()
 		return nil
 	})
