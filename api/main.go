@@ -78,6 +78,22 @@ func main() {
 			webDir = "./web"
 		}
 	}
+
+	facesDir := utils.GetEnv("FACES_DIR", "")
+	if facesDir == "" {
+		if _, err := os.Stat("/data/faces"); err == nil {
+			facesDir = "/data/faces"
+		} else if _, err := os.Stat("./data/faces"); err == nil {
+			facesDir = "./data/faces"
+		} else {
+			facesDir = "./data/faces"
+		}
+	}
+	app.Use("/faces", static.New(facesDir, static.Config{
+		CacheDuration: 0,
+		MaxAge:        0,
+	}))
+
 	app.Use("/", static.New(webDir, static.Config{
 		CacheDuration: -1,
 		MaxAge:        0,

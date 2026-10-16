@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/versenilvis/face-recognition/utils"
 )
 
 type Handler struct {
@@ -84,6 +87,21 @@ func (h *Handler) RegisterFace(c fiber.Ctx) error {
 			"ho_ten": conflict.HoTen,
 		}
 	}
+
+	// save photo to faces directory for preview
+	if mssv, err := h.repo.GetMSSV(c.Context(), svID); err == nil && mssv != "" {
+		facesDir := utils.GetEnv("FACES_DIR", "")
+		if facesDir == "" {
+			if _, err := os.Stat("/data/faces"); err == nil {
+				facesDir = "/data/faces"
+			} else {
+				facesDir = "./data/faces"
+			}
+		}
+		_ = os.MkdirAll(facesDir, 0755)
+		_ = os.WriteFile(filepath.Join(facesDir, fmt.Sprintf("%s.jpeg", mssv)), imgBytes, 0644)
+	}
+
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 

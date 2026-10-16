@@ -25,6 +25,12 @@ func (r *Repo) CheckSinhVienExists(ctx context.Context, id int) (bool, error) {
 	return err == nil, err
 }
 
+func (r *Repo) GetMSSV(ctx context.Context, svID int) (string, error) {
+	var mssv string
+	err := r.db.Read.QueryRowContext(ctx, "select mssv from sinh_vien where id = ?", svID).Scan(&mssv)
+	return mssv, err
+}
+
 func (r *Repo) GetBuoiHoc(ctx context.Context, id int) (int, string, error) {
 	var lopHocID int
 	var trangThai string

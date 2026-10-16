@@ -246,8 +246,15 @@ class DashboardController {
                     }).join('')
                     : '<span style="color: var(--text-dim); font-size: 0.8rem; font-style: italic;">Chưa gán lớp</span>';
 
+                const safeName = (s.ho_ten || '').replace(/'/g, "\\'");
                 const faceBadge = s.has_face
-                    ? '<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 6px;"><span style="width:6px; height:6px; border-radius:50%; background:var(--accent-emerald);"></span> Đã có khuôn mặt</span>'
+                    ? `<div style="display:inline-flex; align-items:center; gap:8px;">
+                        <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 6px;"><span style="width:6px; height:6px; border-radius:50%; background:var(--accent-emerald);"></span> Đã có khuôn mặt</span>
+                        <button class="btn btn-secondary btn-sm" onclick="dashboard.viewFaceModal('${safeName}', '${s.mssv}')" style="display:inline-flex; align-items:center; gap:5px; padding: 2px 8px; font-size: 0.75rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></svg>
+                            Xem ảnh
+                        </button>
+                    </div>`
                     : '<span class="badge badge-neutral" style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim);"><span style="width:6px; height:6px; border-radius:50%; background:var(--text-dim);"></span> Chưa đăng ký</span>';
 
                 return `
@@ -260,6 +267,22 @@ class DashboardController {
                 `;
             })
             .join('');
+    }
+
+    viewFaceModal(name, mssv) {
+        const titleEl = document.getElementById('view-face-title');
+        const subEl = document.getElementById('view-face-subtitle');
+        const img = document.getElementById('view-face-img');
+        if (titleEl) titleEl.textContent = name;
+        if (subEl) subEl.textContent = `MSSV: ${mssv}`;
+        if (img) {
+            img.src = `/faces/${encodeURIComponent(mssv)}.jpeg`;
+            img.onerror = () => {
+                showToast('Chưa có file ảnh mẫu cho sinh viên này (chỉ có vector)', 'warning');
+                this.closeModal('modal-view-face');
+            };
+        }
+        this.openModal('modal-view-face');
     }
 
     filterAllStudentsTable() {
