@@ -15,6 +15,7 @@ class DashboardController {
 
         this.parsedCSV = [];
         this.selectedLessonId = null;
+        this.allStudents = [];
 
         // webcam registration
         this.regStream = null;
@@ -69,6 +70,8 @@ class DashboardController {
             }
         } else if (tabName === 'subjects') {
             this.renderSubjectsTable();
+        } else if (tabName === 'students') {
+            this.loadAllStudents();
         }
     }
 
@@ -194,6 +197,84 @@ class DashboardController {
         } catch (err) {
             showToast(err.message, 'error');
         }
+    }
+
+    // load all students directory
+    async loadAllStudents() {
+        const tbody = document.getElementById('all-students-tbody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-dim); padding: 32px 0;">Đang tải danh sách sinh viên...</td></tr>';
+        }
+        try {
+            this.allStudents = await API.listAllStudents() || [];
+            this.renderAllStudentsTable();
+        } catch (err) {
+            console.error('loadAllStudents error:', err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--accent-rose); padding: 32px 0;">Lỗi tải dữ liệu: ${err.message || 'Lỗi server'}</td></tr>`;
+            }
+        }
+    }
+
+    renderAllStudentsTable(filtered = null) {
+        const tbody = document.getElementById('all-students-tbody');
+        const badge = document.getElementById('all-students-count-badge');
+        if (!tbody) return;
+
+        const list = filtered !== null ? filtered : (this.allStudents || []);
+        if (badge) {
+            badge.textContent = `${list.length} sinh viên`;
+        }
+
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-dim); padding: 32px 0;">Chưa có sinh viên nào phù hợp</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = list
+            .map((s) => {
+                const classBadges = (s.class_names && s.class_names.length > 0)
+                    ? s.class_names.map((c, idx) => {
+                        const classId = (s.class_ids && s.class_ids[idx]) ? s.class_ids[idx] : null;
+                        if (classId) {
+                            return `<button class="class-badge-link" onclick="dashboard.openClassDetail(${classId})" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px; margin-bottom:4px; font-size:0.75rem; padding: 2px 8px;">
+                                <span>${c}</span>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>`;
+                        }
+                        return `<span class="badge badge-neutral" style="margin-right:4px; font-size:0.75rem;">${c}</span>`;
+                    }).join('')
+                    : '<span style="color: var(--text-dim); font-size: 0.8rem; font-style: italic;">Chưa gán lớp</span>';
+
+                const faceBadge = s.has_face
+                    ? '<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 6px;"><span style="width:6px; height:6px; border-radius:50%; background:var(--accent-emerald);"></span> Đã có khuôn mặt</span>'
+                    : '<span class="badge badge-neutral" style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim);"><span style="width:6px; height:6px; border-radius:50%; background:var(--text-dim);"></span> Chưa đăng ký</span>';
+
+                return `
+                <tr>
+                    <td style="font-family: var(--font-mono); font-weight:700; color: var(--primary);">${s.mssv}</td>
+                    <td style="font-weight:700; color:#fff;">${s.ho_ten}</td>
+                    <td>${classBadges}</td>
+                    <td>${faceBadge}</td>
+                </tr>
+                `;
+            })
+            .join('');
+    }
+
+    filterAllStudentsTable() {
+        const input = document.getElementById('filter-all-student-search');
+        const q = (input ? input.value : '').toLowerCase().trim();
+        if (!q) {
+            this.renderAllStudentsTable();
+            return;
+        }
+        const filtered = (this.allStudents || []).filter(s =>
+            (s.mssv || '').toLowerCase().includes(q) ||
+            (s.ho_ten || '').toLowerCase().includes(q) ||
+            (s.class_names || []).some(c => c.toLowerCase().includes(q))
+        );
+        this.renderAllStudentsTable(filtered);
     }
 
     // ==========================================

@@ -63,6 +63,17 @@ func (h *Handler) Create(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "mon hoc khong ton tai"})
 	}
 
+	dup, err := h.repo.FindByNameAndSubject(c.Context(), rq.Ten, rq.MonHocID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "db error"})
+	}
+	if dup != nil {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error":      "lop hoc da ton tai trong mon hoc nay",
+			"lop_hoc_id": dup.ID,
+		})
+	}
+
 	id, err := h.repo.Create(c.Context(), rq.Ten, rq.MonHocID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "db error"})

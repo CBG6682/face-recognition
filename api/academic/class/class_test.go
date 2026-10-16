@@ -101,6 +101,19 @@ func TestLopHocCRUD(t *testing.T) {
 		t.Errorf("expected 400, got: %d", respBad.StatusCode)
 	}
 
+	// tao lop hoc trung ten trong cung mon hoc -> phai tra ve 409
+	dupReq := httptest.NewRequest("POST", "/protected/lop-hoc", strings.NewReader(`{"ten": "L01", "mon_hoc_id": 1}`))
+	dupReq.Header.Set("Content-Type", "application/json")
+	dupReq.AddCookie(cookie)
+
+	respDup, err := app.Test(dupReq)
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	if respDup.StatusCode != http.StatusConflict {
+		t.Errorf("expected 409 conflict for duplicate class, got: %d", respDup.StatusCode)
+	}
+
 	// 3. lay danh sach lop hoc
 	listReq := httptest.NewRequest("GET", "/protected/lop-hoc", nil)
 	listReq.AddCookie(cookie)

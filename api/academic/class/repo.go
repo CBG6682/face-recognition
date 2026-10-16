@@ -58,6 +58,24 @@ func (r *Repo) GetByID(ctx context.Context, id int) (*LopHoc, error) {
 	return &lh, nil
 }
 
+func (r *Repo) FindByNameAndSubject(ctx context.Context, ten string, monHocID int) (*LopHoc, error) {
+	var lh LopHoc
+	err := r.db.Read.QueryRowContext(ctx, `
+		select id, ten, mon_hoc_id
+		from lop_hoc
+		where lower(trim(ten)) = lower(trim(?)) and mon_hoc_id = ?
+		limit 1
+	`, ten, monHocID).Scan(&lh.ID, &lh.Ten, &lh.MonHocID)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &lh, nil
+}
+
+
 func (r *Repo) Create(ctx context.Context, ten string, monHocID int) (int64, error) {
 	res, err := r.db.Write.ExecContext(ctx, "insert into lop_hoc (ten, mon_hoc_id, giang_vien_id) values (?, ?, 1)", ten, monHocID)
 	if err != nil {
