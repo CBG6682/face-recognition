@@ -68,7 +68,17 @@ func main() {
 	faceHandler := face.NewHandler(faceRepo, faceService)
 
 	// web ui
-	app.Use("/", static.New("./web"))
+	webDir := utils.GetEnv("WEB_DIR", "")
+	if webDir == "" {
+		if _, err := os.Stat("./web"); err == nil {
+			webDir = "./web"
+		} else if _, err := os.Stat("../web"); err == nil {
+			webDir = "../web"
+		} else {
+			webDir = "./web"
+		}
+	}
+	app.Use("/", static.New(webDir))
 
 	// public routes
 	app.Post("/login", authHandler.Login)

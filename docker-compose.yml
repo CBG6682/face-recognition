@@ -16,8 +16,8 @@ services:
 
     api:
         build:
-            context: ./api
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: api/Dockerfile
         restart: always
         ports:
             - "8080:8080"
@@ -28,7 +28,7 @@ services:
             - JWT_SECRET=${JWT_SECRET}
         volumes:
             - ./data:/data
-            - ./api/web:/app/web
+            - ./web:/app/web
         logging:
             driver: "json-file"
             options:

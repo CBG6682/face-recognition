@@ -6,5 +6,5 @@
     "checkJs": false,
     "lib": ["DOM", "ES2022"]
   },
-  "include": ["api/web/**/*"]
+  "include": ["web/**/*"]
 }

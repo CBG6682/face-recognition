@@ -8,7 +8,6 @@ data.db
 *.m3u8
 main
 server
-web
 .vscode
 .agents
 .codex
