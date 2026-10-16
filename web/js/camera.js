@@ -1531,12 +1531,42 @@ class CameraController {
             } else {
                 const dx = face.targetRect[0] - face.currentRect[0];
                 const dy = face.targetRect[1] - face.currentRect[1];
-                const dist = Math.hypot(dx, dy);
-                const k = dist > 40 ? 0.70 : 0.45;
-                face.currentRect[0] += dx * k;
-                face.currentRect[1] += dy * k;
-                face.currentRect[2] += (face.targetRect[2] - face.currentRect[2]) * k;
-                face.currentRect[3] += (face.targetRect[3] - face.currentRect[3]) * k;
+                const dw = face.targetRect[2] - face.currentRect[2];
+                const dh = face.targetRect[3] - face.currentRect[3];
+
+                const posDist = Math.hypot(dx, dy);
+                const sizeDist = Math.hypot(dw, dh);
+
+                // adaptive position smoothing with deadband to cancel micro-jitter
+                let kPos = 0;
+                if (posDist > 50) {
+                    kPos = 0.60;
+                } else if (posDist > 20) {
+                    kPos = 0.32;
+                } else if (posDist > 6) {
+                    kPos = 0.16;
+                } else if (posDist > 1.2) {
+                    kPos = 0.08;
+                }
+
+                // adaptive size smoothing with deadband to prevent box pulsating
+                let kSize = 0;
+                if (sizeDist > 30) {
+                    kSize = 0.40;
+                } else if (sizeDist > 12) {
+                    kSize = 0.18;
+                } else if (sizeDist > 2.0) {
+                    kSize = 0.06;
+                }
+
+                if (kPos > 0) {
+                    face.currentRect[0] += dx * kPos;
+                    face.currentRect[1] += dy * kPos;
+                }
+                if (kSize > 0) {
+                    face.currentRect[2] += dw * kSize;
+                    face.currentRect[3] += dh * kSize;
+                }
 
                 this.drawTrackedBox(face);
             }
@@ -1611,7 +1641,6 @@ class CameraController {
             return [screenX, screenY, screenW, screenH, lms];
         });
 
-        const DEAD_ZONE = 3;
         const matchedLocalIndices = new Set();
 
         for (const r of localRects) {
@@ -1637,13 +1666,12 @@ class CameraController {
                 matchedLocalIndices.add(bestIdx);
                 const tf = this.trackedFaces[bestIdx];
                 const targetCoords = r.slice(0, 4);
-                const dx = Math.abs(targetCoords[0] - tf.targetRect[0]);
-                const dy = Math.abs(targetCoords[1] - tf.targetRect[1]);
-                const dw = Math.abs(targetCoords[2] - tf.targetRect[2]);
-                const dh = Math.abs(targetCoords[3] - tf.targetRect[3]);
-                if (dx > DEAD_ZONE || dy > DEAD_ZONE || dw > DEAD_ZONE || dh > DEAD_ZONE) {
-                    tf.targetRect = targetCoords;
-                }
+                // smooth raw target coordinates to cut frame noise
+                const alpha = 0.50;
+                tf.targetRect[0] += (targetCoords[0] - tf.targetRect[0]) * alpha;
+                tf.targetRect[1] += (targetCoords[1] - tf.targetRect[1]) * alpha;
+                tf.targetRect[2] += (targetCoords[2] - tf.targetRect[2]) * alpha;
+                tf.targetRect[3] += (targetCoords[3] - tf.targetRect[3]) * alpha;
                 tf.landmarks = r[4] || [];
                 tf.lastSeen = now;
                 tf.lossCount = 0;
@@ -1768,7 +1796,9 @@ class CameraController {
                         tf.status = m.status;
                     }
 
-                    tf.targetRect = [...serverRect];
+                    if (!this.localFaceDetector) {
+                        tf.targetRect = [...serverRect];
+                    }
                     tf.lastSeen = now;
                     tf.lossCount = 0;
                     tf.opacity = 1.0;
@@ -1846,7 +1876,10 @@ class CameraController {
 
     drawTrackedBox(face) {
         if (!this.ctx || !face) return;
-        const [x, y, w, h] = face.currentRect;
+        const x = Math.round(face.currentRect[0]);
+        const y = Math.round(face.currentRect[1]);
+        const w = Math.round(face.currentRect[2]);
+        const h = Math.round(face.currentRect[3]);
         const opacity = Math.max(0, Math.min(1, face.opacity || 1.0));
 
         let strokeColor = '#2563eb';
