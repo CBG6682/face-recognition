@@ -4,8 +4,16 @@ services:
             context: ./infer
             dockerfile: Dockerfile
         restart: always
+        environment:
+            - TTA_MODE=fast
         volumes:
             - ./infer/models:/root/.insightface
+            - ./infer/app.py:/app/app.py
+            - ./infer/config.py:/app/config.py
+            - ./infer/detector.py:/app/detector.py
+            - ./infer/pipeline.py:/app/pipeline.py
+            - ./infer/notebook_compat.py:/app/notebook_compat.py
+            - ./infer/liveness.py:/app/liveness.py
         logging:
             driver: "json-file"
             options:

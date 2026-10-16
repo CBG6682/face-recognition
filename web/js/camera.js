@@ -1326,12 +1326,12 @@ class CameraController {
                 await this.captureAndCheckin(false);
             }
             if (this.autoEnabled) {
-                // fast polling: 140ms when searching for faces, 200ms when face is tracked
-                let delay = 140;
+                // fast polling: 100ms when searching for faces, 120ms when face is tracked, 1200ms on cooldown
+                let delay = 100;
                 if (this.scanCooldown) {
-                    delay = 1500;
-                } else if (this.faceCache && this.faceCache.opacity > 0.7) {
-                    delay = 200;
+                    delay = 1200;
+                } else if (this.faceCache && (this.faceCache.name || this.faceCache.mssv) && this.faceCache.opacity > 0.5) {
+                    delay = 120;
                 }
                 this.autoTimeoutId = setTimeout(loop, delay);
             }
@@ -1397,8 +1397,8 @@ class CameraController {
             const vw = this.video.videoWidth || 1280;
             const vh = this.video.videoHeight || 720;
 
-            // send native 1280 resolution with high JPEG quality for crystal-clear distant face detection
-            const maxDimension = 1280;
+            // send optimized 960 resolution for fast encoding and responsive tracking
+            const maxDimension = 960;
             const scale = Math.min(1.0, maxDimension / Math.max(vw, vh));
             const sendW = Math.round(vw * scale);
             const sendH = Math.round(vh * scale);
@@ -1410,7 +1410,7 @@ class CameraController {
             }
             const ctx = offscreen.getContext('2d');
             ctx.drawImage(this.video, 0, 0, sendW, sendH);
-            offscreen.toBlob(resolve, 'image/jpeg', 0.88);
+            offscreen.toBlob(resolve, 'image/jpeg', 0.75);
         });
     }
 
@@ -1476,18 +1476,19 @@ class CameraController {
         // render active primary face at 60 fps
         if (this.faceCache) {
             const age = now - this.faceCache.lastSeen;
+            const maxHoldTime = (this.faceCache.name || this.faceCache.mssv) ? 1800 : 800;
 
-            if (age > 800) {
+            if (age > maxHoldTime) {
                 this.faceCache.opacity -= 0.05;
                 if (this.faceCache.opacity <= 0) {
                     this.faceCache = null;
                 }
             } else {
-                // smooth lerp at 60 fps
+                // responsive smooth lerp at 60 fps
                 const dx = this.faceCache.targetRect[0] - this.faceCache.currentRect[0];
                 const dy = this.faceCache.targetRect[1] - this.faceCache.currentRect[1];
                 const dist = Math.hypot(dx, dy);
-                const k = dist > 60 ? 0.40 : 0.25;
+                const k = dist > 40 ? 0.70 : 0.45;
                 this.faceCache.currentRect[0] += dx * k;
                 this.faceCache.currentRect[1] += dy * k;
                 this.faceCache.currentRect[2] += (this.faceCache.targetRect[2] - this.faceCache.currentRect[2]) * k;

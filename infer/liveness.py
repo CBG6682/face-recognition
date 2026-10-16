@@ -107,11 +107,8 @@ def check_liveness(img_bgr: np.ndarray, bbox: list[int]) -> tuple[str, float]:
         if sub_img.size == 0:
             return "Fake", 0.0
 
-        detected_bbox = predictor.get_bbox(sub_img)
-
-        # fallback bbox if model doesn't detect face in sub_img
-        if not detected_bbox or all(v == 0 for v in detected_bbox):
-            detected_bbox = [margin_x, margin_y, face_w, face_h]
+        # use exact face bbox coordinates within sub_img from insightface
+        detected_bbox = [margin_x, margin_y, face_w, face_h]
 
         model_name = os.path.basename(ANTI_SPOOF_MODEL)
         h_in, w_in, _, scale = parse_model_name(model_name)
