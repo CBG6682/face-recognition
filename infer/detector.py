@@ -52,25 +52,48 @@ def get_recognition_model(app: FaceAnalysis):
 
 def get_face_variants(aligned_face: np.ndarray) -> list[np.ndarray]:
     """
-    Tạo 3 biến thể màu sắc chuẩn hóa từ khuôn mặt đã căn chỉnh 112x112:
+    Tạo 5 biến thể kết hợp giữa TTA đối xứng và các phép biến đổi ánh sáng/màu sắc:
     1. Ảnh gốc
-    2. Lật ngang (Horizontal Flip - triệt tiêu bóng đổ bất đối xứng)
-    3. Khử màu (Grayscale chuyển sang 3 kênh BGR - triệt tiêu ám màu / sai lệch tone da)
+    2. Lật ngang (Triệt tiêu bóng đổ bất đối xứng)
+    3. Khử màu (Triệt tiêu sai lệch tone da / ám màu camera)
+    4. Cân bằng tương phản cục bộ CLAHE trên kênh Luminance (Làm rõ rãnh khối mặt)
+    5. Hiệu chỉnh Gamma (Mô phỏng phơi sáng phi tuyến tính)
     """
-    variants = [
-        aligned_face,
-        cv2.flip(aligned_face, 1),
-    ]
+    variants = []
+
+    # 1. Ảnh gốc
+    variants.append(aligned_face)
+
+    # 2. Lật ngang (Horizontal Flip)
+    variants.append(cv2.flip(aligned_face, 1))
+
+    # 3. Khử màu (Grayscale 3 kênh)
     gray = cv2.cvtColor(aligned_face, cv2.COLOR_BGR2GRAY)
-    gray_3ch = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-    variants.append(gray_3ch)
+    variants.append(cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR))
+
+    # 4. Cân bằng tương phản cục bộ (CLAHE trên kênh Y của YCrCb)
+    ycrcb = cv2.cvtColor(aligned_face, cv2.COLOR_BGR2YCrCb)
+    clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(4, 4))
+    ycrcb[:, :, 0] = clahe.apply(ycrcb[:, :, 0])
+    clahe_face = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
+    variants.append(clahe_face)
+
+    # 5. Hiệu chỉnh Gamma (gamma = 1.25 giúp xử lý góc thiếu sáng/ngược sáng)
+    gamma = 1.25
+    inv_gamma = 1.0 / gamma
+    table = np.array(
+        [((i / 255.0) ** inv_gamma) * 255 for i in np.arange(0, 256)]
+    ).astype("uint8")
+    gamma_face = cv2.LUT(aligned_face, table)
+    variants.append(gamma_face)
+
     return variants
 
 
 def extract_tta_vectors(rec_model, aligned_face: np.ndarray) -> np.ndarray:
     """
     Trích xuất vector cho từng biến thể màu sắc và chuẩn hóa L2 đơn vị.
-    Trả về: ma trận numpy shape (3, 512).
+    Trả về: ma trận numpy shape (K, 512) với K là số biến thể (mặc định K=5).
     """
     variants = get_face_variants(aligned_face)
     vectors = []
@@ -79,6 +102,7 @@ def extract_tta_vectors(rec_model, aligned_face: np.ndarray) -> np.ndarray:
         feat_norm = feat / norm(feat)
         vectors.append(feat_norm.flatten())
     return np.array(vectors, dtype=np.float32)
+
 
 
 def compute_face_embedding(rec_model, aligned_face: np.ndarray) -> list[float]:

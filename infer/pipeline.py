@@ -166,7 +166,7 @@ def process_multi_face_frame(
     """
     Hàm xử lý khung hình điểm danh đa mặt đối chiếu với database in-memory (Cell 12 trong ce201.ipynb):
     - Lọc và sắp xếp các mặt theo det_score cao nhất.
-    - Căn chỉnh từ ảnh gốc và áp dụng TTA (Gốc, Lật ngang, Grayscale).
+    - Căn chỉnh từ ảnh gốc và áp dụng TTA 5 biến thể (Gốc, Lật ngang, Grayscale, CLAHE tương phản, Gamma phơi sáng).
     - Tính toán song song cả Liveness và Recognition (không ngắt nhận diện khi là Fake).
     """
     final_results = []
@@ -229,7 +229,7 @@ def process_multi_face_frame(
                 )
                 query_vectors = extract_tta_vectors(rec_model, aligned_face)
 
-                # Ma trận tương đồng Cosine: (3, 512) x (512, N_db) -> (3, N_db)
+                # Ma trận tương đồng Cosine: (5, 512) x (512, N_db) -> (5, N_db)
                 sim_matrix = np.dot(query_vectors, db_matrix.T)
                 mean_sims = np.mean(sim_matrix, axis=0)
 
