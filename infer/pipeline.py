@@ -11,6 +11,7 @@ from numpy.linalg import norm
 from dataclasses import dataclass
 from insightface.utils import face_align
 from config import (
+    DET_SIZE,
     DET_THRESH,
     LIVENESS_THRESH,
     RECOG_THRESH,
@@ -26,7 +27,7 @@ from detector import (
     get_recognition_model,
     extract_tta_vectors,
     compute_face_embedding,
-    _pad_to_target,
+    letterbox_image,
 )
 from liveness import check_liveness, _get_models
 
@@ -106,44 +107,47 @@ def load_database(db_path: str) -> dict[str, np.ndarray]:
 
 
 def add_to_database(
-    db: dict[str, np.ndarray], paths: list[str], ids: list[str], app=None
+    db: dict[str, np.ndarray],
+    paths: list[str],
+    ids: list[str],
+    app=None,
+    target_size: tuple[int, int] = DET_SIZE,
 ) -> None:
     """
-    Trích xuất vector từ ảnh hồ sơ vào database in-memory (Cell 12).
-    Áp dụng gom trung bình TTA và crop từ ảnh gốc để vector lưu trữ chuẩn mực nhất.
+    Chuẩn hóa ảnh hồ sơ về khung `img_padded` (640x640) bằng Letterbox,
+    sau đó cắt mặt 112x112 TRỰC TIẾP trên `img_padded` và gom trung bình TTA (Cách 2 trong ce201.ipynb).
     """
     if app is None:
         app = load_model()
     rec_model = get_recognition_model(app)
 
     for path, person_id in zip(paths, ids):
-        img_bgr = cv2.imread(path)
+        img_bgr = cv2.imread(str(path))
         if img_bgr is None:
             continue
 
-        padded, scale, pad_left, pad_top = _pad_to_target(img_bgr)
-        faces = app.get(padded)
+        img_padded, _, _, _, _ = letterbox_image(img_bgr, target_size=target_size)
+        faces = app.get(img_padded)
         if not faces:
             continue
 
-        # Chọn khuôn mặt có diện tích lớn nhất
+        # Chọn khuôn mặt lớn nhất
         target_face = max(
             faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1])
         )
 
-        # Map 5 landmark về lại ảnh gốc
+        # Cắt mặt trực tiếp trên khung chuẩn img_padded (không map ngược về ảnh gốc)
         if hasattr(target_face, "kps") and target_face.kps is not None and rec_model is not None:
             try:
-                kps_org = target_face.kps.copy()
-                kps_org[:, 0] = (kps_org[:, 0] - pad_left) / scale
-                kps_org[:, 1] = (kps_org[:, 1] - pad_top) / scale
-
                 aligned_face = face_align.norm_crop(
-                    img_bgr, landmark=kps_org, image_size=ALIGNED_FACE_SIZE
+                    img_padded, landmark=target_face.kps, image_size=ALIGNED_FACE_SIZE
                 )
                 if aligned_face is not None and aligned_face.size > 0:
-                    embedding = compute_face_embedding(rec_model, aligned_face)
-                    db[str(person_id)] = np.array(embedding, dtype=np.float32)
+                    vectors = extract_tta_vectors(rec_model, aligned_face)
+                    # Vector đại diện trong DB là trung bình chuẩn hóa L2 của 5 biến thể
+                    mean_emb = np.mean(vectors, axis=0)
+                    mean_emb = mean_emb / norm(mean_emb)
+                    db[str(person_id)] = mean_emb.astype(np.float32)
                     continue
             except Exception:
                 pass
@@ -157,6 +161,7 @@ def process_multi_face_frame(
     frame_org: np.ndarray,
     db: dict[str, np.ndarray],
     app=None,
+    target_size: tuple[int, int] = DET_SIZE,
     det_thresh: float = DET_THRESH,
     liveness_thresh: float = LIVENESS_THRESH * 100.0,
     recog_thresh: float = RECOG_THRESH,
@@ -164,13 +169,14 @@ def process_multi_face_frame(
     check_liveness_flag: bool = True,
 ) -> list[dict]:
     """
-    Hàm xử lý khung hình điểm danh đa mặt đối chiếu với database in-memory (Cell 12 trong ce201.ipynb):
-    - Lọc và sắp xếp các mặt theo det_score cao nhất.
-    - Căn chỉnh từ ảnh gốc và áp dụng TTA 5 biến thể (Gốc, Lật ngang, Grayscale, CLAHE tương phản, Gamma phơi sáng).
-    - Tính toán song song cả Liveness và Recognition (không ngắt nhận diện khi là Fake).
+    Xử lý khung hình điểm danh đa mặt đối chiếu với database in-memory (Cách 2 trong ce201.ipynb):
+    - Chuẩn hóa kích thước bằng letterbox_image (giữ nguyên tỉ lệ H:W, bù pad đen).
+    - BBox hiển thị và cắt Liveness được quy đổi về tọa độ `frame_org`.
+    - Cắt mặt 112x112 để nhận diện được thực hiện TRỰC TIẾP trên `frame_padded` (640x640).
+    - Kết hợp 50% Mean Vector + 50% Top-3 Variants (khử nhiễu lóa kính).
     """
     final_results = []
-    if not db:
+    if not db or frame_org is None:
         return final_results
 
     if app is None:
@@ -180,23 +186,27 @@ def process_multi_face_frame(
     db_ids = list(db.keys())
     db_matrix = np.array(list(db.values()), dtype=np.float32)
 
-    # 1. Phát hiện khuôn mặt
     h_org, w_org = frame_org.shape[:2]
-    padded, scale, pad_left, pad_top = _pad_to_target(frame_org)
 
-    faces = app.get(padded)
+    # --- BƯỚC 1: LETTERBOX SCALE & PHÁT HIỆN GƯƠNG MẶT ---
+    frame_padded, pad_left, pad_top, scale_x, scale_y = letterbox_image(
+        frame_org, target_size=target_size
+    )
+
+    faces = app.get(frame_padded)
     valid_faces = [f for f in faces if f.det_score >= det_thresh]
     valid_faces.sort(key=lambda f: f.det_score, reverse=True)
     if max_faces is not None and max_faces > 0:
         valid_faces = valid_faces[:max_faces]
 
-    # 2. Xử lý từng khuôn mặt
+    # --- BƯỚC 2: XỬ LÝ TỪNG KHUÔN MẶT ---
     for face in valid_faces:
         px1, py1, px2, py2 = face.bbox
-        x1 = max(0, int((px1 - pad_left) / scale))
-        y1 = max(0, int((py1 - pad_top) / scale))
-        x2 = min(w_org, int((px2 - pad_left) / scale))
-        y2 = min(h_org, int((py2 - pad_top) / scale))
+        # Quy đổi BBox về ảnh gốc (dùng để vẽ giao diện và cắt vùng kiểm tra Liveness)
+        x1 = max(0, int(round((px1 - pad_left) / scale_x)))
+        y1 = max(0, int(round((py1 - pad_top) / scale_y)))
+        x2 = min(w_org, int(round((px2 - pad_left) / scale_x)))
+        y2 = min(h_org, int(round((py2 - pad_top) / scale_y)))
 
         face_result = {
             "bbox": [x1, y1, x2, y2],
@@ -216,22 +226,25 @@ def process_multi_face_frame(
             face_result["liveness"]["label"] = label
             is_real = (label == "Real")
 
-        # 2.2 Nhận diện với TTA Vector Matching (luôn chạy)
-        embedding_vec = None
+        # 2.2 Nhận diện trực tiếp trên khung padded 640x640 (Cách 2)
         if hasattr(face, "kps") and face.kps is not None and rec_model is not None:
             try:
-                kps_org = face.kps.copy()
-                kps_org[:, 0] = (kps_org[:, 0] - pad_left) / scale
-                kps_org[:, 1] = (kps_org[:, 1] - pad_top) / scale
-
                 aligned_face = face_align.norm_crop(
-                    frame_org, landmark=kps_org, image_size=ALIGNED_FACE_SIZE
+                    frame_padded, landmark=face.kps, image_size=ALIGNED_FACE_SIZE
                 )
-                query_vectors = extract_tta_vectors(rec_model, aligned_face)
+                query_vectors = extract_tta_vectors(rec_model, aligned_face)  # Shape: (5, 512)
+
+                query_mean_vec = np.mean(query_vectors, axis=0)
+                query_mean_vec = query_mean_vec / norm(query_mean_vec)
 
                 # Ma trận tương đồng Cosine: (5, 512) x (512, N_db) -> (5, N_db)
                 sim_matrix = np.dot(query_vectors, db_matrix.T)
-                mean_sims = np.mean(sim_matrix, axis=0)
+
+                # Kết hợp 50% Mean Vector + 50% Top-3 Variants (khử nhiễu lóa kính)
+                top3_variant_sims = np.sort(sim_matrix, axis=0)[-3:, :]
+                mean_sims = 0.5 * np.dot(query_mean_vec, db_matrix.T) + 0.5 * np.mean(
+                    top3_variant_sims, axis=0
+                )
 
                 best_idx = int(np.argmax(mean_sims))
                 best_avg_sim = float(mean_sims[best_idx])
