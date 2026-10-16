@@ -1326,12 +1326,12 @@ class CameraController {
                 await this.captureAndCheckin(false);
             }
             if (this.autoEnabled) {
-                // fast polling: 100ms when searching for faces, 120ms when face is tracked, 1200ms on cooldown
+                // fast polling: 100ms when searching or unverified faces, 600ms when all tracked faces are cached
                 let delay = 100;
                 if (this.scanCooldown) {
                     delay = 1200;
-                } else if (this.faceCache && (this.faceCache.name || this.faceCache.mssv) && this.faceCache.opacity > 0.5) {
-                    delay = 120;
+                } else if (this.trackedFaces.length > 0 && this.trackedFaces.every(f => (f.name || f.mssv) && f.opacity > 0.5)) {
+                    delay = 600;
                 }
                 this.autoTimeoutId = setTimeout(loop, delay);
             }
@@ -1473,52 +1473,32 @@ class CameraController {
             }
         }
 
-        // render active primary face at 60 fps
-        if (this.faceCache) {
-            const age = now - this.faceCache.lastSeen;
-            const maxHoldTime = (this.faceCache.name || this.faceCache.mssv) ? 1800 : 800;
-
-            if (age > maxHoldTime) {
-                this.faceCache.opacity -= 0.05;
-                if (this.faceCache.opacity <= 0) {
-                    this.faceCache = null;
-                }
-            } else {
-                // responsive smooth lerp at 60 fps
-                const dx = this.faceCache.targetRect[0] - this.faceCache.currentRect[0];
-                const dy = this.faceCache.targetRect[1] - this.faceCache.currentRect[1];
-                const dist = Math.hypot(dx, dy);
-                const k = dist > 40 ? 0.70 : 0.45;
-                this.faceCache.currentRect[0] += dx * k;
-                this.faceCache.currentRect[1] += dy * k;
-                this.faceCache.currentRect[2] += (this.faceCache.targetRect[2] - this.faceCache.currentRect[2]) * k;
-                this.faceCache.currentRect[3] += (this.faceCache.targetRect[3] - this.faceCache.currentRect[3]) * k;
-
-                this.drawTrackedBox(this.faceCache);
-            }
-        }
-
-        // render secondary faces if present
+        // render all tracked faces at 60 fps with responsive smooth lerp
         for (let i = this.trackedFaces.length - 1; i >= 0; i--) {
             const face = this.trackedFaces[i];
             const age = now - face.lastSeen;
+            const maxHoldTime = (face.name || face.mssv) ? 1800 : 800;
 
-            if (age > 450) {
-                face.opacity -= 0.08;
+            if (age > maxHoldTime || face.lossCount >= 4) {
+                face.opacity -= 0.05;
                 if (face.opacity <= 0) {
                     this.trackedFaces.splice(i, 1);
                     continue;
                 }
+            } else {
+                const dx = face.targetRect[0] - face.currentRect[0];
+                const dy = face.targetRect[1] - face.currentRect[1];
+                const dist = Math.hypot(dx, dy);
+                const k = dist > 40 ? 0.70 : 0.45;
+                face.currentRect[0] += dx * k;
+                face.currentRect[1] += dy * k;
+                face.currentRect[2] += (face.targetRect[2] - face.currentRect[2]) * k;
+                face.currentRect[3] += (face.targetRect[3] - face.currentRect[3]) * k;
+
+                this.drawTrackedBox(face);
             }
-
-            const k = 0.12;
-            face.currentRect[0] += (face.targetRect[0] - face.currentRect[0]) * k;
-            face.currentRect[1] += (face.targetRect[1] - face.currentRect[1]) * k;
-            face.currentRect[2] += (face.targetRect[2] - face.currentRect[2]) * k;
-            face.currentRect[3] += (face.targetRect[3] - face.currentRect[3]) * k;
-
-            this.drawTrackedBox(face);
         }
+        this.faceCache = this.trackedFaces[0] || null;
     }
 
     processLocalDetections(detections, now, vw, vh) {
@@ -1558,10 +1538,10 @@ class CameraController {
             .sort((a, b) => a.boundingBox.originY - b.boundingBox.originY); // topmost first
 
         if (validDetections.length === 0) {
-            if (this.faceCache) {
-                this.faceCache.lossCount = (this.faceCache.lossCount || 0) + 1;
-                if (this.faceCache.lossCount >= 3) {
-                    this.faceCache.lastSeen = now - 400;
+            for (let i = 0; i < this.trackedFaces.length; i++) {
+                this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+                if (this.trackedFaces[i].lossCount >= 3) {
+                    this.trackedFaces[i].lastSeen = now - 400;
                 }
             }
             return;
@@ -1588,103 +1568,67 @@ class CameraController {
             return [screenX, screenY, screenW, screenH, lms];
         });
 
-        // temporal smoothing: average last N raw rects for primary face to kill model noise
-        const rawPrimary = localRects[0] ? localRects[0].slice(0, 4) : null;
-        let smoothedPrimary;
-        if (rawPrimary) {
-            this._rawRectBuf.push(rawPrimary);
-            if (this._rawRectBuf.length > this._RAW_BUF_SIZE) this._rawRectBuf.shift();
-            smoothedPrimary = this._rawRectBuf.reduce(
-                (acc, r) => [acc[0] + r[0], acc[1] + r[1], acc[2] + r[2], acc[3] + r[3]],
-                [0, 0, 0, 0]
-            ).map(v => v / this._rawRectBuf.length);
-        } else {
-            this._rawRectBuf = [];
-        }
-
         const DEAD_ZONE = 3;
+        const matchedLocalIndices = new Set();
 
-        if (this.faceCache) {
-            const ccx = this.faceCache.currentRect[0] + this.faceCache.currentRect[2] / 2;
-            const ccy = this.faceCache.currentRect[1] + this.faceCache.currentRect[3] / 2;
-            let closestRect = null;
-            let minDist = Math.max(this.faceCache.currentRect[2], this.faceCache.currentRect[3]) * 2.5;
-
-            for (const r of localRects) {
-                const rcx = r[0] + r[2] / 2;
-                const rcy = r[1] + r[3] / 2;
-                const dist = Math.hypot(ccx - rcx, ccy - rcy);
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestRect = r;
-                }
-            }
-
-            const chosenRect = closestRect || localRects[0];
-
-            if (chosenRect) {
-                const targetCoords = chosenRect === localRects[0] && smoothedPrimary ? smoothedPrimary : chosenRect.slice(0, 4);
-                const dx = Math.abs(targetCoords[0] - this.faceCache.targetRect[0]);
-                const dy = Math.abs(targetCoords[1] - this.faceCache.targetRect[1]);
-                const dw = Math.abs(targetCoords[2] - this.faceCache.targetRect[2]);
-                const dh = Math.abs(targetCoords[3] - this.faceCache.targetRect[3]);
-                if (dx > DEAD_ZONE || dy > DEAD_ZONE || dw > DEAD_ZONE || dh > DEAD_ZONE) {
-                    this.faceCache.targetRect = targetCoords;
-                }
-                this.faceCache.landmarks = chosenRect[4] || [];
-                this.faceCache.lastSeen = now;
-                this.faceCache.lossCount = 0;
-                this.faceCache.opacity = 1.0;
-            } else {
-                this.faceCache.lossCount = (this.faceCache.lossCount || 0) + 1;
-            }
-        } else if (smoothedPrimary) {
-            const identity = this.cachedIdentity;
-            const isFresh = identity && (now - (identity.timestamp || 0) < 4000);
-            this.faceCache = {
-                name: isFresh ? identity.name : '',
-                mssv: isFresh ? identity.mssv : '',
-                status: isFresh ? identity.status : 'scanning',
-                similarity: isFresh ? identity.similarity : 0,
-                currentRect: [...smoothedPrimary],
-                targetRect: [...smoothedPrimary],
-                landmarks: localRects[0] ? (localRects[0][4] || []) : [],
-                lastSeen: now,
-                lossCount: 0,
-                opacity: 1.0,
-            };
-        }
-
-        for (let i = 1; i < localRects.length; i++) {
-            const r = localRects[i];
+        for (const r of localRects) {
             const rcx = r[0] + r[2] / 2;
             const rcy = r[1] + r[3] / 2;
-            let matched = false;
+            let bestIdx = -1;
+            let bestDist = Infinity;
+            const maxDist = Math.max(r[2], r[3]) * 1.8;
 
-            for (const tf of this.trackedFaces) {
-                const fcx = tf.targetRect[0] + tf.targetRect[2] / 2;
-                const fcy = tf.targetRect[1] + tf.targetRect[3] / 2;
-                if (Math.hypot(rcx - fcx, rcy - fcy) < Math.max(r[2], r[3]) * 1.5) {
-                    tf.targetRect = r;
-                    tf.lastSeen = now;
-                    tf.opacity = 1.0;
-                    matched = true;
-                    break;
+            for (let i = 0; i < this.trackedFaces.length; i++) {
+                if (matchedLocalIndices.has(i)) continue;
+                const tf = this.trackedFaces[i];
+                const tfcx = tf.currentRect[0] + tf.currentRect[2] / 2;
+                const tfcy = tf.currentRect[1] + tf.currentRect[3] / 2;
+                const dist = Math.hypot(rcx - tfcx, rcy - tfcy);
+                if (dist < bestDist && dist < maxDist) {
+                    bestDist = dist;
+                    bestIdx = i;
                 }
             }
 
-            if (!matched) {
-                this.trackedFaces.push({
-                    currentRect: [...r],
-                    targetRect: [...r],
+            if (bestIdx !== -1) {
+                matchedLocalIndices.add(bestIdx);
+                const tf = this.trackedFaces[bestIdx];
+                const targetCoords = r.slice(0, 4);
+                const dx = Math.abs(targetCoords[0] - tf.targetRect[0]);
+                const dy = Math.abs(targetCoords[1] - tf.targetRect[1]);
+                const dw = Math.abs(targetCoords[2] - tf.targetRect[2]);
+                const dh = Math.abs(targetCoords[3] - tf.targetRect[3]);
+                if (dx > DEAD_ZONE || dy > DEAD_ZONE || dw > DEAD_ZONE || dh > DEAD_ZONE) {
+                    tf.targetRect = targetCoords;
+                }
+                tf.landmarks = r[4] || [];
+                tf.lastSeen = now;
+                tf.lossCount = 0;
+                tf.opacity = 1.0;
+            } else {
+                const newFace = {
+                    currentRect: [...r.slice(0, 4)],
+                    targetRect: [...r.slice(0, 4)],
+                    landmarks: r[4] || [],
                     name: '',
                     mssv: '',
                     status: 'scanning',
+                    similarity: 0,
                     lastSeen: now,
+                    lossCount: 0,
                     opacity: 1.0,
-                });
+                };
+                this.trackedFaces.push(newFace);
+                matchedLocalIndices.add(this.trackedFaces.length - 1);
             }
         }
+
+        for (let i = 0; i < this.trackedFaces.length; i++) {
+            if (!matchedLocalIndices.has(i)) {
+                this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+            }
+        }
+        this.faceCache = this.trackedFaces[0] || null;
     }
 
     handleCheckinResult(res, isManual = false) {
@@ -1699,12 +1643,13 @@ class CameraController {
         this.lastMatches = matches;
 
         if (matches.length === 0) {
-            if (!this.localFaceDetector && this.faceCache) {
-                this.faceCache.lossCount = (this.faceCache.lossCount || 0) + 1;
-                if (this.faceCache.lossCount >= 2) {
-                    this.faceCache = null;
+            for (let i = 0; i < this.trackedFaces.length; i++) {
+                this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+                if (this.trackedFaces[i].lossCount >= 3) {
+                    this.trackedFaces[i].opacity -= 0.2;
                 }
             }
+            this.faceCache = this.trackedFaces[0] || null;
             if (isManual) {
                 if (facesDetected === 0) {
                     showToast('Không phát hiện khuôn mặt nào trước camera', 'warning');
@@ -1718,18 +1663,14 @@ class CameraController {
         const canvasWidth = this.canvas.width || 1280;
         const scale = this.lastFrameScale || 1.0;
         const now = performance.now();
+        const matchedIndices = new Set();
+        const nowDate = new Date();
+        const timeStr = nowDate.toTimeString().split(' ')[0];
+        let hasNewCheckin = false;
 
         matches.forEach((m) => {
             const cleanName = (m.ho_ten || '').replace(/^['"]|['"]$/g, '').trim();
             const cleanMssv = (m.mssv || '').replace(/^['"]|['"]$/g, '').trim();
-
-            this.cachedIdentity = {
-                name: cleanName,
-                mssv: cleanMssv,
-                status: m.status,
-                similarity: m.similarity,
-                timestamp: now,
-            };
 
             let screenX = 0, screenY = 0, screenW = 0, screenH = 0;
             if (m.bbox && m.bbox.length >= 4) {
@@ -1745,8 +1686,39 @@ class CameraController {
 
             if (screenW > 0) {
                 const serverRect = [screenX, screenY, screenW, screenH];
-                if (!this.faceCache) {
-                    this.faceCache = {
+                const scx = screenX + screenW / 2;
+                const scy = screenY + screenH / 2;
+
+                // spatial matching to nearest existing tracked face
+                let bestIdx = -1;
+                let bestDist = Infinity;
+                const maxDist = Math.max(screenW, screenH) * 1.5;
+
+                for (let i = 0; i < this.trackedFaces.length; i++) {
+                    if (matchedIndices.has(i)) continue;
+                    const tf = this.trackedFaces[i];
+                    const tfcx = tf.currentRect[0] + tf.currentRect[2] / 2;
+                    const tfcy = tf.currentRect[1] + tf.currentRect[3] / 2;
+                    const dist = Math.hypot(scx - tfcx, scy - tfcy);
+                    if (dist < bestDist && dist < maxDist) {
+                        bestDist = dist;
+                        bestIdx = i;
+                    }
+                }
+
+                if (bestIdx !== -1) {
+                    matchedIndices.add(bestIdx);
+                    const tf = this.trackedFaces[bestIdx];
+                    tf.name = cleanName;
+                    tf.mssv = cleanMssv;
+                    tf.similarity = m.similarity;
+                    tf.status = m.status;
+                    tf.targetRect = [...serverRect];
+                    tf.lastSeen = now;
+                    tf.lossCount = 0;
+                    tf.opacity = 1.0;
+                } else {
+                    const newFace = {
                         name: cleanName,
                         mssv: cleanMssv,
                         similarity: m.similarity,
@@ -1757,22 +1729,13 @@ class CameraController {
                         lossCount: 0,
                         opacity: 1.0,
                     };
-                } else {
-                    this.faceCache.name = cleanName;
-                    this.faceCache.mssv = cleanMssv;
-                    this.faceCache.similarity = m.similarity;
-                    this.faceCache.status = m.status;
-                    this.faceCache.targetRect = [...serverRect];
-                    this.faceCache.lastSeen = now;
-                    this.faceCache.lossCount = 0;
-                    this.faceCache.opacity = 1.0;
+                    this.trackedFaces.push(newFace);
+                    matchedIndices.add(this.trackedFaces.length - 1);
                 }
             }
 
-            const nowDate = new Date();
-            const timeStr = nowDate.toTimeString().split(' ')[0];
-
             if (m.status === 'new') {
+                hasNewCheckin = true;
                 this.playSuccessChime();
                 showToast(`Điểm danh thành công: ${cleanName}`, 'success');
 
@@ -1783,11 +1746,6 @@ class CameraController {
                     target.similarity = m.similarity;
                 }
                 this.renderLiveFeed();
-
-                this.scanCooldown = true;
-                setTimeout(() => {
-                    this.scanCooldown = false;
-                }, 1500);
             } else if (m.status === 'already') {
                 if (isManual) showToast(`${cleanName}: Đã có mặt rồi`, 'info');
             } else if (m.status === 'other_class') {
@@ -1809,6 +1767,20 @@ class CameraController {
                 showToast('Cảnh báo: Phát hiện khuôn mặt giả mạo!', 'error');
             }
         });
+
+        if (hasNewCheckin) {
+            this.scanCooldown = true;
+            setTimeout(() => {
+                this.scanCooldown = false;
+            }, 1200);
+        }
+
+        for (let i = 0; i < this.trackedFaces.length; i++) {
+            if (!matchedIndices.has(i)) {
+                this.trackedFaces[i].lossCount = (this.trackedFaces[i].lossCount || 0) + 1;
+            }
+        }
+        this.faceCache = this.trackedFaces[0] || null;
     }
 
     drawTrackedBox(face) {
