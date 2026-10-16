@@ -23,4 +23,5 @@ ALIGNED_FACE_SIZE = 112  # ArcFace alignment input resolution
 LIVENESS_THRESH = 0.60   # score >= 60% → real
 RECOG_THRESH = 0.45      # cosine sim >= 45% → matched (production tighter than notebook's 0.25)
 LIVENESS_MARGIN = 0.8    # expand bbox by 80% each side before liveness check
+TTA_MODE = os.getenv("TTA_MODE", "fast")  # 'none', 'fast' (2 variants), 'full' (5 variants)
 

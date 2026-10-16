@@ -10,7 +10,14 @@ from numpy.linalg import norm
 from dataclasses import dataclass
 from insightface.app import FaceAnalysis
 from insightface.utils import face_align
-from config import INSIGHT_FACE_MODEL, DET_SIZE, DET_THRESH, MAX_FACES, ALIGNED_FACE_SIZE
+from config import (
+    INSIGHT_FACE_MODEL,
+    DET_SIZE,
+    DET_THRESH,
+    MAX_FACES,
+    ALIGNED_FACE_SIZE,
+    TTA_MODE,
+)
 
 
 @dataclass
@@ -59,22 +66,28 @@ _GAMMA_LUT = np.array(
 )
 
 
-def get_face_variants(aligned_face: np.ndarray) -> list[np.ndarray]:
+def get_face_variants(
+    aligned_face: np.ndarray, mode: str | None = None
+) -> list[np.ndarray]:
     """
-    Tạo 5 biến thể kết hợp giữa TTA đối xứng và các phép biến đổi ánh sáng/màu sắc:
-    1. Ảnh gốc
-    2. Lật ngang (Triệt tiêu bóng đổ bất đối xứng)
-    3. Khử màu (Triệt tiêu sai lệch tone da / ám màu camera)
-    4. Cân bằng tương phản cục bộ CLAHE trên kênh Luminance (Làm rõ rãnh khối mặt)
-    5. Hiệu chỉnh Gamma (Mô phỏng phơi sáng phi tuyến tính)
+    Tạo các biến thể kết hợp giữa TTA đối xứng và các phép biến đổi ánh sáng/màu sắc:
+    - mode="none": Chỉ lấy ảnh gốc (1 biến thể, tốc độ cao nhất)
+    - mode="fast": Ảnh gốc + Lật ngang (2 biến thể, cân bằng tốc độ và độ ổn định)
+    - mode="full": Cả 5 biến thể (Gốc, Lật ngang, Grayscale, CLAHE, Gamma)
     """
-    variants = []
+    if mode is None:
+        mode = TTA_MODE
+    mode = str(mode).lower()
 
     # 1. Ảnh gốc
-    variants.append(aligned_face)
+    variants = [aligned_face]
+    if mode in ("none", "off"):
+        return variants
 
     # 2. Lật ngang (Horizontal Flip)
     variants.append(cv2.flip(aligned_face, 1))
+    if mode == "fast":
+        return variants
 
     # 3. Khử màu (Grayscale 3 kênh)
     gray = cv2.cvtColor(aligned_face, cv2.COLOR_BGR2GRAY)
@@ -93,12 +106,14 @@ def get_face_variants(aligned_face: np.ndarray) -> list[np.ndarray]:
     return variants
 
 
-def extract_tta_vectors(rec_model, aligned_face: np.ndarray) -> np.ndarray:
+def extract_tta_vectors(
+    rec_model, aligned_face: np.ndarray, tta_mode: str | None = None
+) -> np.ndarray:
     """
     Trích xuất vector cho từng biến thể màu sắc và chuẩn hóa L2 đơn vị.
-    Trả về: ma trận numpy shape (K, 512) với K là số biến thể (mặc định K=5).
+    Trả về: ma trận numpy shape (K, 512) với K là số biến thể.
     """
-    variants = get_face_variants(aligned_face)
+    variants = get_face_variants(aligned_face, mode=tta_mode)
     try:
         feats = rec_model.get_feat(variants)
         norms = norm(feats, axis=1, keepdims=True)
@@ -114,13 +129,14 @@ def extract_tta_vectors(rec_model, aligned_face: np.ndarray) -> np.ndarray:
         return np.array(vectors, dtype=np.float32)
 
 
-
-def compute_face_embedding(rec_model, aligned_face: np.ndarray) -> list[float]:
+def compute_face_embedding(
+    rec_model, aligned_face: np.ndarray, tta_mode: str | None = None
+) -> list[float]:
     """
     Tính vector đặc trưng trung bình từ các biến thể TTA và chuẩn hóa L2.
     Trả về list[float] 512 chiều chuẩn hóa.
     """
-    vectors = extract_tta_vectors(rec_model, aligned_face)
+    vectors = extract_tta_vectors(rec_model, aligned_face, tta_mode=tta_mode)
     mean_emb = np.mean(vectors, axis=0)
     mean_emb = mean_emb / norm(mean_emb)
     return mean_emb.astype(np.float32).tolist()
@@ -156,7 +172,9 @@ def _pad_to_target(
 
 
 def get_faces(
-    img_bgr: np.ndarray, max_faces: int | None = MAX_FACES
+    img_bgr: np.ndarray,
+    max_faces: int | None = MAX_FACES,
+    tta_mode: str | None = None,
 ) -> list[DetectedFace]:
     """
     detect all faces in img_bgr, align from original image, extract TTA embeddings.
@@ -195,7 +213,9 @@ def get_faces(
                     img_bgr, landmark=kps_org, image_size=ALIGNED_FACE_SIZE
                 )
                 if aligned_face is not None and aligned_face.size > 0:
-                    embedding = compute_face_embedding(rec_model, aligned_face)
+                    embedding = compute_face_embedding(
+                        rec_model, aligned_face, tta_mode=tta_mode
+                    )
             except Exception:
                 embedding = None
 

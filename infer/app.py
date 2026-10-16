@@ -28,8 +28,8 @@ def infer():
 
     if img_bgr is None:
         return jsonify({"error": "invalid image"}), 400
-
-    results: list[FaceResult] = process_frame(img_bgr)
+    tta_mode = request.form.get("tta_mode") or request.args.get("tta_mode")
+    results: list[FaceResult] = process_frame(img_bgr, tta_mode=tta_mode)
 
     return jsonify({
         "faces": [

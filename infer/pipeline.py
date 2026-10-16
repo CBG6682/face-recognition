@@ -41,14 +41,18 @@ class FaceResult:
 
 
 def process_frame(
-    img_bgr: np.ndarray, max_faces: int | None = None
+    img_bgr: np.ndarray,
+    max_faces: int | None = None,
+    tta_mode: str | None = None,
 ) -> list[FaceResult]:
     """
     run full pipeline on a single frame.
     returns one FaceResult per detected face, regardless of liveness outcome.
     go-side decides what to do with fake faces.
     """
-    faces: list[DetectedFace] = get_faces(img_bgr, max_faces=max_faces)
+    faces: list[DetectedFace] = get_faces(
+        img_bgr, max_faces=max_faces, tta_mode=tta_mode
+    )
     results: list[FaceResult] = []
 
     for face in faces:
