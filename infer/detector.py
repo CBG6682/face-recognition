@@ -99,12 +99,19 @@ def extract_tta_vectors(rec_model, aligned_face: np.ndarray) -> np.ndarray:
     Trả về: ma trận numpy shape (K, 512) với K là số biến thể (mặc định K=5).
     """
     variants = get_face_variants(aligned_face)
-    vectors = []
-    for var_img in variants:
-        feat = rec_model.get_feat(var_img)
-        feat_norm = feat / norm(feat)
-        vectors.append(feat_norm.flatten())
-    return np.array(vectors, dtype=np.float32)
+    try:
+        feats = rec_model.get_feat(variants)
+        norms = norm(feats, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        return (feats / norms).astype(np.float32)
+    except Exception:
+        # fallback to sequential loop if model does not support batch
+        vectors = []
+        for var_img in variants:
+            feat = rec_model.get_feat(var_img)
+            feat_norm = feat / norm(feat)
+            vectors.append(feat_norm.flatten())
+        return np.array(vectors, dtype=np.float32)
 
 
 
