@@ -80,14 +80,11 @@ def _get_models() -> tuple[AntiSpoofPredict, CropImage]:
 
 def check_liveness(img_bgr: np.ndarray, bbox: list[int]) -> tuple[str, float]:
     """
-    run MiniFASNetV2 on the face region (with margin) to detect spoof.
+    run MiniFASNetV2 on face bounding box to detect spoof.
     returns ("Real" | "Fake", confidence_score 0.0 - 1.0)
-
-    bbox: [x1, y1, x2, y2] in img_bgr coords
     """
     try:
         predictor, cropper = _get_models()
-        h, w = img_bgr.shape[:2]
         x1, y1, x2, y2 = bbox
 
         face_w = x2 - x1
@@ -95,26 +92,11 @@ def check_liveness(img_bgr: np.ndarray, bbox: list[int]) -> tuple[str, float]:
         if face_w <= 0 or face_h <= 0:
             return "Fake", 0.0
 
-        margin_x = int(face_w * LIVENESS_MARGIN)
-        margin_y = int(face_h * LIVENESS_MARGIN)
-
-        ex1 = max(0, x1 - margin_x)
-        ey1 = max(0, y1 - margin_y)
-        ex2 = min(w, x2 + margin_x)
-        ey2 = min(h, y2 + margin_y)
-
-        sub_img = img_bgr[ey1:ey2, ex1:ex2]
-        if sub_img.size == 0:
-            return "Fake", 0.0
-
-        # use exact face bbox coordinates within sub_img from insightface
-        detected_bbox = [margin_x, margin_y, face_w, face_h]
-
         model_name = os.path.basename(ANTI_SPOOF_MODEL)
         h_in, w_in, _, scale = parse_model_name(model_name)
         param = {
-            "org_img": sub_img,
-            "bbox": detected_bbox,
+            "org_img": img_bgr,
+            "bbox": [x1, y1, face_w, face_h],
             "scale": scale,
             "out_w": w_in,
             "out_h": h_in,
@@ -129,4 +111,5 @@ def check_liveness(img_bgr: np.ndarray, bbox: list[int]) -> tuple[str, float]:
 
     except Exception:
         return "Fake", 0.0
+
 

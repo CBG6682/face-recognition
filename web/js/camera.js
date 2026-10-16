@@ -1326,12 +1326,12 @@ class CameraController {
                 await this.captureAndCheckin(false);
             }
             if (this.autoEnabled) {
-                // fast polling: 100ms when searching or unverified faces, 600ms when all tracked faces are cached
+                // fast polling: 100ms when searching or unverified faces, 800ms when all tracked faces are cached
                 let delay = 100;
                 if (this.scanCooldown) {
                     delay = 1200;
-                } else if (this.trackedFaces.length > 0 && this.trackedFaces.every(f => (f.name || f.mssv) && f.opacity > 0.5)) {
-                    delay = 600;
+                } else if (this.trackedFaces.length > 0 && this.trackedFaces.every(f => f.isCached && f.opacity > 0.5)) {
+                    delay = 800;
                 }
                 this.autoTimeoutId = setTimeout(loop, delay);
             }
@@ -1477,9 +1477,9 @@ class CameraController {
         for (let i = this.trackedFaces.length - 1; i >= 0; i--) {
             const face = this.trackedFaces[i];
             const age = now - face.lastSeen;
-            const maxHoldTime = (face.name || face.mssv) ? 1800 : 800;
+            const maxHoldTime = face.isCached ? 2500 : 800;
 
-            if (age > maxHoldTime || face.lossCount >= 4) {
+            if (age > maxHoldTime || face.lossCount >= 6) {
                 face.opacity -= 0.05;
                 if (face.opacity <= 0) {
                     this.trackedFaces.splice(i, 1);
@@ -1671,6 +1671,8 @@ class CameraController {
         matches.forEach((m) => {
             const cleanName = (m.ho_ten || '').replace(/^['"]|['"]$/g, '').trim();
             const cleanMssv = (m.mssv || '').replace(/^['"]|['"]$/g, '').trim();
+            const isVerifiedMatch = (m.status === 'new' || m.status === 'already' || m.status === 'other_class') &&
+                cleanName && cleanName !== 'Chưa đăng ký' && cleanName !== 'Giả mạo';
 
             let screenX = 0, screenY = 0, screenW = 0, screenH = 0;
             if (m.bbox && m.bbox.length >= 4) {
@@ -1709,10 +1711,20 @@ class CameraController {
                 if (bestIdx !== -1) {
                     matchedIndices.add(bestIdx);
                     const tf = this.trackedFaces[bestIdx];
-                    tf.name = cleanName;
-                    tf.mssv = cleanMssv;
-                    tf.similarity = m.similarity;
-                    tf.status = m.status;
+
+                    if (isVerifiedMatch) {
+                        tf.isCached = true;
+                        tf.name = cleanName;
+                        tf.mssv = cleanMssv;
+                        tf.similarity = m.similarity;
+                        tf.status = m.status === 'new' ? 'new' : (tf.status === 'new' ? 'new' : m.status);
+                    } else if (!tf.isCached) {
+                        tf.name = cleanName;
+                        tf.mssv = cleanMssv;
+                        tf.similarity = m.similarity;
+                        tf.status = m.status;
+                    }
+
                     tf.targetRect = [...serverRect];
                     tf.lastSeen = now;
                     tf.lossCount = 0;
@@ -1723,6 +1735,7 @@ class CameraController {
                         mssv: cleanMssv,
                         similarity: m.similarity,
                         status: m.status,
+                        isCached: isVerifiedMatch,
                         currentRect: [...serverRect],
                         targetRect: [...serverRect],
                         lastSeen: now,
@@ -1763,7 +1776,7 @@ class CameraController {
                     });
                     this.renderLiveFeed();
                 }
-            } else if (m.status === 'fake') {
+            } else if (m.status === 'fake' && isManual) {
                 showToast('Cảnh báo: Phát hiện khuôn mặt giả mạo!', 'error');
             }
         });
