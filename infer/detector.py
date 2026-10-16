@@ -50,6 +50,15 @@ def get_recognition_model(app: FaceAnalysis):
     return rec_model
 
 
+# cached clahe and gamma lut tables to avoid reallocating per face
+_clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(4, 4))
+_GAMMA = 1.25
+_INV_GAMMA = 1.0 / _GAMMA
+_GAMMA_LUT = np.array(
+    [((i / 255.0) ** _INV_GAMMA) * 255 for i in range(256)], dtype="uint8"
+)
+
+
 def get_face_variants(aligned_face: np.ndarray) -> list[np.ndarray]:
     """
     Tạo 5 biến thể kết hợp giữa TTA đối xứng và các phép biến đổi ánh sáng/màu sắc:
@@ -73,18 +82,12 @@ def get_face_variants(aligned_face: np.ndarray) -> list[np.ndarray]:
 
     # 4. Cân bằng tương phản cục bộ (CLAHE trên kênh Y của YCrCb)
     ycrcb = cv2.cvtColor(aligned_face, cv2.COLOR_BGR2YCrCb)
-    clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(4, 4))
-    ycrcb[:, :, 0] = clahe.apply(ycrcb[:, :, 0])
+    ycrcb[:, :, 0] = _clahe.apply(ycrcb[:, :, 0])
     clahe_face = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
     variants.append(clahe_face)
 
     # 5. Hiệu chỉnh Gamma (gamma = 1.25 giúp xử lý góc thiếu sáng/ngược sáng)
-    gamma = 1.25
-    inv_gamma = 1.0 / gamma
-    table = np.array(
-        [((i / 255.0) ** inv_gamma) * 255 for i in np.arange(0, 256)]
-    ).astype("uint8")
-    gamma_face = cv2.LUT(aligned_face, table)
+    gamma_face = cv2.LUT(aligned_face, _GAMMA_LUT)
     variants.append(gamma_face)
 
     return variants
