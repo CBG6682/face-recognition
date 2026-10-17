@@ -659,8 +659,8 @@ class DashboardController {
                         <div class="row-actions" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;">
                             ${
                                 isOpen
-                                    ? `<button class="btn btn-secondary btn-sm" onclick="dashboard.toggleLessonStatus(${l.id}, 'closed')">Đóng buổi</button>`
-                                    : `<button class="btn btn-success btn-sm" onclick="dashboard.toggleLessonStatus(${l.id}, 'open')">Mở điểm danh</button>`
+                                    ? `<button class="btn btn-secondary btn-sm btn-lesson-toggle" style="width: 100px;" onclick="dashboard.toggleLessonStatus(${l.id}, 'closed')">Đóng buổi</button>`
+                                    : `<button class="btn btn-success btn-sm btn-lesson-toggle" style="width: 100px;" onclick="dashboard.toggleLessonStatus(${l.id}, 'open')">Mở điểm danh</button>`
                             }
                             <button class="btn btn-primary btn-sm" onclick="dashboard.openAttendanceModal(${l.id}, '${l.ngay}')">
                                 Sổ điểm danh
