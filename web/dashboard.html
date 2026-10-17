@@ -250,15 +250,15 @@
 
         /* prephub stats overview banner */
         .stats-banner-container {
-            background-image: url('/img/stats-banner.webp'), url('/img/stats-banner.png');
+            background-image: linear-gradient(rgba(3, 7, 18, 0.45), rgba(3, 7, 18, 0.65)), url('/img/stats-banner.webp'), url('/img/stats-banner.png');
             background-size: cover;
             background-position: center;
             border-radius: 20px;
             padding: 22px 24px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 22px;
         }
 
@@ -289,7 +289,9 @@
             justify-content: space-between;
             align-items: center;
             min-height: 98px;
-            box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.14);
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: left;
             cursor: pointer;
@@ -297,7 +299,7 @@
 
         .prephub-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 28px -4px rgba(0, 0, 0, 0.26);
+            box-shadow: 0 16px 30px -4px rgba(0, 0, 0, 0.5);
         }
 
         .prephub-stat-info {
@@ -330,7 +332,7 @@
             width: 78px;
             height: 78px;
             z-index: 1;
-            opacity: 0.12;
+            opacity: 0.14;
             transform: rotate(-15deg);
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -341,80 +343,80 @@
 
         .prephub-card:hover .prephub-stat-icon {
             transform: scale(1.12) rotate(-10deg);
-            opacity: 0.2;
+            opacity: 0.22;
         }
 
-        /* stat card color themes */
+        /* stat card color themes (dark palette) */
         .prephub-card.theme-dark {
-            background: linear-gradient(135deg, #05102b 0%, #1e3a8a 100%);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: linear-gradient(135deg, rgba(6, 15, 38, 0.92) 0%, rgba(24, 48, 120, 0.92) 100%);
+            border: 1px solid rgba(147, 197, 253, 0.22);
         }
         .prephub-card.theme-dark .prephub-stat-info h3 {
-            color: rgba(255, 255, 255, 0.72);
+            color: rgba(255, 255, 255, 0.75);
         }
         .prephub-card.theme-dark .stat-value {
             color: #ffffff;
         }
         .prephub-card.theme-dark .prephub-stat-icon {
-            color: #ffffff;
-            opacity: 0.11;
+            color: #93c5fd;
+            opacity: 0.14;
         }
         .prephub-card.theme-dark:hover .prephub-stat-icon {
-            opacity: 0.18;
+            opacity: 0.22;
         }
 
         .prephub-card.theme-orange {
-            background: #fffbeb;
-            border: 1px solid #fef3c7;
+            background: linear-gradient(135deg, rgba(34, 18, 4, 0.92) 0%, rgba(72, 38, 6, 0.92) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.25);
         }
         .prephub-card.theme-orange .prephub-stat-info h3 {
-            color: #b45309;
+            color: #fbbf24;
         }
         .prephub-card.theme-orange .stat-value {
-            color: #0f172a;
+            color: #ffffff;
         }
         .prephub-card.theme-orange .prephub-stat-icon {
-            color: #d97706;
-            opacity: 0.14;
+            color: #f59e0b;
+            opacity: 0.15;
         }
         .prephub-card.theme-orange:hover .prephub-stat-icon {
-            opacity: 0.22;
+            opacity: 0.24;
         }
 
         .prephub-card.theme-green {
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
+            background: linear-gradient(135deg, rgba(5, 28, 16, 0.92) 0%, rgba(12, 64, 36, 0.92) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
         .prephub-card.theme-green .prephub-stat-info h3 {
-            color: #15803d;
+            color: #34d399;
         }
         .prephub-card.theme-green .stat-value {
-            color: #0f172a;
+            color: #ffffff;
         }
         .prephub-card.theme-green .prephub-stat-icon {
-            color: #16a34a;
-            opacity: 0.14;
+            color: #10b981;
+            opacity: 0.15;
         }
         .prephub-card.theme-green:hover .prephub-stat-icon {
-            opacity: 0.22;
+            opacity: 0.24;
         }
 
         .prephub-card.theme-blue {
-            background: #eff6ff;
-            border: 1px solid #dbeafe;
+            background: linear-gradient(135deg, rgba(6, 24, 44, 0.92) 0%, rgba(14, 55, 98, 0.92) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
         .prephub-card.theme-blue .prephub-stat-info h3 {
-            color: #1d4ed8;
+            color: #38bdf8;
         }
         .prephub-card.theme-blue .stat-value {
-            color: #0f172a;
+            color: #ffffff;
         }
         .prephub-card.theme-blue .prephub-stat-icon {
-            color: #2563eb;
-            opacity: 0.14;
+            color: #38bdf8;
+            opacity: 0.15;
         }
         .prephub-card.theme-blue:hover .prephub-stat-icon {
-            opacity: 0.22;
+            opacity: 0.24;
         }
     </style>
 </head>
@@ -532,7 +534,7 @@
                             <div class="prephub-stat-info">
                                 <h3>Tỷ lệ có mặt</h3>
                                 <div class="stat-value" id="stat-face-rate">0%</div>
-                                <div class="text-[11px] font-semibold text-emerald-700 mt-1" id="stat-face-detail">0/0 đã có mặt</div>
+                                <div class="text-[11px] font-semibold text-emerald-400 mt-1" id="stat-face-detail">0/0 đã có mặt</div>
                             </div>
                             <div class="prephub-stat-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
