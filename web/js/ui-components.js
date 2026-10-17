@@ -260,7 +260,7 @@ class UIComponents {
                 btn.type = 'button';
                 const isSel = h === hVal;
                 btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
-                    isSel ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
+                    isSel ? 'bg-gradient-to-b from-[#2a4897] to-[#1e3674] text-white font-bold border border-[#4b72db]/35 shadow-sm shadow-black/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                 }`;
                 btn.textContent = h;
                 btn.addEventListener('click', (e) => {
@@ -280,7 +280,7 @@ class UIComponents {
                 btn.type = 'button';
                 const isSel = m === mVal;
                 btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
-                    isSel ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
+                    isSel ? 'bg-gradient-to-b from-[#2a4897] to-[#1e3674] text-white font-bold border border-[#4b72db]/35 shadow-sm shadow-black/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                 }`;
                 btn.textContent = m;
                 btn.addEventListener('click', (e) => {
@@ -506,9 +506,9 @@ class UIComponents {
 
                 btn.className = `w-7 h-7 rounded-lg text-[11px] font-semibold tabular-nums flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                        ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40'
+                        ? 'bg-gradient-to-b from-[#2a4897] to-[#1e3674] text-white font-bold border border-[#4b72db]/35 shadow-sm shadow-black/40'
                         : isToday
-                        ? 'text-[#9dbcff] font-bold bg-[#2a4690]/20 hover:bg-[#2a4690]/30 border border-[#3b5aa8]/30'
+                        ? 'text-[#9dbcff] font-bold bg-[#2a4897]/25 hover:bg-[#2a4897]/35 border border-[#4b72db]/30'
                         : 'text-zinc-200 hover:bg-white/[0.08]'
                 }`;
                 btn.textContent = d;
