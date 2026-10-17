@@ -248,24 +248,12 @@
             flex-shrink: 0;
         }
 
-        /* prephub stats overview banner */
-        .stats-banner-container {
-            background-image: linear-gradient(rgba(3, 7, 18, 0.45), rgba(3, 7, 18, 0.65)), url('/img/stats-banner.webp'), url('/img/stats-banner.png');
-            background-size: cover;
-            background-position: center;
-            border-radius: 20px;
-            padding: 22px 24px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 22px;
-        }
-
+        /* overview stats grid and cards */
         .stats-grid-prephub {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
+            margin-bottom: 22px;
         }
 
         @media (max-width: 1024px) {
@@ -281,17 +269,16 @@
         }
 
         .prephub-card {
-            border-radius: 16px;
-            padding: 20px 22px;
+            border-radius: 18px;
+            padding: 22px 24px;
             position: relative;
             overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 98px;
-            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            min-height: 104px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: left;
             cursor: pointer;
@@ -299,7 +286,6 @@
 
         .prephub-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 16px 30px -4px rgba(0, 0, 0, 0.5);
         }
 
         .prephub-stat-info {
@@ -312,27 +298,28 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             margin-bottom: 6px;
             line-height: 1.2;
         }
 
         .prephub-stat-info .stat-value {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 800;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
             line-height: 1.1;
             font-variant-numeric: tabular-nums;
+            color: #ffffff;
         }
 
         .prephub-stat-icon {
             position: absolute;
             right: -10px;
             bottom: -10px;
-            width: 78px;
-            height: 78px;
+            width: 82px;
+            height: 82px;
             z-index: 1;
-            opacity: 0.14;
+            opacity: 0.15;
             transform: rotate(-15deg);
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -343,80 +330,79 @@
 
         .prephub-card:hover .prephub-stat-icon {
             transform: scale(1.12) rotate(-10deg);
-            opacity: 0.22;
+            opacity: 0.25;
         }
 
-        /* stat card color themes (dark palette) */
-        .prephub-card.theme-dark {
-            background: linear-gradient(135deg, rgba(6, 15, 38, 0.92) 0%, rgba(24, 48, 120, 0.92) 100%);
-            border: 1px solid rgba(147, 197, 253, 0.22);
+        /* card color themes with ambient radial glow */
+        .prephub-card.theme-blue {
+            background: radial-gradient(120% 120% at 100% 0%, rgba(59, 130, 246, 0.22) 0%, transparent 65%),
+                        linear-gradient(145deg, rgba(16, 28, 62, 0.85) 0%, rgba(7, 11, 24, 0.95) 100%);
+            border: 1px solid rgba(96, 165, 250, 0.24);
+            box-shadow: 0 10px 28px -6px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(191, 219, 254, 0.2);
         }
-        .prephub-card.theme-dark .prephub-stat-info h3 {
-            color: rgba(255, 255, 255, 0.75);
+        .prephub-card.theme-blue:hover {
+            border-color: rgba(96, 165, 250, 0.45);
+            box-shadow: 0 16px 36px -6px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(191, 219, 254, 0.35);
         }
-        .prephub-card.theme-dark .stat-value {
-            color: #ffffff;
-        }
-        .prephub-card.theme-dark .prephub-stat-icon {
+        .prephub-card.theme-blue .prephub-stat-info h3 {
             color: #93c5fd;
-            opacity: 0.14;
         }
-        .prephub-card.theme-dark:hover .prephub-stat-icon {
-            opacity: 0.22;
+        .prephub-card.theme-blue .prephub-stat-icon {
+            color: #60a5fa;
         }
 
-        .prephub-card.theme-orange {
-            background: linear-gradient(135deg, rgba(34, 18, 4, 0.92) 0%, rgba(72, 38, 6, 0.92) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.25);
+        .prephub-card.theme-purple {
+            background: radial-gradient(120% 120% at 100% 0%, rgba(168, 85, 247, 0.22) 0%, transparent 65%),
+                        linear-gradient(145deg, rgba(38, 16, 62, 0.85) 0%, rgba(12, 6, 22, 0.95) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.24);
+            box-shadow: 0 10px 28px -6px rgba(147, 51, 234, 0.22), inset 0 1px 0 rgba(233, 213, 255, 0.2);
         }
-        .prephub-card.theme-orange .prephub-stat-info h3 {
-            color: #fbbf24;
+        .prephub-card.theme-purple:hover {
+            border-color: rgba(168, 85, 247, 0.45);
+            box-shadow: 0 16px 36px -6px rgba(147, 51, 234, 0.35), inset 0 1px 0 rgba(233, 213, 255, 0.35);
         }
-        .prephub-card.theme-orange .stat-value {
-            color: #ffffff;
+        .prephub-card.theme-purple .prephub-stat-info h3 {
+            color: #d8b4fe;
         }
-        .prephub-card.theme-orange .prephub-stat-icon {
-            color: #f59e0b;
-            opacity: 0.15;
-        }
-        .prephub-card.theme-orange:hover .prephub-stat-icon {
-            opacity: 0.24;
+        .prephub-card.theme-purple .prephub-stat-icon {
+            color: #c084fc;
         }
 
         .prephub-card.theme-green {
-            background: linear-gradient(135deg, rgba(5, 28, 16, 0.92) 0%, rgba(12, 64, 36, 0.92) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: radial-gradient(120% 120% at 100% 0%, rgba(16, 185, 129, 0.22) 0%, transparent 65%),
+                        linear-gradient(145deg, rgba(8, 42, 26, 0.85) 0%, rgba(4, 18, 11, 0.95) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.24);
+            box-shadow: 0 10px 28px -6px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(167, 243, 208, 0.2);
+        }
+        .prephub-card.theme-green:hover {
+            border-color: rgba(16, 185, 129, 0.45);
+            box-shadow: 0 16px 36px -6px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(167, 243, 208, 0.35);
         }
         .prephub-card.theme-green .prephub-stat-info h3 {
-            color: #34d399;
+            color: #6ee7b7;
         }
         .prephub-card.theme-green .stat-value {
-            color: #ffffff;
+            color: #34d399;
         }
         .prephub-card.theme-green .prephub-stat-icon {
             color: #10b981;
-            opacity: 0.15;
-        }
-        .prephub-card.theme-green:hover .prephub-stat-icon {
-            opacity: 0.24;
         }
 
-        .prephub-card.theme-blue {
-            background: linear-gradient(135deg, rgba(6, 24, 44, 0.92) 0%, rgba(14, 55, 98, 0.92) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.25);
+        .prephub-card.theme-amber {
+            background: radial-gradient(120% 120% at 100% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 65%),
+                        linear-gradient(145deg, rgba(46, 26, 8, 0.85) 0%, rgba(18, 11, 4, 0.95) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.24);
+            box-shadow: 0 10px 28px -6px rgba(217, 119, 6, 0.22), inset 0 1px 0 rgba(254, 240, 138, 0.2);
         }
-        .prephub-card.theme-blue .prephub-stat-info h3 {
-            color: #38bdf8;
+        .prephub-card.theme-amber:hover {
+            border-color: rgba(245, 158, 11, 0.45);
+            box-shadow: 0 16px 36px -6px rgba(217, 119, 6, 0.35), inset 0 1px 0 rgba(254, 240, 138, 0.35);
         }
-        .prephub-card.theme-blue .stat-value {
-            color: #ffffff;
+        .prephub-card.theme-amber .prephub-stat-info h3 {
+            color: #fcd34d;
         }
-        .prephub-card.theme-blue .prephub-stat-icon {
-            color: #38bdf8;
-            opacity: 0.15;
-        }
-        .prephub-card.theme-blue:hover .prephub-stat-icon {
-            opacity: 0.24;
+        .prephub-card.theme-amber .prephub-stat-icon {
+            color: #f59e0b;
         }
     </style>
 </head>
@@ -496,66 +482,64 @@
 
             <!-- LEVEL 1: DANH SÁCH LỚP HỌC (OVERVIEW & STATS) -->
             <div id="view-classes-list">
-                <!-- stats overview banner inspired by prephub -->
-                <div class="stats-banner-container">
-                    <div class="stats-grid-prephub">
-                        <!-- card 1: theme dark (lớp học phụ trách) -->
-                        <div class="prephub-card theme-dark">
-                            <div class="prephub-stat-info">
-                                <h3>Lớp học phụ trách</h3>
-                                <div class="stat-value" id="stat-total-classes">0</div>
-                            </div>
-                            <div class="prephub-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                </svg>
-                            </div>
+                <!-- overview stats grid -->
+                <div class="stats-grid-prephub">
+                    <!-- card 1: sapphire blue (lớp học phụ trách) -->
+                    <div class="prephub-card theme-blue">
+                        <div class="prephub-stat-info">
+                            <h3>Lớp học phụ trách</h3>
+                            <div class="stat-value" id="stat-total-classes">0</div>
                         </div>
-
-                        <!-- card 2: theme orange (tổng số sinh viên) -->
-                        <div class="prephub-card theme-orange">
-                            <div class="prephub-stat-info">
-                                <h3>Tổng số sinh viên</h3>
-                                <div class="stat-value" id="stat-total-students">0</div>
-                            </div>
-                            <div class="prephub-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                            </div>
+                        <div class="prephub-stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
                         </div>
+                    </div>
 
-                        <!-- card 3: theme green (tỷ lệ có mặt) -->
-                        <div class="prephub-card theme-green">
-                            <div class="prephub-stat-info">
-                                <h3>Tỷ lệ có mặt</h3>
-                                <div class="stat-value" id="stat-face-rate">0%</div>
-                                <div class="text-[11px] font-semibold text-emerald-400 mt-1" id="stat-face-detail">0/0 đã có mặt</div>
-                            </div>
-                            <div class="prephub-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                                    <path d="M9 12l2 2 4-4"></path>
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg>
-                            </div>
+                    <!-- card 2: royal purple (tổng số sinh viên) -->
+                    <div class="prephub-card theme-purple">
+                        <div class="prephub-stat-info">
+                            <h3>Tổng số sinh viên</h3>
+                            <div class="stat-value" id="stat-total-students">0</div>
                         </div>
+                        <div class="prephub-stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                    </div>
 
-                        <!-- card 4: theme blue (buổi học đang mở) -->
-                        <div class="prephub-card theme-blue">
-                            <div class="prephub-stat-info">
-                                <h3>Buổi học đang mở</h3>
-                                <div class="stat-value" id="stat-open-lessons">0</div>
-                            </div>
-                            <div class="prephub-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                            </div>
+                    <!-- card 3: emerald mint (tỷ lệ có mặt) -->
+                    <div class="prephub-card theme-green">
+                        <div class="prephub-stat-info">
+                            <h3>Tỷ lệ có mặt</h3>
+                            <div class="stat-value" id="stat-face-rate">0%</div>
+                            <div class="text-[11px] font-semibold text-emerald-400 mt-1" id="stat-face-detail">0/0 đã có mặt</div>
+                        </div>
+                        <div class="prephub-stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                                <path d="M9 12l2 2 4-4"></path>
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- card 4: sunset amber (buổi học đang mở) -->
+                    <div class="prephub-card theme-amber">
+                        <div class="prephub-stat-info">
+                            <h3>Buổi học đang mở</h3>
+                            <div class="stat-value" id="stat-open-lessons">0</div>
+                        </div>
+                        <div class="prephub-stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
                         </div>
                     </div>
                 </div>
