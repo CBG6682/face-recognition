@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef } from "react";
 
 // eye tracker logo component
 const stillness = () =>
@@ -19,20 +19,6 @@ const GAP = 0.19;
 const TILT = 64;
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-
-const LINES = [
-  "Hey, I see you.",
-  "Boop.",
-  "That tickles.",
-  "Hi there!",
-  "Stop poking me.",
-  "I am watching you.",
-  "Again? Okay.",
-  "Face detected!",
-];
-const TINTS = ["#3b5bff", "#179c52", "#e0307f", "#38bdf8"];
-const KEY_MS = 38;
-const HOLD_MS = 1500;
 
 const SHAPES: Record<string, string> = {
   Ball: "M50 0 A50 50 0 1 1 49.99 0 Z",
@@ -95,6 +81,8 @@ export function Watcher({
   eyeRound = 1,
   eyeHeight = 1,
   idle = false,
+  onClick,
+  className = "",
 }: {
   follow?: number;
   bounce?: number;
@@ -106,38 +94,11 @@ export function Watcher({
   eyeRound?: number;
   eyeHeight?: number;
   idle?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
 } = {}) {
   const still = stillness();
   const box = useRef<HTMLDivElement>(null);
-  const [typed, setTyped] = useState("");
-  const [talking, setTalking] = useState(false);
-  const [tint, setTint] = useState(TINTS[0]);
-  const turn = useRef(0);
-  const lastLine = useRef(-1);
-  useEffect(() => () => { turn.current++; }, []);
-
-  const poke = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (idle) return;
-    const mine = ++turn.current;
-    const pool = LINES.map((_, i) => i).filter((i) => i !== lastLine.current);
-    const i = pool[Math.floor(Math.random() * pool.length)];
-    lastLine.current = i;
-    const line = LINES[i];
-    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    setTint(TINTS[Math.floor(Math.random() * TINTS.length)]);
-    setTyped("");
-    setTalking(true);
-    for (let k = 1; k <= line.length; k++) {
-      await wait(KEY_MS + Math.random() * 24);
-      if (mine !== turn.current) return;
-      setTyped(line.slice(0, k));
-    }
-    await wait(HOLD_MS);
-    if (mine !== turn.current) return;
-    setTalking(false);
-  };
 
   const eyes = useRef<(SVGGElement | null)[]>([]);
   const knobs = useRef({ follow, bounce, eyeScale });
@@ -307,17 +268,16 @@ export function Watcher({
 
   return (
     <div
-      className="eyt-wrap"
+      className={`eyt-wrap ${className}`.trim()}
       ref={box}
       style={{ "--eyt-size": `${s}px` } as React.CSSProperties}
       role="img"
       aria-label="A ball with two eyes that follows the cursor"
+      onClick={onClick}
     >
       <svg
         className="eyt-svg"
         viewBox="0 0 100 100"
-        data-poke={idle ? undefined : true}
-        onClick={poke}
       >
         <defs>
           <clipPath id={clip}>
@@ -349,17 +309,6 @@ export function Watcher({
           ))}
         </g>
       </svg>
-      {idle ? null : (
-        <span
-          className="eyt-say"
-          data-on={talking || undefined}
-          aria-live="polite"
-          style={{ "--tint": tint } as React.CSSProperties}
-        >
-          <span>{typed}</span>
-          <span className="eyt-caret" />
-        </span>
-      )}
     </div>
   );
 }

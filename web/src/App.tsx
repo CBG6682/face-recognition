@@ -41,6 +41,14 @@ export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [lastDetected] = useState<string | null>(null)
 
+  // reset to home view
+  const goHome = () => {
+    setActiveTab('classes')
+    setSelectedClass(null)
+    setSelectedLesson(null)
+    setModalType(null)
+  }
+
   // load initial data
   const loadInitialData = async () => {
     try {
@@ -199,10 +207,15 @@ export default function App() {
       <header className="sticky top-0 z-40 h-[56px] min-h-[56px] px-5 flex justify-between items-center bg-[#07090e]/85 backdrop-blur-xl border-b border-white/[0.08]">
         {/* Brand with interactive Watcher logo */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2.5 cursor-pointer">
+          <button
+            type="button"
+            onClick={goHome}
+            className="flex items-center gap-2.5 cursor-pointer bg-transparent border-0 p-0 text-left focus:outline-none group select-none"
+            title="Trang chủ"
+          >
             <Watcher size={32} shape="Cube" follow={65} />
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold tracking-tight text-white flex items-center gap-1">
+              <span className="text-xs font-bold tracking-tight text-white flex items-center gap-1 group-hover:text-[#9dbcff] transition-colors">
                 <span>Face</span>
                 <b className="text-[#9dbcff] font-bold">Attendance</b>
               </span>
@@ -210,7 +223,7 @@ export default function App() {
                 REACT
               </span>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Center Tabs */}
