@@ -2065,13 +2065,13 @@ class CameraController {
                 <div class="mb-2 p-2.5 rounded-2xl bg-amber-500/10 flex flex-col gap-1.5">
                     <div class="text-[11px] font-bold text-amber-400 flex items-center justify-between">
                         <span>Sinh viên khác lớp vừa quét</span>
-                        <span class="text-[10px] text-amber-400/70 font-mono">${list.length}</span>
+                        <span class="text-[10px] text-amber-400/80 font-bold tabular-nums">${list.length}</span>
                     </div>
                     ${list.map((item) => `
                         <div class="flex items-center justify-between gap-2 py-1">
                             <div class="min-w-0 flex-1">
                                 <div class="text-xs font-semibold text-white truncate leading-tight">${item.name}</div>
-                                <div class="text-[10px] font-mono text-amber-300/80 leading-tight">${item.mssv} · ${item.time}</div>
+                                <div class="text-[10px] font-medium text-amber-300/80 leading-tight tabular-nums">${item.mssv} · ${item.time}</div>
                             </div>
                             <button onclick="cameraCtrl.quickAddOtherStudent('${item.mssv}', '${item.name.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[10px] font-semibold transition cursor-pointer shrink-0">
                                 + Thêm vào lớp
@@ -2084,7 +2084,7 @@ class CameraController {
 
         if (items.length === 0) {
             this.liveListEl.innerHTML = otherHtml + `
-                <div class="text-slate-500 text-center mt-12 text-xs">
+                <div class="text-slate-500 text-center mt-12 text-xs font-normal">
                     ${query ? 'Không tìm thấy sinh viên phù hợp' : 'Chưa có sinh viên nào trong danh sách lớp'}
                 </div>
             `;
@@ -2094,29 +2094,31 @@ class CameraController {
         const rosterHtml = items
             .map((s) => {
                 const isPresent = s.trang_thai === 'present';
-                const timeOnly = s.thoi_gian ? s.thoi_gian.split(' ')[1] || s.thoi_gian : '';
                 const studentId = s.sinh_vien_id || s.id;
 
                 return `
                 <div class="live-item ${isPresent ? 'is-present' : 'is-absent'}">
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <span class="w-2 h-2 rounded-full shrink-0 ${isPresent ? 'bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse' : 'bg-slate-600'}"></span>
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        ${
+                            isPresent
+                                ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-emerald-400"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+                                : `<span class="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-600 ml-1 mr-0.5"></span>`
+                        }
                         <div class="min-w-0 flex-1">
                             <div class="text-xs font-semibold text-white truncate leading-tight">${s.ho_ten}</div>
-                            <div class="text-[10px] font-mono text-slate-400 leading-tight">${s.mssv}</div>
+                            <div class="text-[11px] font-medium text-zinc-400 leading-tight tabular-nums mt-0.5">${s.mssv}</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         ${
                             isPresent
                                 ? `
-                            <span class="font-mono text-[10px] text-emerald-400 font-semibold">${timeOnly || '✓'}</span>
-                            <button class="w-5 h-5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 flex items-center justify-center text-xs transition cursor-pointer" onclick="cameraCtrl.toggleManualAttendance(${studentId}, false)" title="Hủy điểm danh">
+                            <button class="w-5 h-5 rounded-full bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 flex items-center justify-center text-xs transition cursor-pointer" onclick="cameraCtrl.toggleManualAttendance(${studentId}, false)" title="Hủy điểm danh">
                                 &times;
                             </button>
                         `
                                 : `
-                            <button class="px-2 py-0.5 rounded-lg bg-blue-600/15 hover:bg-blue-600 text-blue-300 hover:text-white text-[10px] font-semibold transition cursor-pointer" onclick="cameraCtrl.toggleManualAttendance(${studentId}, true)" title="Điểm danh thủ công">
+                            <button class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-[#2a4690] border border-white/[0.08] text-zinc-300 hover:text-white text-[10px] font-semibold transition cursor-pointer" onclick="cameraCtrl.toggleManualAttendance(${studentId}, true)" title="Điểm danh thủ công">
                                 + Có mặt
                             </button>
                         `

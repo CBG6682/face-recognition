@@ -7,7 +7,7 @@
     <meta name="description" content="Hệ thống nhận diện khuôn mặt và điểm danh sinh viên tự động qua camera">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
         @import "tailwindcss";
@@ -20,12 +20,8 @@
             --rh-accent-light: #9dbcff;
         }
 
-        .font-serif {
-            font-family: 'Instrument Serif', Georgia, serif;
-        }
-
         .font-mono {
-            font-family: 'Geist Mono', monospace;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .modal-backdrop { display: none; }
@@ -104,81 +100,42 @@
         }
         .live-item.is-present { 
             background: rgba(16, 185, 129, 0.05); 
-            border-color: rgba(16, 185, 129, 0.25); 
+            border-color: rgba(16, 185, 129, 0.22); 
         }
         .live-item.is-absent { 
-            opacity: 0.9; 
-        }
-        .live-item .text-white {
-            color: #f4f4f5 !important;
-            font-weight: 600 !important;
-            font-size: 0.8125rem !important;
-        }
-        .live-item .text-slate-400 {
-            color: #71717a !important;
-            font-family: 'Geist Mono', monospace !important;
-        }
-        .live-item .w-2.h-2.rounded-full.shrink-0 {
-            width: 22px !important;
-            height: 22px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 8px !important;
-            font-size: 10px !important;
-            font-weight: 700 !important;
-            box-shadow: none !important;
-            animation: none !important;
-        }
-        .live-item.is-present .w-2.h-2.rounded-full.shrink-0 {
-            background: rgba(16, 185, 129, 0.15) !important;
-            border: 1px solid rgba(16, 185, 129, 0.3) !important;
-            color: #34d399 !important;
-        }
-        .live-item.is-present .w-2.h-2.rounded-full.shrink-0::after {
-            content: "✓";
-        }
-        .live-item.is-absent .w-2.h-2.rounded-full.shrink-0 {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            color: #71717a !important;
-        }
-        .live-item.is-absent .w-2.h-2.rounded-full.shrink-0::after {
-            content: "•";
+            opacity: 0.85; 
         }
         .live-item button[title="Hủy điểm danh"] {
-            background: rgba(244, 63, 94, 0.1) !important;
-            border: 1px solid rgba(244, 63, 94, 0.2) !important;
-            color: #fda4af !important;
-            border-radius: 9999px !important;
-            width: 20px !important;
-            height: 20px !important;
-            font-weight: 700 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            color: #fda4af;
+            border-radius: 9999px;
+            width: 20px;
+            height: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+        .live-item button[title="Hủy điểm danh"]:hover {
+            background: rgba(244, 63, 94, 0.25);
+            color: #ffffff;
         }
         .live-item button[title="Điểm danh thủ công"] {
-            background: rgba(42, 70, 144, 0.2) !important;
-            border: 1px solid rgba(157, 188, 255, 0.25) !important;
-            color: #9dbcff !important;
-            border-radius: 9999px !important;
-            font-weight: 600 !important;
-            font-size: 10px !important;
-            padding: 3px 9px !important;
+            background: rgba(42, 70, 144, 0.2);
+            border: 1px solid rgba(157, 188, 255, 0.25);
+            color: #9dbcff;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 10px;
+            padding: 3px 9px;
+            transition: all 0.15s ease;
         }
         .live-item button[title="Điểm danh thủ công"]:hover {
-            background: rgba(42, 70, 144, 0.4) !important;
-            color: #ffffff !important;
-            border-color: rgba(157, 188, 255, 0.45) !important;
-        }
-        .live-item .text-emerald-400 {
-            color: #34d399 !important;
-            font-weight: 700 !important;
-            background: rgba(16, 185, 129, 0.1) !important;
-            padding: 2px 7px !important;
-            border-radius: 9999px !important;
-            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+            background: rgba(42, 70, 144, 0.4);
+            color: #ffffff;
+            border-color: rgba(157, 188, 255, 0.45);
         }
 
         .slide-drawer {
@@ -248,9 +205,9 @@
                 <div class="min-w-0">
                     <div class="text-xs font-bold text-white tracking-tight flex items-center gap-1">
                         <span>Face</span><b class="text-[#9dbcff] font-bold">Attendance</b>
-                        <span class="font-mono text-[9px] text-[#9dbcff]/70 bg-[#2a4690]/25 px-1.5 py-0.5 rounded border border-[#9dbcff]/20 ml-1">KIOSK</span>
+                        <span class="text-[9px] font-semibold text-[#9dbcff]/80 bg-[#2a4690]/25 px-1.5 py-0.5 rounded border border-[#9dbcff]/20 ml-1 tracking-wider">KIOSK</span>
                     </div>
-                    <p class="text-[11px] text-zinc-400 truncate max-w-[200px]" id="nav-lesson-name">Chưa chọn buổi học</p>
+                    <p class="text-[11px] font-normal text-zinc-400 truncate max-w-[200px]" id="nav-lesson-name">Chưa chọn buổi học</p>
                 </div>
             </a>
         </div>
@@ -260,16 +217,16 @@
             <div class="relative flex items-center">
                 <button id="btn-lesson-menu" type="button" class="group flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 px-3.5 py-1.5 rounded-full shadow-sm transition-all duration-150 cursor-pointer outline-none">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="kiosk-header-dot" style="display: none;"></span>
-                    <span class="text-xs font-medium text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
-                    <span class="font-mono text-xs text-[#9dbcff] font-semibold whitespace-nowrap" id="kiosk-lesson-date"></span>
+                    <span class="text-xs font-semibold text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
+                    <span class="text-xs text-[#9dbcff] font-medium whitespace-nowrap" id="kiosk-lesson-date"></span>
                     <svg class="text-zinc-500 group-hover:text-zinc-200 transition-transform duration-150" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
 
                 <!-- Floating Dropdown Menu for Lessons -->
                 <div id="lesson-menu-dropdown" class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 max-w-[90vw] bg-[#0c101c] border border-white/10 rounded-2xl p-2.5 shadow-2xl z-50 transition-all duration-150 opacity-0 pointer-events-none -translate-y-2">
-                    <div class="px-2.5 py-1.5 flex items-center justify-between text-[11px] font-mono font-medium text-zinc-400 uppercase tracking-wider">
+                    <div class="px-2.5 py-1.5 flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
                         <span>Chọn buổi điểm danh</span>
-                        <button id="btn-dropdown-new-lesson" type="button" class="text-[#9dbcff] hover:text-white font-sans font-medium text-xs cursor-pointer">+ Tạo mới</button>
+                        <button id="btn-dropdown-new-lesson" type="button" class="text-[#9dbcff] hover:text-white font-medium text-xs cursor-pointer">+ Tạo mới</button>
                     </div>
                     <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto mt-1 pr-0.5">
                         <div class="text-xs text-zinc-500 p-3 text-center">Đang tải danh sách...</div>
@@ -277,7 +234,7 @@
                 </div>
             </div>
 
-            <div class="lesson-status-pill flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 whitespace-nowrap shrink-0" id="lesson-status-pill" style="display: none;">
+            <div class="lesson-status-pill flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 whitespace-nowrap shrink-0" id="lesson-status-pill" style="display: none;">
                 <span class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse" id="status-dot"></span>
                 <span id="lesson-status-text">Đang mở</span>
             </div>
@@ -317,7 +274,7 @@
                             </svg>
                         </div>
                         <h3 id="empty-state-title" class="text-lg font-bold text-white tracking-tight mb-1.5">
-                            Chọn lớp <em class="font-serif italic font-normal text-[#9dbcff]">bắt đầu</em>
+                            Chọn lớp để bắt đầu
                         </h3>
                         <p id="empty-state-desc" class="text-xs text-zinc-400 leading-relaxed mb-6">Chưa có buổi học nào mở. Bạn có thể tạo nhanh buổi học ngay tại đây hoặc mở từ trang quản lý.</p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
@@ -334,11 +291,11 @@
 
                 <!-- HUD Top Bar -->
                 <div class="camera-hud-top absolute top-3 inset-x-4 flex justify-between items-center z-20 pointer-events-none">
-                    <div class="bg-[#0a0d16]/85 border border-white/[0.1] backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-mono font-medium flex items-center gap-2 pointer-events-auto text-zinc-200 shadow-md">
+                    <div class="bg-[#0a0d16]/85 border border-white/[0.1] backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 pointer-events-auto text-zinc-200 shadow-md">
                         <span class="hud-status-indicator w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="hud-status-dot"></span>
                         <span id="hud-status-text">Khởi tạo camera...</span>
                     </div>
-                    <div class="bg-[#0a0d16]/85 border border-white/[0.1] backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-mono text-[#9dbcff] flex items-center gap-1.5 pointer-events-auto shadow-md" id="hud-face-counter">
+                    <div class="bg-[#0a0d16]/85 border border-white/[0.1] backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#9dbcff] flex items-center gap-1.5 pointer-events-auto shadow-md" id="hud-face-counter">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -349,7 +306,7 @@
 
                 <!-- Bottom Floating Dock: Raised Hand Glass Pill -->
                 <div class="camera-control-dock absolute bottom-5 left-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-[#0a0d16]/90 border border-white/[0.12] hover:border-white/20 backdrop-blur-2xl rounded-full shadow-[0_16px_36px_rgba(0,0,0,0.7)] z-20">
-                    <button id="auto-toggle-btn" class="dock-auto-btn btn-rh-primary inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold tracking-wider cursor-pointer outline-none active:scale-95" title="Bật/Tắt tự động quét">
+                    <button id="auto-toggle-btn" class="dock-auto-btn btn-rh-primary inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider cursor-pointer outline-none active:scale-95" title="Bật/Tắt tự động quét">
                         <span class="auto-live-dot w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse"></span>
                         <span id="auto-toggle-text">LIVE</span>
                     </button>
@@ -393,13 +350,13 @@
                 <!-- Sidebar Header: Subject, Class & Lesson -->
                 <div class="flex justify-between items-start mb-3 shrink-0 pb-2.5 border-b border-white/[0.06]">
                     <div class="min-w-0 pr-2">
-                        <span class="font-mono text-[10px] font-semibold text-[#9dbcff] uppercase tracking-wider truncate block" id="sidebar-subject-title">Môn học</span>
-                        <div class="text-xs font-bold text-white tracking-tight truncate leading-snug" id="sidebar-class-title">Chưa chọn lớp</div>
-                        <p class="font-mono text-[11px] text-zinc-400 truncate mt-0.5" id="current-lesson-label">Chưa chọn buổi</p>
+                        <span class="text-[10px] font-semibold text-[#9dbcff] uppercase tracking-wider truncate block" id="sidebar-subject-title">Môn học</span>
+                        <div class="text-sm font-bold text-white tracking-tight truncate leading-snug mt-0.5" id="sidebar-class-title">Chưa chọn lớp</div>
+                        <p class="text-[11px] font-normal text-zinc-400 truncate mt-0.5" id="current-lesson-label">Chưa chọn buổi</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="font-mono text-lg font-bold text-emerald-400 leading-none" id="live-count">0/0</span>
-                        <div class="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">có mặt</div>
+                        <span class="text-xl font-bold text-emerald-400 leading-none tracking-tight block tabular-nums" id="live-count">0/0</span>
+                        <div class="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mt-1">có mặt</div>
                     </div>
                 </div>
 
@@ -414,7 +371,7 @@
 
                 <!-- Student List -->
                 <div class="flex flex-col gap-1.5 flex-1 overflow-y-auto pr-0.5 min-h-0" id="live-list">
-                    <div class="text-zinc-500 text-center mt-12 text-xs font-mono">
+                    <div class="text-zinc-500 text-center mt-12 text-xs font-medium">
                         Đang kết nối buổi học...
                     </div>
                 </div>
@@ -439,11 +396,11 @@
 
                     <!-- Secondary utilities -->
                     <div class="flex gap-1.5">
-                        <button id="btn-sync-attendance" class="flex-1 py-1 px-2 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] text-zinc-400 hover:text-zinc-200 rounded-lg text-[10px] font-mono transition duration-150 cursor-pointer flex items-center justify-center gap-1" title="Đồng bộ lại danh sách">
+                        <button id="btn-sync-attendance" class="flex-1 py-1 px-2 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] text-zinc-400 hover:text-zinc-200 rounded-lg text-[10px] font-medium transition duration-150 cursor-pointer flex items-center justify-center gap-1" title="Đồng bộ lại danh sách">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                             <span>Đồng bộ</span>
                         </button>
-                        <button id="btn-export-csv" class="flex-1 py-1 px-2 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] text-zinc-400 hover:text-zinc-200 rounded-lg text-[10px] font-mono transition duration-150 cursor-pointer flex items-center justify-center gap-1" title="Xuất CSV">
+                        <button id="btn-export-csv" class="flex-1 py-1 px-2 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] text-zinc-400 hover:text-zinc-200 rounded-lg text-[10px] font-medium transition duration-150 cursor-pointer flex items-center justify-center gap-1" title="Xuất CSV">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             <span>Xuất CSV</span>
                         </button>
@@ -456,7 +413,7 @@
 
                 <!-- Drawer Top Bar: Title & Close -->
                 <div class="flex justify-between items-center mb-3 shrink-0 pb-2.5 border-b border-white/[0.06]">
-                    <span class="text-xs font-semibold text-white tracking-tight uppercase font-mono" id="drawer-title">Quản lý nhanh</span>
+                    <span class="text-xs font-bold text-white tracking-tight uppercase" id="drawer-title">Quản lý nhanh</span>
                     <button id="btn-close-drawer" class="w-6 h-6 rounded-md bg-white/[0.05] hover:bg-white/10 border border-white/[0.08] text-zinc-400 hover:text-white flex items-center justify-center transition duration-150 cursor-pointer" aria-label="Đóng">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -467,13 +424,13 @@
 
                 <!-- Tabs: [Sinh viên] [Buổi học] [Lớp học] -->
                 <div class="grid grid-cols-3 gap-1 bg-white/[0.03] p-1 rounded-xl mb-3 shrink-0 border border-white/[0.05]">
-                    <button class="drawer-tab-btn active py-1 text-[11px] font-medium rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-student" onclick="cameraCtrl.switchDrawerTab('student')">
+                    <button class="drawer-tab-btn active py-1 text-[11px] font-semibold rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-student" onclick="cameraCtrl.switchDrawerTab('student')">
                         Sinh viên
                     </button>
-                    <button class="drawer-tab-btn py-1 text-[11px] font-medium rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-lesson" onclick="cameraCtrl.switchDrawerTab('lesson')">
+                    <button class="drawer-tab-btn py-1 text-[11px] font-semibold rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-lesson" onclick="cameraCtrl.switchDrawerTab('lesson')">
                         Buổi học
                     </button>
-                    <button class="drawer-tab-btn py-1 text-[11px] font-medium rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-class" onclick="cameraCtrl.switchDrawerTab('class')">
+                    <button class="drawer-tab-btn py-1 text-[11px] font-semibold rounded-lg text-zinc-400 transition duration-150 cursor-pointer" id="tab-btn-class" onclick="cameraCtrl.switchDrawerTab('class')">
                         Lớp học
                     </button>
                 </div>
@@ -483,7 +440,7 @@
 
                     <!-- Wizard steps indicator -->
                     <div class="flex items-center gap-1.5 mb-3 shrink-0">
-                        <span class="text-[10px] font-mono font-medium text-[#9dbcff] uppercase" id="ws-text-step">Bước 1: Tìm MSSV</span>
+                        <span class="text-[10px] font-semibold text-[#9dbcff] uppercase tracking-wider" id="ws-text-step">Bước 1: Tìm MSSV</span>
                         <div class="flex-1 h-1 bg-white/[0.05] rounded-full overflow-hidden">
                             <div class="h-full bg-[#2a4690] transition-all duration-300 w-1/2" id="ws-progress-bar"></div>
                         </div>
@@ -500,16 +457,16 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-class">Chọn lớp học *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-class">Chọn lớp học *</label>
                             <select id="quick-student-class" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer" required>
                                 <option value="">Đang tải lớp học...</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-mssv">Mã số sinh viên (MSSV)</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-mssv">Mã số sinh viên (MSSV)</label>
                             <div class="relative">
-                                <input type="text" id="quick-student-mssv" class="w-full pl-3 pr-8 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white font-mono text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600" placeholder="Nhập MSSV..." autocomplete="off">
+                                <input type="text" id="quick-student-mssv" class="w-full pl-3 pr-8 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600 tracking-wider" placeholder="Nhập MSSV..." autocomplete="off">
                                 <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500" id="mssv-spinner" style="display: none;">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-spin">
                                         <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
@@ -520,24 +477,25 @@
 
                         <!-- Found student card -->
                         <div id="student-found-card" class="flex items-center gap-2.5 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl mb-3" style="display: none;">
-                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono text-xs font-bold shrink-0" id="found-avatar">SV</div>
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0" id="found-avatar">SV</div>
                             <div class="flex-1 min-w-0">
-                                <div class="font-medium text-xs text-white truncate" id="found-name">Nguyễn Văn A</div>
-                                <div class="font-mono text-[10px] text-zinc-400" id="found-mssv-display">2021001</div>
+                                <div class="font-semibold text-xs text-white truncate" id="found-name">Nguyễn Văn A</div>
+                                <div class="text-[11px] font-medium text-zinc-400 tracking-wide" id="found-mssv-display">2021001</div>
                             </div>
-                            <div id="found-face-badge" class="px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 rounded text-[10px] font-mono text-emerald-300 shrink-0" style="display: none;">
+                            <div id="found-face-badge" class="px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 rounded text-[10px] font-semibold text-emerald-300 shrink-0" style="display: none;">
                                 Đã có mặt
                             </div>
                         </div>
 
                         <!-- New student name form -->
                         <div id="new-student-form" class="mb-3" style="display: none;">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-name">Họ và tên *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-student-name">Họ và tên *</label>
                             <input type="text" id="quick-student-name" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600" placeholder="VD: Nguyễn Văn A">
                         </div>
 
-                        <div class="text-[11px] text-zinc-400 mb-4 p-2 bg-white/[0.02] border border-white/[0.04] rounded-lg font-mono" id="auto-class-notice" style="display: none;">
-                            Sẽ thêm vào: <strong class="text-[#9dbcff]" id="auto-class-name">--</strong>
+                        <div class="text-[11px] font-medium text-zinc-400 mb-4 p-2 bg-white/[0.02] border border-white/[0.04] rounded-lg" id="auto-class-notice" style="display: none;">
+                            Sẽ thêm vào: <strong class="text-[#9dbcff] font-semibold" id="auto-class-name">--</strong>
+                        </div>
                         </div>
 
                         <div class="mt-auto pt-3 flex gap-2">
@@ -593,35 +551,35 @@
                 <div id="drawer-pane-lesson" class="flex-1 flex flex-col overflow-y-auto min-h-0" style="display: none;">
                     <form id="drawer-form-lesson" class="flex flex-col flex-1">
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-class">Chọn lớp học *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-class">Chọn lớp học *</label>
                             <select id="quick-lesson-class" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer" required>
                                 <option value="">Đang tải lớp học...</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-date">Ngày học *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-date">Ngày học *</label>
                             <input type="date" id="quick-lesson-date" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2 mb-2">
                             <div>
-                                <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-start">Bắt đầu</label>
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-start">Bắt đầu</label>
                                 <input type="time" id="quick-lesson-start" value="07:30" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer">
                             </div>
                             <div>
-                                <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-end">Kết thúc</label>
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-lesson-end">Kết thúc</label>
                                 <input type="time" id="quick-lesson-end" value="11:30" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer">
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5 mb-3">
-                            <span class="text-[10px] font-mono text-zinc-500 shrink-0">Ca học:</span>
-                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-400 text-[10px] font-mono transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('07:30','11:30')">Sáng</button>
-                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-400 text-[10px] font-mono transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('13:00','16:15')">Chiều</button>
-                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-400 text-[10px] font-mono transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('18:00','21:00')">Tối</button>
+                            <span class="text-[10px] font-medium text-zinc-500 shrink-0">Ca học:</span>
+                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-300 text-[10px] font-semibold transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('07:30','11:30')">Sáng</button>
+                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-300 text-[10px] font-semibold transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('13:00','16:15')">Chiều</button>
+                            <button type="button" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] text-zinc-300 text-[10px] font-semibold transition duration-150 cursor-pointer" onclick="cameraCtrl.setShiftTime('18:00','21:00')">Tối</button>
                         </div>
                         <div class="mb-4">
                             <label class="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
                                 <input type="checkbox" id="quick-lesson-open-now" checked class="w-3.5 h-3.5 rounded bg-zinc-900 border-zinc-700 text-[#2a4690] focus:ring-0">
-                                <span>Mở điểm danh ngay cho buổi này</span>
+                                <span class="font-normal">Mở điểm danh ngay cho buổi này</span>
                             </label>
                         </div>
                         <div class="mt-auto pt-3 flex gap-2">
@@ -637,21 +595,21 @@
                         <div id="no-subject-alert" class="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl mb-3 flex items-center justify-between gap-2" style="display: none;">
                             <div class="min-w-0">
                                 <p class="text-xs font-semibold text-amber-300">Chưa có môn học</p>
-                                <p class="text-[11px] text-zinc-400">Bấm để tạo môn học mẫu ngay</p>
+                                <p class="text-[11px] font-normal text-zinc-400">Bấm để tạo môn học mẫu ngay</p>
                             </div>
                             <button type="button" id="btn-quick-seed-subject" class="btn-rh-primary px-2.5 py-1 rounded-md text-[11px] font-semibold shrink-0 cursor-pointer">Tạo môn mẫu</button>
                         </div>
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-class-name">Tên lớp học *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-class-name">Tên lớp học *</label>
                             <input type="text" id="quick-class-name" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600" placeholder="VD: CNTT K64 - Lớp 01" required>
                         </div>
                         <div class="mb-3">
-                            <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-class-subject">Môn học *</label>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-class-subject">Môn học *</label>
                             <select id="quick-class-subject" class="w-full px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer" required>
                                 <option value="">Đang tải môn học...</option>
                             </select>
                         </div>
-                        <div class="p-2.5 bg-white/[0.02] border border-white/[0.04] rounded-xl mb-4 text-[11px] text-zinc-400 leading-relaxed font-mono">
+                        <div class="p-2.5 bg-white/[0.02] border border-white/[0.04] rounded-xl mb-4 text-[11px] text-zinc-400 leading-relaxed font-normal">
                             Sau khi tạo lớp, bạn có thể tạo ngay buổi học mới và thêm sinh viên vào danh sách.
                         </div>
                         <div class="mt-auto pt-3 flex gap-2">
@@ -672,13 +630,13 @@
                 <h3 class="text-sm font-semibold text-white tracking-tight">Xác thực Giảng viên</h3>
                 <button class="text-zinc-500 hover:text-white text-lg leading-none cursor-pointer" onclick="closeModal('modal-quick-auth')">&times;</button>
             </div>
-            <p class="text-xs text-zinc-400 mb-4 leading-relaxed">
+            <p class="text-xs font-normal text-zinc-400 mb-4 leading-relaxed">
                 Vui lòng nhập mã giảng viên để thực hiện thao tác quản lý.
             </p>
             <form id="form-quick-auth">
                 <div class="mb-4">
-                    <label class="block font-mono text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1" for="quick-auth-code">Mã giảng viên</label>
-                    <input type="password" id="quick-auth-code" class="w-full px-3 py-2 bg-white/[0.04] border border-white/10 rounded-lg text-white font-mono text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150" placeholder="Mặc định: gv123" required autofocus>
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1" for="quick-auth-code">Mã giảng viên</label>
+                    <input type="password" id="quick-auth-code" class="w-full px-3 py-2 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150" placeholder="Mặc định: gv123" required autofocus>
                 </div>
                 <div class="flex justify-end gap-2">
                     <button type="button" class="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 text-xs font-medium" onclick="closeModal('modal-quick-auth')">Hủy</button>

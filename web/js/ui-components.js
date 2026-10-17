@@ -210,7 +210,7 @@ class UIComponents {
         trigger.innerHTML = `
             <div class="flex items-center gap-2 min-w-0">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400 shrink-0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span class="custom-time-display font-mono font-semibold text-white tracking-wider truncate">${inputEl.value}</span>
+                <span class="custom-time-display font-semibold text-white tracking-wider truncate tabular-nums">${inputEl.value}</span>
             </div>
             <svg class="custom-time-chevron shrink-0 text-slate-400 transition-transform duration-100" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         `;
@@ -259,7 +259,7 @@ class UIComponents {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 const isSel = h === hVal;
-                btn.className = `w-full py-1 text-xs font-mono rounded-lg transition-all cursor-pointer text-center ${
+                btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
                     isSel ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30' : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`;
                 btn.textContent = h;
@@ -279,7 +279,7 @@ class UIComponents {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 const isSel = m === mVal;
-                btn.className = `w-full py-1 text-xs font-mono rounded-lg transition-all cursor-pointer text-center ${
+                btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
                     isSel ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30' : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`;
                 btn.textContent = m;
@@ -399,7 +399,7 @@ class UIComponents {
         trigger.innerHTML = `
             <div class="flex items-center gap-2 min-w-0">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span class="custom-date-display font-mono font-semibold text-white tracking-wider truncate">${formatDisplay(inputEl.value)}</span>
+                <span class="custom-date-display font-semibold text-white tracking-wider truncate tabular-nums">${formatDisplay(inputEl.value)}</span>
             </div>
             <svg class="custom-date-chevron shrink-0 text-slate-400 transition-transform duration-100" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         `;
@@ -504,7 +504,7 @@ class UIComponents {
                 const isSelected = selY === viewYear && selM === viewMonth + 1 && selD === d;
                 const isToday = nowY === viewYear && nowM === viewMonth + 1 && nowD === d;
 
-                btn.className = `w-7 h-7 rounded-lg text-[11px] font-mono flex items-center justify-center transition-all cursor-pointer ${
+                btn.className = `w-7 h-7 rounded-lg text-[11px] font-semibold tabular-nums flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
                         ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30'
                         : isToday
