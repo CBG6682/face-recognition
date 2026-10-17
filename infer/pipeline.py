@@ -3,8 +3,9 @@ main inference pipeline: combines detector + liveness into one call.
 this is what app.py calls per request.
 """
 
-import numpy as np
 from dataclasses import dataclass
+import numpy as np
+
 from detector import get_faces, DetectedFace
 from liveness import check_liveness
 

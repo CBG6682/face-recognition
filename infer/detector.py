@@ -142,33 +142,50 @@ def compute_face_embedding(
     return mean_emb.astype(np.float32).tolist()
 
 
-def _pad_to_target(
-    img_bgr: np.ndarray, target: tuple[int, int] = DET_SIZE
-) -> tuple[np.ndarray, float, int, int]:
+def letterbox_image(
+    img_bgr: np.ndarray, target_size: tuple[int, int] = DET_SIZE
+) -> tuple[np.ndarray, int, int, float, float]:
     """
-    scale down if larger than target, then pad with black border to reach target.
-    returns (padded_img, scale, pad_left, pad_top)
+    Scale ảnh giữ nguyên 100% tỉ lệ H:W (Aspect Ratio):
+    - Đưa chiều lớn nhất của ảnh về đúng kích thước target_size.
+    - Chiều nhỏ hơn sẽ co/giãn theo đúng tỉ lệ và bù phần thiếu bằng pad đen đối xứng.
+    - Dùng INTER_AREA khi thu nhỏ (chống răng cưa) và INTER_LINEAR khi phóng to.
     """
-    h, w = img_bgr.shape[:2]
-    scale = 1.0
+    h_org, w_org = img_bgr.shape[:2]
+    target_h, target_w = target_size
 
-    if h > target[0] or w > target[1]:
-        scale = min(target[0] / h, target[1] / w)
-        new_w, new_h = int(w * scale), int(h * scale)
-        img_bgr = cv2.resize(img_bgr, (new_w, new_h))
-        h, w = img_bgr.shape[:2]
+    scale = min(target_h / float(h_org), target_w / float(w_org))
+    new_w = max(1, int(round(w_org * scale)))
+    new_h = max(1, int(round(h_org * scale)))
 
-    pad_h = target[0] - h
-    pad_w = target[1] - w
-    top = pad_h // 2
-    left = pad_w // 2
-    bottom = pad_h - top
-    right = pad_w - left
+    if new_w != w_org or new_h != h_org:
+        interp = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_LINEAR
+        img_resized = cv2.resize(img_bgr, (new_w, new_h), interpolation=interp)
+    else:
+        img_resized = img_bgr.copy()
 
-    padded = cv2.copyMakeBorder(
-        img_bgr, top, bottom, left, right, cv2.BORDER_CONSTANT, value=0
+    scale_x = new_w / float(w_org)
+    scale_y = new_h / float(h_org)
+
+    pad_h = target_h - new_h
+    pad_w = target_w - new_w
+
+    pad_top = pad_h // 2
+    pad_bottom = pad_h - pad_top
+    pad_left = pad_w // 2
+    pad_right = pad_w - pad_left
+
+    img_padded = cv2.copyMakeBorder(
+        img_resized,
+        pad_top,
+        pad_bottom,
+        pad_left,
+        pad_right,
+        cv2.BORDER_CONSTANT,
+        value=[0, 0, 0],
     )
-    return padded, scale, left, top
+
+    return img_padded, pad_left, pad_top, scale_x, scale_y
 
 
 def get_faces(
@@ -177,15 +194,20 @@ def get_faces(
     tta_mode: str | None = None,
 ) -> list[DetectedFace]:
     """
-    detect all faces in img_bgr, align from original image, extract TTA embeddings.
-    bbox coordinates are mapped back to original image space.
+    Phát hiện và trích xuất vector đặc trưng khuôn mặt (Cách 2 trong ce201.ipynb):
+    - Chuẩn hóa tỉ lệ ảnh bằng letterbox_image (giữ nguyên aspect ratio).
+    - Cắt mặt 112x112 trực tiếp trên img_padded bằng face.kps chuẩn xác.
+    - BBox được quy đổi về hệ tọa độ ảnh gốc img_bgr.
+    - Trích xuất vector 5 biến thể TTA và chuẩn hóa L2 đơn vị (512 chiều).
     """
     app = load_model()
     rec_model = get_recognition_model(app)
     h_org, w_org = img_bgr.shape[:2]
-    padded, scale, pad_left, pad_top = _pad_to_target(img_bgr)
+    img_padded, pad_left, pad_top, scale_x, scale_y = letterbox_image(
+        img_bgr, target_size=DET_SIZE
+    )
 
-    raw_faces = app.get(padded)
+    raw_faces = app.get(img_padded)
 
     # 1. Lọc theo ngưỡng phát hiện và sắp xếp giảm dần theo det_score
     valid_faces = [f for f in raw_faces if f.det_score >= DET_THRESH]
@@ -196,21 +218,18 @@ def get_faces(
     results = []
     for face in valid_faces:
         px1, py1, px2, py2 = face.bbox
-        x1 = max(0, int((px1 - pad_left) / scale))
-        y1 = max(0, int((py1 - pad_top) / scale))
-        x2 = min(w_org, int((px2 - pad_left) / scale))
-        y2 = min(h_org, int((py2 - pad_top) / scale))
+        # Quy đổi BBox về tọa độ ảnh gốc
+        x1 = max(0, int(round((px1 - pad_left) / scale_x)))
+        y1 = max(0, int(round((py1 - pad_top) / scale_y)))
+        x2 = min(w_org, int(round((px2 - pad_left) / scale_x)))
+        y2 = min(h_org, int(round((py2 - pad_top) / scale_y)))
 
-        # 2. Map 5 landmark (kps) về lại ảnh gốc để crop độ nét cao
+        # 2. Cắt mặt trực tiếp trên khung chuẩn img_padded (Cách 2)
         embedding = None
         if hasattr(face, "kps") and face.kps is not None and rec_model is not None:
             try:
-                kps_org = face.kps.copy()
-                kps_org[:, 0] = (kps_org[:, 0] - pad_left) / scale
-                kps_org[:, 1] = (kps_org[:, 1] - pad_top) / scale
-
                 aligned_face = face_align.norm_crop(
-                    img_bgr, landmark=kps_org, image_size=ALIGNED_FACE_SIZE
+                    img_padded, landmark=face.kps, image_size=ALIGNED_FACE_SIZE
                 )
                 if aligned_face is not None and aligned_face.size > 0:
                     embedding = compute_face_embedding(
