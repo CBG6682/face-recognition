@@ -591,8 +591,8 @@ class CameraController {
                     item.type = 'button';
                     item.className = `w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer ${
                         isCurrent
-                            ? 'bg-blue-600/20 text-white font-semibold'
-                            : 'bg-white/[0.03] hover:bg-white/10 text-slate-200'
+                            ? 'bg-[#2a4690]/30 border border-[#3b5aa8]/40 text-white font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
+                            : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-200 border border-transparent'
                     }`;
                     item.innerHTML = `
                         <div class="min-w-0 pr-2">
@@ -600,9 +600,9 @@ class CameraController {
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
                                 <span class="text-xs font-semibold truncate text-white">${l.ten_lop || c.ten || 'Lớp học'}</span>
                             </div>
-                            <div class="text-[10px] text-slate-400 mt-0.5 truncate">${c.ten_mon || ''} · ${l.ngay || ''}</div>
+                            <div class="text-[10px] text-zinc-400 mt-0.5 truncate">${c.ten_mon || ''} · ${l.ngay || ''}</div>
                         </div>
-                        ${isCurrent ? '<span class="text-[10px] text-blue-400 font-bold shrink-0">Đang chọn</span>' : ''}
+                        ${isCurrent ? '<span class="text-[10px] text-[#9dbcff] font-bold shrink-0">Đang chọn</span>' : ''}
                     `;
                     item.addEventListener('click', async () => {
                         this.closeLessonMenu?.();
@@ -613,10 +613,10 @@ class CameraController {
                 });
             } else {
                 const emptyNotice = document.createElement('div');
-                emptyNotice.className = 'text-[11px] text-slate-400 p-3 text-center bg-white/[0.02] rounded-xl';
+                emptyNotice.className = 'text-[11px] text-zinc-400 p-3 text-center bg-white/[0.02] border border-white/5 rounded-xl';
                 emptyNotice.innerHTML = `
                     <p class="mb-1">Chưa có buổi học nào đang mở</p>
-                    <button type="button" class="text-xs text-blue-400 hover:text-blue-300 font-semibold cursor-pointer underline" onclick="cameraCtrl.openSlideDrawer('lesson')">Bấm vào đây để tạo buổi</button>
+                    <button type="button" class="text-xs text-[#9dbcff] hover:text-white font-semibold cursor-pointer underline" onclick="cameraCtrl.openSlideDrawer('lesson')">Bấm vào đây để tạo buổi</button>
                 `;
                 list.appendChild(emptyNotice);
             }

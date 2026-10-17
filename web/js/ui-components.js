@@ -20,28 +20,28 @@ class UIComponents {
         selectEl.style.display = 'none';
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'custom-select-wrapper relative w-full select-none';
+        wrapper.className = 'custom-select-wrapper relative min-w-[160px] select-none';
         selectEl.parentNode.insertBefore(wrapper, selectEl);
         wrapper.appendChild(selectEl);
 
         const trigger = document.createElement('button');
         trigger.type = 'button';
-        trigger.className = 'custom-select-trigger w-full px-3 py-2 bg-[#0b1222] hover:bg-[#0e172a] rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:ring-2 focus:ring-blue-500/40 text-left';
+        trigger.className = 'custom-select-trigger w-full h-9 px-3.5 bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:border-[#557ee6] focus:ring-1 focus:ring-[#557ee6]/40 text-left box-border';
         trigger.innerHTML = `
-            <span class="custom-select-label truncate text-slate-300 font-medium">${placeholder}</span>
-            <svg class="custom-select-chevron shrink-0 ml-2 text-slate-400 transition-transform duration-100" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <span class="custom-select-label truncate text-zinc-300 font-medium">${placeholder}</span>
+            <svg class="custom-select-chevron shrink-0 ml-2 text-zinc-400 transition-transform duration-150" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         `;
         wrapper.appendChild(trigger);
 
         const menu = document.createElement('div');
-        menu.className = 'custom-select-menu absolute left-0 right-0 top-full mt-1.5 bg-[#080f21]/95 backdrop-blur-2xl rounded-2xl p-1.5 shadow-2xl z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-100';
+        menu.className = 'custom-select-menu absolute left-0 min-w-full w-max max-w-[320px] top-full mt-1.5 bg-[#0a0d16]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-1.5 shadow-[0_20px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-150';
         wrapper.appendChild(menu);
 
         const searchWrap = document.createElement('div');
         searchWrap.className = 'custom-select-search px-1 pb-1.5 mb-1';
         searchWrap.innerHTML = `
             <div class="relative">
-                <input type="text" placeholder="Tìm kiếm nhanh..." class="w-full px-2.5 py-1.5 bg-[#0e172a] rounded-lg text-white text-[11px] outline-none placeholder:text-slate-500 focus:bg-[#13203b] transition-all">
+                <input type="text" placeholder="Tìm kiếm nhanh..." class="w-full px-2.5 py-1.5 bg-white/[0.05] border border-white/10 rounded-xl text-white text-[11px] outline-none placeholder:text-zinc-500 focus:border-[#557ee6] focus:bg-white/[0.08] transition-all">
             </div>
         `;
         menu.appendChild(searchWrap);
@@ -110,7 +110,7 @@ class UIComponents {
             if (matchCount === 0) {
                 if (!emptyEl) {
                     emptyEl = document.createElement('div');
-                    emptyEl.className = 'empty-notice text-[11px] text-slate-500 p-2 text-center';
+                    emptyEl.className = 'empty-notice text-[11px] text-zinc-500 p-2 text-center';
                     emptyEl.textContent = 'Không có kết quả';
                     list.appendChild(emptyEl);
                 }
@@ -133,12 +133,12 @@ class UIComponents {
 
             if (selectedOpt && selectedOpt.value) {
                 label.textContent = selectedOpt.textContent;
-                label.classList.remove('text-slate-400');
+                label.classList.remove('text-zinc-400');
                 label.classList.add('text-white');
             } else {
                 label.textContent = (selectedOpt && selectedOpt.textContent) || placeholder;
                 label.classList.remove('text-white');
-                label.classList.add('text-slate-400');
+                label.classList.add('text-zinc-400');
             }
 
             options.forEach((opt) => {
@@ -149,12 +149,12 @@ class UIComponents {
                 const isSelected = opt.value === selectEl.value;
                 item.className = `w-full px-2.5 py-1.5 rounded-xl text-xs flex items-center justify-between text-left transition-all cursor-pointer ${
                     isSelected
-                        ? 'bg-blue-600/20 text-blue-400 font-semibold'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                        ? 'bg-[#2a4690]/30 text-[#9dbcff] font-semibold border border-[#3b5aa8]/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
+                        : 'text-zinc-300 hover:text-white hover:bg-white/[0.06] border border-transparent'
                 }`;
                 item.innerHTML = `
                     <span class="truncate">${opt.textContent}</span>
-                    ${isSelected ? '<svg class="w-3.5 h-3.5 text-blue-400 shrink-0 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                    ${isSelected ? '<svg class="w-3.5 h-3.5 text-[#9dbcff] shrink-0 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
                 `;
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -206,22 +206,22 @@ class UIComponents {
 
         const trigger = document.createElement('button');
         trigger.type = 'button';
-        trigger.className = 'custom-time-trigger w-full px-3 py-2 bg-[#0b1222] hover:bg-[#0f1930] rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:ring-2 focus:ring-blue-500/40 text-left';
+        trigger.className = 'custom-time-trigger w-full h-9 px-3.5 bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:border-[#557ee6] focus:ring-1 focus:ring-[#557ee6]/40 text-left box-border';
         trigger.innerHTML = `
             <div class="flex items-center gap-2 min-w-0">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400 shrink-0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#9dbcff] shrink-0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 <span class="custom-time-display font-semibold text-white tracking-wider truncate tabular-nums">${inputEl.value}</span>
             </div>
-            <svg class="custom-time-chevron shrink-0 text-slate-400 transition-transform duration-100" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg class="custom-time-chevron shrink-0 text-zinc-400 transition-transform duration-150" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         `;
         wrapper.appendChild(trigger);
 
         const menu = document.createElement('div');
-        menu.className = 'custom-time-menu absolute top-full mt-1.5 w-44 bg-[#080f21]/95 backdrop-blur-2xl rounded-2xl p-2.5 shadow-2xl z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-100';
+        menu.className = 'custom-time-menu absolute top-full mt-1.5 w-48 bg-[#0a0d16]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 shadow-[0_20px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-150';
         wrapper.appendChild(menu);
 
         menu.innerHTML = `
-            <div class="grid grid-cols-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
+            <div class="grid grid-cols-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2 text-center">
                 <span>Giờ</span>
                 <span>Phút</span>
             </div>
@@ -260,7 +260,7 @@ class UIComponents {
                 btn.type = 'button';
                 const isSel = h === hVal;
                 btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
-                    isSel ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30' : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    isSel ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                 }`;
                 btn.textContent = h;
                 btn.addEventListener('click', (e) => {
@@ -280,7 +280,7 @@ class UIComponents {
                 btn.type = 'button';
                 const isSel = m === mVal;
                 btn.className = `w-full py-1 text-xs font-semibold tabular-nums rounded-lg transition-all cursor-pointer text-center ${
-                    isSel ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30' : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    isSel ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40' : 'text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                 }`;
                 btn.textContent = m;
                 btn.addEventListener('click', (e) => {
@@ -297,8 +297,8 @@ class UIComponents {
         };
 
         const scrollToSelected = () => {
-            const selH = hoursContainer.querySelector('.bg-blue-600');
-            const selM = minutesContainer.querySelector('.bg-blue-600');
+            const selH = hoursContainer.querySelector('.font-bold');
+            const selM = minutesContainer.querySelector('.font-bold');
             if (selH) {
                 hoursContainer.scrollTop = selH.offsetTop - hoursContainer.clientHeight / 2 + selH.clientHeight / 2;
             }
@@ -395,18 +395,18 @@ class UIComponents {
 
         const trigger = document.createElement('button');
         trigger.type = 'button';
-        trigger.className = 'custom-date-trigger w-full px-3 py-2 bg-[#0b1222] hover:bg-[#0f1930] rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:ring-2 focus:ring-blue-500/40 text-left';
+        trigger.className = 'custom-date-trigger w-full h-9 px-3.5 bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-xl text-white text-xs flex items-center justify-between transition-all cursor-pointer outline-none focus:border-[#557ee6] focus:ring-1 focus:ring-[#557ee6]/40 text-left box-border';
         trigger.innerHTML = `
             <div class="flex items-center gap-2 min-w-0">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#9dbcff] shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                 <span class="custom-date-display font-semibold text-white tracking-wider truncate tabular-nums">${formatDisplay(inputEl.value)}</span>
             </div>
-            <svg class="custom-date-chevron shrink-0 text-slate-400 transition-transform duration-100" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg class="custom-date-chevron shrink-0 text-zinc-400 transition-transform duration-150" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         `;
         wrapper.appendChild(trigger);
 
         const menu = document.createElement('div');
-        menu.className = 'custom-date-menu absolute top-full mt-1.5 w-64 bg-[#080f21]/95 backdrop-blur-2xl rounded-2xl p-3 shadow-2xl z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-100';
+        menu.className = 'custom-date-menu absolute top-full mt-1.5 w-64 bg-[#0a0d16]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-3 shadow-[0_20px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] z-50 opacity-0 pointer-events-none -translate-y-2 transition-all duration-150';
         wrapper.appendChild(menu);
 
         const [initY, initM] = (inputEl.value || todayStr).split('-').map(Number);
@@ -428,21 +428,21 @@ class UIComponents {
 
             menu.innerHTML = `
                 <div class="flex items-center justify-between mb-2.5 px-0.5">
-                    <button type="button" class="btn-prev-month w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 flex items-center justify-center transition-all cursor-pointer">
+                    <button type="button" class="btn-prev-month w-6 h-6 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/10">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </button>
                     <span class="font-bold text-xs text-white">${monthNames[viewMonth]}, ${viewYear}</span>
-                    <button type="button" class="btn-next-month w-6 h-6 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 flex items-center justify-center transition-all cursor-pointer">
+                    <button type="button" class="btn-next-month w-6 h-6 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/10">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                 </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-500 mb-1">
+                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-zinc-400 mb-1">
                     <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
                 </div>
                 <div class="calendar-days-grid grid grid-cols-7 gap-1"></div>
-                <div class="flex items-center justify-between mt-2.5 pt-1.5">
-                    <button type="button" class="btn-pick-today text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-all cursor-pointer">Hôm nay</button>
-                    <button type="button" class="btn-close-date text-[11px] font-medium text-slate-400 hover:text-white transition-all cursor-pointer">Đóng</button>
+                <div class="flex items-center justify-between mt-2.5 pt-1.5 border-t border-white/[0.06]">
+                    <button type="button" class="btn-pick-today text-[11px] font-semibold text-[#9dbcff] hover:text-white transition-all cursor-pointer">Hôm nay</button>
+                    <button type="button" class="btn-close-date text-[11px] font-medium text-zinc-400 hover:text-white transition-all cursor-pointer">Đóng</button>
                 </div>
             `;
 
@@ -489,7 +489,7 @@ class UIComponents {
             for (let i = startOffset - 1; i >= 0; i--) {
                 const dayNum = prevMonthDays - i;
                 const cell = document.createElement('div');
-                cell.className = 'w-7 h-7 flex items-center justify-center text-[11px] text-slate-600 select-none';
+                cell.className = 'w-7 h-7 flex items-center justify-center text-[11px] text-zinc-600 select-none';
                 cell.textContent = dayNum;
                 grid.appendChild(cell);
             }
@@ -506,10 +506,10 @@ class UIComponents {
 
                 btn.className = `w-7 h-7 rounded-lg text-[11px] font-semibold tabular-nums flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                        ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30'
+                        ? 'bg-gradient-to-b from-[#385bbb] to-[#24428e] text-white font-bold border border-[#3b5aa8] shadow-md shadow-[#2a4690]/40'
                         : isToday
-                        ? 'text-blue-400 font-bold bg-blue-500/10 hover:bg-blue-500/20'
-                        : 'text-slate-200 hover:bg-white/10'
+                        ? 'text-[#9dbcff] font-bold bg-[#2a4690]/20 hover:bg-[#2a4690]/30 border border-[#3b5aa8]/30'
+                        : 'text-zinc-200 hover:bg-white/[0.08]'
                 }`;
                 btn.textContent = d;
 

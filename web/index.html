@@ -24,6 +24,14 @@
             font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        select {
+            color-scheme: dark;
+        }
+        select option {
+            background-color: #0a0d16;
+            color: #f4f4f5;
+        }
+
         .modal-backdrop { display: none; }
         .modal-backdrop.active { display: flex; }
 
@@ -394,7 +402,7 @@
                 </button>
 
                 <!-- Floating Dropdown Menu for Lessons -->
-                <div id="lesson-menu-dropdown" class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 max-w-[90vw] bg-[#0a0d16] rounded-2xl p-2.5 shadow-2xl z-50 transition-all duration-150 opacity-0 pointer-events-none -translate-y-2">
+                <div id="lesson-menu-dropdown" class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 max-w-[90vw] bg-[#0a0d16]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] z-50 transition-all duration-150 opacity-0 pointer-events-none -translate-y-2">
                     <div class="px-2.5 py-1.5 flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
                         <span>Chọn buổi điểm danh</span>
                         <button id="btn-dropdown-new-lesson" type="button" class="text-[#9dbcff] hover:text-white font-medium text-xs cursor-pointer">+ Tạo mới</button>

@@ -47,6 +47,14 @@
             filter: brightness(1.06);
         }
 
+        select {
+            color-scheme: dark;
+        }
+        select option {
+            background-color: #0a0d16;
+            color: #f4f4f5;
+        }
+
         table {
             width: 100%;
             border-collapse: separate;
@@ -613,9 +621,9 @@
                             <p class="text-xs text-zinc-400">Bấm vào bất kỳ lớp nào để quản lý buổi học, điểm danh và sinh viên</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="filter-class-search" class="w-48 h-9 px-3.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] focus:ring-1 focus:ring-[#9dbcff]/30 transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
-                            <select id="filter-class-subject" class="h-9 px-3.5 bg-white/[0.04] border-none rounded-xl text-white text-xs outline-none transition duration-150 cursor-pointer box-border" onchange="dashboard.filterClassesTable()">
-                                <option value="" class="bg-[#04060a] text-white">Tất cả môn học</option>
+                            <input type="text" id="filter-class-search" class="w-48 h-9 px-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-white text-xs outline-none focus:border-[#557ee6] focus:ring-1 focus:ring-[#557ee6]/30 transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
+                            <select id="filter-class-subject" class="h-9 px-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-white text-xs outline-none transition duration-150 cursor-pointer box-border" onchange="dashboard.filterClassesTable()">
+                                <option value="" class="bg-[#0a0d16] text-white">Tất cả môn học</option>
                             </select>
                             <button class="btn btn-primary" onclick="dashboard.openModal('modal-add-class')">
                                 + Thêm lớp học
