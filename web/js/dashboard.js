@@ -403,17 +403,17 @@ class DashboardController {
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${c.id}</td>
+                    <td style="font-family: var(--font-mono); font-weight:700; white-space: nowrap;">#${c.id}</td>
                     <td>
                         <button onclick="dashboard.openClassDetail(${c.id})" style="background:none; text-align:left; color: inherit; cursor:pointer;">
-                            <div style="font-weight:700; font-size: 1rem; color: #fff;">${c.ten}</div>
+                            <div style="font-weight:800; font-size: 0.95rem; color: #fff; letter-spacing: -0.01em;">${c.ten}</div>
                         </button>
                     </td>
                     <td style="white-space: nowrap;">
-                        <span class="badge badge-neutral" style="font-family: var(--font-mono); white-space: nowrap; flex-shrink: 0;">${c.ma_mon || ''}</span>
-                        <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 6px;">${c.ten_mon || ''}</span>
+                        <span class="badge badge-neutral" style="font-family: var(--font-mono); font-weight: 700; white-space: nowrap; flex-shrink: 0;">${c.ma_mon || ''}</span>
+                        <span style="font-size: 0.8125rem; font-weight: 400; color: var(--text-muted); margin-left: 6px;">${c.ten_mon || ''}</span>
                     </td>
-                    <td style="font-family: var(--font-mono); font-weight: 600; white-space: nowrap;">
+                    <td style="font-family: var(--font-mono); font-weight: 700; white-space: nowrap;">
                         ${totalStudents} SV
                     </td>
                     <td style="white-space: nowrap;">
@@ -624,9 +624,9 @@ class DashboardController {
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${l.id}</td>
-                    <td style="font-weight:700; white-space: nowrap;">${l.ngay}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); white-space: nowrap;">
+                    <td style="font-family: var(--font-mono); font-weight:700; white-space: nowrap;">#${l.id}</td>
+                    <td style="font-weight:800; font-size: 0.875rem; white-space: nowrap;">${l.ngay}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 400; color: var(--text-muted); white-space: nowrap;">
                         ${l.bat_dau || '--:--'} - ${l.ket_thuc || '--:--'}
                     </td>
                     <td style="white-space: nowrap;">

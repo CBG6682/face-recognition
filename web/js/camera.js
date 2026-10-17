@@ -629,11 +629,11 @@ class CameraController {
 
                         let badgeHtml = '';
                         if (ev.isLive) {
-                            badgeHtml = '<span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 shrink-0">LIVE</span>';
+                            badgeHtml = '<span class="text-[9px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">LIVE</span>';
                         } else if (ev.code === 'past_shift') {
-                            badgeHtml = '<span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-white/[0.04] text-zinc-400 border border-white/[0.06] shrink-0">Hết ca</span>';
+                            badgeHtml = '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-white/[0.06] text-zinc-300 border border-white/[0.08] shrink-0">Hết ca</span>';
                         } else if (ev.code === 'upcoming_shift') {
-                            badgeHtml = '<span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-sky-500/15 text-sky-300 border border-sky-500/20 shrink-0">Sắp tới</span>';
+                            badgeHtml = '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/30 shrink-0">Sắp tới</span>';
                         }
 
                         const subParts = [];
@@ -651,10 +651,10 @@ class CameraController {
                             <div class="min-w-0 pr-2">
                                 <div class="flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 rounded-full ${ev.dotClass} ${ev.isPulse ? 'animate-pulse' : ''} shrink-0"></span>
-                                    <span class="text-xs font-semibold truncate text-white">${l.ten_lop || c.ten || 'Lớp học'}</span>
+                                    <span class="text-sm font-extrabold text-white tracking-tight truncate">${l.ten_lop || c.ten || 'Lớp học'}</span>
                                     ${badgeHtml}
                                 </div>
-                                <div class="text-[11px] text-zinc-400 mt-1 truncate font-normal">${subtitle}</div>
+                                <div class="text-[11px] font-normal text-zinc-400 mt-0.5 truncate tracking-normal">${subtitle}</div>
                             </div>
                             ${
                                 isCurrent
@@ -676,14 +676,14 @@ class CameraController {
                 };
 
                 const liveHeader = document.createElement('div');
-                liveHeader.className = 'px-2 pt-1.5 pb-1 flex items-center gap-1.5 text-[11px] font-medium text-emerald-400/90';
+                liveHeader.className = 'px-2 pt-2 pb-1 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-400/90';
                 liveHeader.innerHTML = `
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>Đang trong ca học</span>
                 `;
 
                 const otherHeader = document.createElement('div');
-                otherHeader.className = 'px-2 pt-2.5 pb-1 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400';
+                otherHeader.className = 'px-2 pt-3 pb-1 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400';
                 otherHeader.innerHTML = `<span>Ca khác hôm nay</span>`;
 
                 renderGroup(liveHeader, liveGroup);
@@ -2182,8 +2182,8 @@ class CameraController {
                                 : `<span class="w-1.5 h-1.5 rounded-full shrink-0 bg-zinc-600 ml-1 mr-0.5"></span>`
                         }
                         <div class="min-w-0 flex-1">
-                            <div class="text-xs font-semibold text-white truncate leading-tight">${s.ho_ten}</div>
-                            <div class="text-[11px] font-medium text-zinc-400 leading-tight tabular-nums mt-0.5">${s.mssv}</div>
+                            <div class="text-xs font-bold text-white truncate leading-tight">${s.ho_ten}</div>
+                            <div class="text-[11px] font-normal text-zinc-400 leading-tight tabular-nums mt-0.5">${s.mssv}</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">

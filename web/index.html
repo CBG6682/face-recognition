@@ -442,16 +442,16 @@
             <!-- pill button -->
             <button id="btn-lesson-menu" type="button" class="btn btn-secondary inline-flex items-center gap-2 px-3.5 h-[30px] rounded-full text-xs font-semibold cursor-pointer outline-none transition-transform duration-100 active:scale-95" aria-expanded="false">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="kiosk-header-dot" style="display: none;"></span>
-                <span class="text-xs font-semibold text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
-                <span class="text-xs text-[#9dbcff] font-medium whitespace-nowrap" id="kiosk-lesson-date"></span>
+                <span class="text-[13px] font-extrabold text-white tracking-tight whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
+                <span class="text-xs font-normal text-zinc-400 whitespace-nowrap" id="kiosk-lesson-date"></span>
                 <svg class="text-zinc-400 group-hover:text-zinc-200 transition-transform duration-150 shrink-0" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
 
             <!-- fast hardware-accelerated dropdown menu -->
             <div id="lesson-menu-dropdown" class="flex flex-col">
                 <div class="px-2.5 py-1.5 flex items-center justify-between border-b border-white/[0.06] mb-1.5">
-                    <span class="text-xs font-semibold text-zinc-200">Chọn ca điểm danh</span>
-                    <button id="btn-dropdown-new-lesson" type="button" class="btn btn-primary text-[11px] h-6 px-2.5 rounded-lg font-medium cursor-pointer shadow-none">+ Tạo mới</button>
+                    <span class="text-xs font-bold text-white tracking-tight">Chọn ca điểm danh</span>
+                    <button id="btn-dropdown-new-lesson" type="button" class="btn btn-primary text-[11px] h-6 px-2.5 rounded-lg font-bold cursor-pointer shadow-none">+ Tạo mới</button>
                 </div>
                 <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto pr-0.5">
                     <div class="text-xs text-zinc-500 p-3 text-center">Đang tải danh sách...</div>
@@ -567,15 +567,15 @@
             <!-- VIEW 1: ROSTER & ATTENDANCE LIST -->
             <div id="roster-view" class="flex flex-col h-full w-full">
                 <!-- Sidebar Header: Subject, Class & Lesson -->
-                <div class="flex justify-between items-start mb-3 shrink-0 pb-2.5">
+                <div class="flex justify-between items-start mb-3 shrink-0 pb-2.5 border-b border-white/[0.06]">
                     <div class="min-w-0 pr-2">
-                        <span class="text-[10px] font-semibold text-[#9dbcff] uppercase tracking-wider truncate block" id="sidebar-subject-title">Môn học</span>
-                        <div class="text-sm font-bold text-white tracking-tight truncate leading-snug mt-0.5" id="sidebar-class-title">Chưa chọn lớp</div>
+                        <span class="text-[10px] font-bold text-[#9dbcff] uppercase tracking-wider truncate block" id="sidebar-subject-title">Môn học</span>
+                        <div class="text-base font-extrabold text-white tracking-tight truncate leading-snug mt-0.5" id="sidebar-class-title">Chưa chọn lớp</div>
                         <p class="text-[11px] font-normal text-zinc-400 truncate mt-0.5" id="current-lesson-label">Chưa chọn buổi</p>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="text-xl font-bold text-emerald-400 leading-none tracking-tight block tabular-nums" id="live-count">0/0</span>
-                        <div class="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mt-1">có mặt</div>
+                        <span class="text-2xl font-black text-emerald-400 leading-none tracking-tight block tabular-nums" id="live-count">0/0</span>
+                        <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">có mặt</div>
                     </div>
                 </div>
 
