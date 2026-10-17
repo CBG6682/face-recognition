@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác thực Giảng viên - FaceAttendance</title>
+    <meta name="description" content="Đăng nhập hệ thống quản lý điểm danh khuôn mặt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @import "tailwindcss";
+        :root {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --rh-canvas: #04060a;
+            --rh-card: rgba(10, 13, 22, 0.85);
+            --rh-accent: #2a4690;
+            --rh-accent-light: #9dbcff;
+        }
+
+        .font-mono {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .btn-rh-primary {
+            background: linear-gradient(180deg, #385bbb 0%, #24428e 100%);
+            border: 1px solid #3b5aa8;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 24px -6px rgba(42, 70, 144, 0.65);
+            color: #ffffff;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-rh-primary:hover {
+            background: linear-gradient(180deg, #4267cf 0%, #2a4c9f 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 28px -6px rgba(42, 70, 144, 0.85);
+            transform: translateY(-1px);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(16px);
+            color: #fff;
+            background: rgba(10, 13, 22, 0.95);
+            pointer-events: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.toast-success { border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
+        .toast.toast-error { border-color: rgba(244, 63, 94, 0.3); color: #fb7185; }
+        .toast.toast-info { border-color: rgba(157, 188, 255, 0.3); color: #9dbcff; }
+    </style>
+</head>
+<body class="bg-[#04060a] text-zinc-100 flex flex-col justify-between min-h-[100dvh] antialiased p-6 sm:p-8 relative selection:bg-[#2a4690]/40 selection:text-[#9dbcff]">
+    <!-- Ambient Sapphire Glow (Raised Hand signature background) -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(42,70,144,0.22)_0%,rgba(4,6,10,0)_70%)]"></div>
+        <div class="absolute bottom-[-15%] right-[10%] w-[500px] h-[350px] bg-[radial-gradient(ellipse_at_center,rgba(30,58,138,0.12)_0%,rgba(4,6,10,0)_70%)]"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="w-full max-w-5xl mx-auto flex justify-between items-center relative z-10">
+        <a href="/" class="flex items-center gap-2.5 group">
+            <div class="eye-watcher-logo" data-size="32" data-shape="Cube"></div>
+            <div class="text-sm font-semibold tracking-tight text-white flex items-center gap-1">
+                <span>Face</span><b class="text-[#9dbcff] font-bold">Attendance</b>
+            </div>
+        </a>
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-[11px] font-semibold text-[#9dbcff] bg-[#2a4690]/20 border border-[#9dbcff]/25 flex items-center gap-1.5 shadow-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#9dbcff] animate-pulse"></span>
+                kiosk online
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Auth Card -->
+    <main class="w-full max-w-[400px] mx-auto my-auto py-8 relative z-10">
+        <div class="bg-[#0a0d16]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_60px_-15px_rgba(0,0,0,0.85)] rounded-[24px] p-7 sm:p-8">
+            <!-- Header -->
+            <div class="mb-6">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#2a4690]/20 border border-[#9dbcff]/20 text-[#9dbcff] mb-3">
+                    cổng xác thực
+                </span>
+                <h1 class="text-2xl font-bold tracking-tight text-white mb-1.5 leading-snug">
+                    Xác thực Giảng viên
+                </h1>
+                <p class="text-xs text-zinc-400 font-normal leading-relaxed">Nhập mã truy cập để đăng nhập hệ thống quản lý lớp học</p>
+            </div>
+
+            <!-- Form -->
+            <form id="login-form">
+                <div class="space-y-1.5 mb-5">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-400" for="login-code">
+                        Mã truy cập
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="login-code" 
+                            class="w-full px-3.5 py-2.5 bg-white/[0.04] hover:bg-white/[0.06] focus:bg-[#0e1424] border border-white/[0.08] focus:border-[#9dbcff]/60 focus:ring-2 focus:ring-[#2a4690]/30 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition duration-150" 
+                            placeholder="Nhập mã (mặc định: gv123)" 
+                            required 
+                            autofocus
+                            autocomplete="current-password"
+                        >
+                    </div>
+                </div>
+
+                <div id="login-error" class="hidden text-rose-300 font-medium text-xs mb-4 p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+                </div>
+
+                <button 
+                    type="submit" 
+                    id="btn-submit" 
+                    class="btn-rh-primary w-full py-2.5 text-xs font-semibold tracking-tight rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                >
+                    <span>Đăng nhập hệ thống</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-white/[0.06] text-center">
+                <a href="/" class="inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-[#9dbcff] transition duration-150">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    <span>Quay lại camera điểm danh</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-5xl mx-auto flex justify-between items-center text-[11px] text-zinc-500 relative z-10">
+        <div>Hệ thống điểm danh sinh viên thông minh</div>
+        <div class="flex items-center gap-1.5 font-medium text-zinc-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#9dbcff]"></span>
+            <span>Edge AI Recognition</span>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="/js/watcher-logo.js?v=1.0"></script>
+    <script src="/js/api.js?v=4.0"></script>
+    <script>
+        const form = document.getElementById('login-form');
+        const codeInput = document.getElementById('login-code');
+        const errorEl = document.getElementById('login-error');
+        const submitBtn = document.getElementById('btn-submit');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Đang xác thực...</span>';
+
+            try {
+                const res = await API.login(codeInput.value.trim());
+                showToast(`Chào mừng ${res.ho_ten || 'Giảng viên'}!`, 'success');
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 350);
+            } catch (err) {
+                errorEl.textContent = 'Mã truy cập không hợp lệ. Vui lòng kiểm tra lại!';
+                errorEl.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Đăng nhập hệ thống</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+            }
+        });
+    </script>
+</body>
+</html>

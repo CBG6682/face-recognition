@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 // eye tracker logo component
 const stillness = () =>
@@ -19,6 +19,20 @@ const GAP = 0.19;
 const TILT = 64;
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+
+const LINES = [
+  "Hey, I see you.",
+  "Boop.",
+  "That tickles.",
+  "Hi there!",
+  "Stop poking me.",
+  "I'm watching you.",
+  "Again? Okay.",
+  "You found me.",
+];
+const TINTS = ["#3b5bff", "#179c52", "#e0307f"];
+const KEY_MS = 38;
+const HOLD_MS = 1500;
 
 const SHAPES: Record<string, string> = {
   Ball: "M50 0 A50 50 0 1 1 49.99 0 Z",
@@ -71,18 +85,16 @@ function outline(r: number[]): string {
 }
 
 export function Watcher({
-  follow = 65,
-  bounce = 28,
-  size = 34,
+  follow = 60,
+  bounce = 30,
+  size = 100,
   shape = "Cube",
   eyes: look = "Slant",
-  eyeScale = 1.05,
+  eyeScale = 1,
   eyeWidth = 1,
   eyeRound = 1,
   eyeHeight = 1,
   idle = false,
-  onClick,
-  className = "",
 }: {
   follow?: number;
   bounce?: number;
@@ -94,12 +106,35 @@ export function Watcher({
   eyeRound?: number;
   eyeHeight?: number;
   idle?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
-  className?: string;
 } = {}) {
   const still = stillness();
   const box = useRef<HTMLDivElement>(null);
-
+  const [typed, setTyped] = useState("");
+  const [talking, setTalking] = useState(false);
+  const [tint, setTint] = useState(TINTS[0]);
+  const turn = useRef(0);
+  const lastLine = useRef(-1);
+  useEffect(() => () => { turn.current++; }, []);
+  const poke = async () => {
+    if (idle) return;
+    const mine = ++turn.current;
+    const pool = LINES.map((_, i) => i).filter((i) => i !== lastLine.current);
+    const i = pool[Math.floor(Math.random() * pool.length)];
+    lastLine.current = i;
+    const line = LINES[i];
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    setTint(TINTS[Math.floor(Math.random() * TINTS.length)]);
+    setTyped("");
+    setTalking(true);
+    for (let k = 1; k <= line.length; k++) {
+      await wait(KEY_MS + Math.random() * 30);
+      if (mine !== turn.current) return;
+      setTyped(line.slice(0, k));
+    }
+    await wait(HOLD_MS);
+    if (mine !== turn.current) return;
+    setTalking(false);
+  };
   const eyes = useRef<(SVGGElement | null)[]>([]);
   const knobs = useRef({ follow, bounce, eyeScale });
   knobs.current = { follow, bounce, eyeScale };
@@ -187,12 +222,19 @@ export function Watcher({
     };
     raf = requestAnimationFrame(tick);
 
+    const frame = el.closest<HTMLElement>(".bench-card, .dtl-block, .board, .sf-thumb") ?? el;
     const aim = (e: PointerEvent) => {
+      const f = frame.getBoundingClientRect();
+      if (e.clientX < f.left || e.clientX > f.right || e.clientY < f.top || e.clientY > f.bottom) {
+        t.tx = 0;
+        t.ty = 0;
+        return;
+      }
       const r = el.getBoundingClientRect();
       const dx = e.clientX - (r.left + r.width / 2);
       const dy = e.clientY - (r.top + r.height / 2);
       const d = Math.hypot(dx, dy) || 1;
-      const reach = 300;
+      const reach = Math.max(60, Math.min(f.width, f.height) * 0.28);
       const far = Math.min(0.85, Math.tanh(d / reach) * (clamp(knobs.current.follow, 0, 100) / 100) * 1.5);
       t.tx = (dx / d) * far;
       t.ty = (dy / d) * far;
@@ -230,7 +272,6 @@ export function Watcher({
   const s = clamp(size, 16, 180);
   const body = SHAPES[shape] ?? SHAPES.Ball;
   const clip = `eyt-clip-${useId().replace(/:/g, "")}`;
-  const grad = `eyt-grad-${useId().replace(/:/g, "")}`;
 
   const bodyEl = useRef<SVGPathElement>(null);
   const clipEl = useRef<SVGPathElement>(null);
@@ -268,47 +309,50 @@ export function Watcher({
 
   return (
     <div
-      className={`eyt-wrap ${className}`.trim()}
+      className="eyt"
       ref={box}
       style={{ "--eyt-size": `${s}px` } as React.CSSProperties}
       role="img"
       aria-label="A ball with two eyes that follows the cursor"
-      onClick={onClick}
     >
       <svg
-        className="eyt-svg"
+        className="eyt-ball"
         viewBox="0 0 100 100"
+        data-poke={idle ? undefined : true}
+        onClick={poke}
       >
         <defs>
           <clipPath id={clip}>
             <path ref={clipEl} d={shown.current ? outline(shown.current) : body} />
           </clipPath>
-          <linearGradient id={grad} x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#2a4690" />
-            <stop offset="100%" stopColor="#0a101d" />
-          </linearGradient>
         </defs>
-        <path
-          ref={bodyEl}
-          className="eyt-body-path"
-          fill={`url(#${grad})`}
-          d={shown.current ? outline(shown.current) : body}
-        />
+        <path ref={bodyEl} className="eyt-body" d={shown.current ? outline(shown.current) : body} />
         <g clipPath={`url(#${clip})`}>
-          {[0, 1].map((i) => (
-            <g key={i} ref={(n) => { eyes.current[i] = n; }}>
-              <rect
-                className="eyt-eye-rect"
-                x={-eye.w / 2}
-                y={-eye.h / 2}
-                width={eye.w}
-                height={eye.h}
-                rx={eye.r}
-              />
-            </g>
-          ))}
+        {[0, 1].map((i) => (
+          <g key={i} ref={(n) => { eyes.current[i] = n; }}>
+            <rect
+              className="eyt-eye"
+              x={-eye.w / 2}
+              y={-eye.h / 2}
+              width={eye.w}
+              height={eye.h}
+              rx={eye.r}
+            />
+          </g>
+        ))}
         </g>
       </svg>
+      {idle ? null : (
+        <span
+          className="eyt-say"
+          data-on={talking || undefined}
+          aria-live="polite"
+          style={{ "--tint": tint } as React.CSSProperties}
+        >
+          <span>{typed}</span>
+          <span className="eyt-caret" />
+        </span>
+      )}
     </div>
   );
 }

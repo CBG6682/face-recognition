@@ -1,14 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM oven/bun:1-alpine AS web-builder
-WORKDIR /app/web
+FROM golang:1.23-alpine AS builder
 
-COPY web/package.json web/bun.lock* ./
-RUN bun install --frozen-lockfile
-
-COPY web/ ./
-RUN bun run build
-
-FROM golang:1.23-alpine AS api-builder
 WORKDIR /app
 ENV GOTOOLCHAIN=auto
 
@@ -26,8 +18,8 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates tzdata
 ENV TZ=Asia/Ho_Chi_Minh
 
-COPY --from=api-builder /app/server .
-COPY --from=web-builder /app/web/dist ./web/dist
+COPY --from=builder /app/server .
+COPY web ./web
 
 RUN mkdir -p /data
 
@@ -35,4 +27,3 @@ ENV PORT=8080
 EXPOSE 8080
 
 CMD ["./server"]
-

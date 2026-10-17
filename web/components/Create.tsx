@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, GraduationCap, BookOpen, UserPlus, Calendar } from "lucide-react";
+import { FileText, Folder, Grid2x2, Plus, Table2 } from "lucide-react";
 
 // liquid morphing create menu component
 const LIQUID = {
@@ -12,28 +12,19 @@ const LIQUID = {
 
 const LIQUID_STILL = { ...LIQUID, stiffness: 420, damping: 30 };
 
-export interface CreateMenuItem {
-  icon: any
-  label: string
-  action: string
-}
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-const DEFAULT_ITEMS: CreateMenuItem[] = [
-  { icon: GraduationCap, label: "Lớp học mới", action: "create-class" },
-  { icon: BookOpen, label: "Môn học mới", action: "create-subject" },
-  { icon: UserPlus, label: "Thêm sinh viên", action: "create-student" },
-  { icon: Calendar, label: "Tạo buổi học", action: "create-lesson" },
+const ITEMS = [
+  { icon: FileText, label: "Document" },
+  { icon: Table2, label: "Spreadsheet" },
+  { icon: Grid2x2, label: "Board" },
+  { icon: Folder, label: "Folder" },
 ];
 
-export function Create({
-  label = "Tạo mới",
-  items = DEFAULT_ITEMS,
-  onSelect,
-}: {
-  label?: string
-  items?: CreateMenuItem[]
-  onSelect?: (action: string) => void
-}) {
+const CRT_CORNER = 20;
+const CRT_MAX = 40;
+
+export function Create({ corner = CRT_CORNER }: { corner?: number } = {}) {
   const [open, setOpen] = useState(false);
   const [sink, setSink] = useState(false);
 
@@ -41,7 +32,7 @@ export function Create({
   const say = useRef<HTMLSpanElement | null>(null);
   const beat = useRef(0);
 
-  const [sayW, setSayW] = useState(54);
+  const [sayW, setSayW] = useState(96);
 
   useLayoutEffect(() => {
     const el = say.current;
@@ -51,7 +42,7 @@ export function Create({
     measure();
     document.fonts?.ready.then(measure).catch(() => {});
     return () => { live = false; };
-  }, [label]);
+  }, []);
 
   useEffect(() => () => {
     window.clearTimeout(beat.current);
@@ -86,7 +77,7 @@ export function Create({
   };
 
   const pillW = 14 + 6 + sayW + 24;
-  const panelR = 16;
+  const panelR = clamp(corner, 0, CRT_MAX);
   const shutR = 8;
 
   return (
@@ -97,9 +88,9 @@ export function Create({
       ref={panel}
       style={{
         "--pill-w": `${pillW}px`,
-        "--crt-r": `${panelR}px`,
+        "--crt-r": `${clamp(corner, 0, CRT_MAX)}px`,
         "--crt-shut-r": `${shutR}px`,
-        "--crt-row-r": "8px",
+        "--crt-row-r": `${Math.min(17, Math.max(0, clamp(corner, 0, CRT_MAX) - 10)).toFixed(2)}px`,
       } as React.CSSProperties}
     >
       <div className="crt-blobs" aria-hidden="true">
@@ -119,27 +110,23 @@ export function Create({
           <Plus size={13} strokeWidth={2.2} />
         </span>
         <span className="crt-say" style={{ width: sayW || undefined }}>
-          <span ref={say}>{label}</span>
+          <span ref={say}>Create</span>
         </span>
       </button>
 
       <div className="crt-panel">
         <ul className="crt-menu">
-          {items.map((it, i) => (
+          {ITEMS.map((it, i) => (
             <li
               className="crt-item"
-              key={it.action}
-              style={{ transitionDelay: open ? `${26 + i * 22}ms` : "0ms" }}
+              key={it.label}
+              style={{ transitionDelay: open ? `${30 + i * 22}ms` : "0ms" }}
             >
               <button
-                className="crt-item-btn"
-                onClick={() => {
-                  setOpen(false);
-                  if (onSelect) onSelect(it.action);
-                }}
+                onClick={() => { setOpen(false); }}
               >
-                <it.icon size={15} strokeWidth={2} />
-                <span>{it.label}</span>
+                <it.icon size={16} strokeWidth={2} />
+                {it.label}
               </button>
             </li>
           ))}
