@@ -248,7 +248,7 @@
             flex-shrink: 0;
         }
 
-        /* overview stats grid and cards */
+        /* overview stats grid and unified obsidian cards */
         .stats-grid-prephub {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -269,7 +269,9 @@
         }
 
         .prephub-card {
-            border-radius: 18px;
+            background: rgba(10, 13, 22, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
             padding: 22px 24px;
             position: relative;
             overflow: hidden;
@@ -277,6 +279,7 @@
             justify-content: space-between;
             align-items: center;
             min-height: 104px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 36px -10px rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -286,6 +289,8 @@
 
         .prephub-card:hover {
             transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px -10px rgba(0, 0, 0, 0.8);
         }
 
         .prephub-stat-info {
@@ -296,10 +301,11 @@
 
         .prephub-stat-info h3 {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            margin-bottom: 6px;
+            color: #71717a;
+            margin-bottom: 8px;
             line-height: 1.2;
         }
 
@@ -316,10 +322,10 @@
             position: absolute;
             right: -10px;
             bottom: -10px;
-            width: 82px;
-            height: 82px;
+            width: 84px;
+            height: 84px;
             z-index: 1;
-            opacity: 0.15;
+            opacity: 0.07;
             transform: rotate(-15deg);
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -330,79 +336,25 @@
 
         .prephub-card:hover .prephub-stat-icon {
             transform: scale(1.12) rotate(-10deg);
-            opacity: 0.25;
+            opacity: 0.14;
         }
 
-        /* card color themes with ambient radial glow */
-        .prephub-card.theme-blue {
-            background: radial-gradient(120% 120% at 100% 0%, rgba(59, 130, 246, 0.22) 0%, transparent 65%),
-                        linear-gradient(145deg, rgba(16, 28, 62, 0.85) 0%, rgba(7, 11, 24, 0.95) 100%);
-            border: 1px solid rgba(96, 165, 250, 0.24);
-            box-shadow: 0 10px 28px -6px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(191, 219, 254, 0.2);
+        .prephub-card.theme-green .stat-value {
+            color: #34d399;
         }
-        .prephub-card.theme-blue:hover {
-            border-color: rgba(96, 165, 250, 0.45);
-            box-shadow: 0 16px 36px -6px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(191, 219, 254, 0.35);
-        }
-        .prephub-card.theme-blue .prephub-stat-info h3 {
-            color: #93c5fd;
-        }
+
+        /* subtle watermark accent colors */
         .prephub-card.theme-blue .prephub-stat-icon {
-            color: #60a5fa;
-        }
-
-        .prephub-card.theme-purple {
-            background: radial-gradient(120% 120% at 100% 0%, rgba(168, 85, 247, 0.22) 0%, transparent 65%),
-                        linear-gradient(145deg, rgba(38, 16, 62, 0.85) 0%, rgba(12, 6, 22, 0.95) 100%);
-            border: 1px solid rgba(168, 85, 247, 0.24);
-            box-shadow: 0 10px 28px -6px rgba(147, 51, 234, 0.22), inset 0 1px 0 rgba(233, 213, 255, 0.2);
-        }
-        .prephub-card.theme-purple:hover {
-            border-color: rgba(168, 85, 247, 0.45);
-            box-shadow: 0 16px 36px -6px rgba(147, 51, 234, 0.35), inset 0 1px 0 rgba(233, 213, 255, 0.35);
-        }
-        .prephub-card.theme-purple .prephub-stat-info h3 {
-            color: #d8b4fe;
+            color: #9dbcff;
         }
         .prephub-card.theme-purple .prephub-stat-icon {
             color: #c084fc;
         }
-
-        .prephub-card.theme-green {
-            background: radial-gradient(120% 120% at 100% 0%, rgba(16, 185, 129, 0.22) 0%, transparent 65%),
-                        linear-gradient(145deg, rgba(8, 42, 26, 0.85) 0%, rgba(4, 18, 11, 0.95) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.24);
-            box-shadow: 0 10px 28px -6px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(167, 243, 208, 0.2);
-        }
-        .prephub-card.theme-green:hover {
-            border-color: rgba(16, 185, 129, 0.45);
-            box-shadow: 0 16px 36px -6px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(167, 243, 208, 0.35);
-        }
-        .prephub-card.theme-green .prephub-stat-info h3 {
-            color: #6ee7b7;
-        }
-        .prephub-card.theme-green .stat-value {
+        .prephub-card.theme-green .prephub-stat-icon {
             color: #34d399;
         }
-        .prephub-card.theme-green .prephub-stat-icon {
-            color: #10b981;
-        }
-
-        .prephub-card.theme-amber {
-            background: radial-gradient(120% 120% at 100% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 65%),
-                        linear-gradient(145deg, rgba(46, 26, 8, 0.85) 0%, rgba(18, 11, 4, 0.95) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.24);
-            box-shadow: 0 10px 28px -6px rgba(217, 119, 6, 0.22), inset 0 1px 0 rgba(254, 240, 138, 0.2);
-        }
-        .prephub-card.theme-amber:hover {
-            border-color: rgba(245, 158, 11, 0.45);
-            box-shadow: 0 16px 36px -6px rgba(217, 119, 6, 0.35), inset 0 1px 0 rgba(254, 240, 138, 0.35);
-        }
-        .prephub-card.theme-amber .prephub-stat-info h3 {
-            color: #fcd34d;
-        }
         .prephub-card.theme-amber .prephub-stat-icon {
-            color: #f59e0b;
+            color: #9dbcff;
         }
     </style>
 </head>
