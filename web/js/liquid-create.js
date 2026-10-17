@@ -359,16 +359,9 @@
 
     // hit test click outside
     const handleOutsideClick = (e) => {
-      if (!isOpen || !e.isTrusted) return;
-      const box = panelEl.getBoundingClientRect();
-      const on =
-        e.clientX >= box.left &&
-        e.clientX <= box.right &&
-        e.clientY >= box.top &&
-        e.clientY <= box.bottom;
-      if (!on) {
-        closeMenu();
-      }
+      if (!isOpen) return;
+      if (stage.contains(e.target)) return;
+      closeMenu();
     };
     document.addEventListener('pointerdown', handleOutsideClick);
 
@@ -376,9 +369,12 @@
     stage.querySelectorAll('.crt-item-btn').forEach((btn, index) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault();
         const action = btn.dataset.action;
         closeMenu();
-        onSelect(items[index], action);
+        if (typeof onSelect === 'function') {
+          onSelect(items[index], action);
+        }
       });
     });
 
@@ -408,14 +404,23 @@
           });
           el.dispatchEvent(event);
 
+          const openTargetModal = (modalId) => {
+            if (window.dashboard && typeof window.dashboard.openModal === 'function') {
+              window.dashboard.openModal(modalId);
+            } else {
+              const modal = document.getElementById(modalId);
+              if (modal) modal.classList.add('active');
+            }
+          };
+
           if (action === 'create-class') {
-            if (window.dashboard?.openModal) window.dashboard.openModal('modal-add-class');
+            openTargetModal('modal-add-class');
           } else if (action === 'create-subject') {
-            if (window.dashboard?.openModal) window.dashboard.openModal('modal-add-subject');
+            openTargetModal('modal-add-subject');
           } else if (action === 'create-student') {
-            if (window.dashboard?.openModal) window.dashboard.openModal('modal-add-student');
+            openTargetModal('modal-add-student');
           } else if (action === 'create-lesson') {
-            if (window.dashboard?.openModal) window.dashboard.openModal('modal-add-lesson');
+            openTargetModal('modal-add-lesson');
           }
         }
       });

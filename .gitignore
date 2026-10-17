@@ -11,3 +11,4 @@ main
 infer/models/
 cookies.txt
 *.db
+.agents

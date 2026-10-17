@@ -1205,8 +1205,11 @@ class DashboardController {
 }
 
 // Global instance
-let dashboard;
+var dashboard = null;
+window.dashboard = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     dashboard = new DashboardController();
+    window.dashboard = dashboard;
     dashboard.init();
 });
