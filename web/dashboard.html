@@ -199,6 +199,76 @@
             white-space: nowrap; 
         }
 
+        /* navigation and subnav tab switch styles */
+        .nav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 13px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9px;
+            color: #a1a1aa;
+            border: 1px solid transparent;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-tab:hover:not(.active) {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(180deg, #385bbb 0%, #24428e 100%);
+            border: 1px solid #3b5aa8;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 22px -6px rgba(42, 70, 144, 0.65);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .nav-tab.active:hover {
+            background: linear-gradient(180deg, #4267cf 0%, #2a4c9f 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 28px -6px rgba(42, 70, 144, 0.85);
+            transform: translateY(-1px);
+        }
+
+        .subnav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9px;
+            color: #a1a1aa;
+            border: 1px solid transparent;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .subnav-tab:hover:not(.active) {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .subnav-tab.active {
+            background: linear-gradient(180deg, #385bbb 0%, #24428e 100%);
+            border: 1px solid #3b5aa8;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 22px -6px rgba(42, 70, 144, 0.65);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .subnav-tab.active:hover {
+            background: linear-gradient(180deg, #4267cf 0%, #2a4c9f 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 28px -6px rgba(42, 70, 144, 0.85);
+            transform: translateY(-1px);
+        }
+
         .badge { 
             display: inline-flex; 
             align-items: center; 
@@ -382,15 +452,15 @@
             </div>
 
             <!-- Root Tabs: Lớp học & Môn học & Sinh viên -->
-            <nav class="flex gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.06]">
-                <a href="#classes" class="nav-tab active inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition-all [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold [&.active]:shadow-sm" data-tab="classes" onclick="dashboard.switchMainTab('classes'); return false;">
+            <nav class="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
+                <a href="#classes" class="nav-tab active" data-tab="classes" onclick="dashboard.switchMainTab('classes'); return false;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                     <span>Lớp học</span>
                 </a>
-                <a href="#subjects" class="nav-tab inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition-all [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold [&.active]:shadow-sm" data-tab="subjects" onclick="dashboard.switchMainTab('subjects'); return false;">
+                <a href="#subjects" class="nav-tab" data-tab="subjects" onclick="dashboard.switchMainTab('subjects'); return false;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -399,7 +469,7 @@
                     </svg>
                     <span>Môn học</span>
                 </a>
-                <a href="#students" class="nav-tab inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition-all [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold [&.active]:shadow-sm" data-tab="students" onclick="dashboard.switchMainTab('students'); return false;">
+                <a href="#students" class="nav-tab" data-tab="students" onclick="dashboard.switchMainTab('students'); return false;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
@@ -581,8 +651,8 @@
                 </div>
 
                 <!-- Subnav Tabs: Buổi học vs Sinh viên -->
-                <div class="flex gap-1.5 mb-3 bg-white/[0.04] p-1 rounded-xl w-fit border border-white/[0.06]">
-                    <button class="subnav-tab active flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition duration-150 cursor-pointer [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold [&.active]:shadow-sm" data-subtab="lessons" onclick="dashboard.switchSubTab('lessons')">
+                <div class="flex items-center gap-1.5 mb-3 bg-white/[0.04] p-1 rounded-xl w-fit border border-white/[0.08]">
+                    <button class="subnav-tab active" data-subtab="lessons" onclick="dashboard.switchSubTab('lessons')">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -592,7 +662,7 @@
                         <span>Buổi học &amp; Điểm danh</span>
                         <span class="badge badge-neutral text-[10px]" id="badge-count-lessons">0</span>
                     </button>
-                    <button class="subnav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition duration-150 cursor-pointer [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold [&.active]:shadow-sm" data-subtab="students" onclick="dashboard.switchSubTab('students')">
+                    <button class="subnav-tab" data-subtab="students" onclick="dashboard.switchSubTab('students')">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
