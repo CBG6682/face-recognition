@@ -187,20 +187,32 @@
         .badge { 
             display: inline-flex; 
             align-items: center; 
-            gap: 5px; 
-            padding: 2.5px 8px; 
+            gap: 6px; 
+            padding: 3px 10px; 
             font-size: 0.6875rem; 
             font-weight: 500; 
+            line-height: 1.2;
             border-radius: 9999px; 
-            font-family: 'Geist Mono', monospace; 
+            font-family: inherit; 
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
-        .badge-dot { width: 5px; height: 5px; border-radius: 50%; }
-        .badge-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); color: #34d399; }
+        .badge-dot { 
+            width: 6px; 
+            height: 6px; 
+            border-radius: 50%; 
+            flex-shrink: 0;
+            display: inline-block;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.28); color: #34d399; }
         .badge-success .badge-dot { background: #34d399; }
         .badge-neutral { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: #a1a1aa; }
         .badge-neutral .badge-dot { background: #71717a; }
-        .badge-danger { background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2); color: #fb7185; }
+        .badge-danger { background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); color: #fb7185; }
         .badge-danger .badge-dot { background: #fb7185; }
+        .badge-warning { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); color: #fbbf24; }
+        .badge-warning .badge-dot { background: #fbbf24; }
 
         .attendance-progress { display: flex; flex-direction: column; gap: 4px; min-width: 110px; }
         .attendance-progress-text { display: flex; justify-content: space-between; font-size: 0.6875rem; font-family: 'Geist Mono', monospace; }
@@ -219,6 +231,8 @@
             font-size: 0.75rem; 
             cursor: pointer; 
             transition: all 0.12s ease; 
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .class-badge-link:hover { 
             background: rgba(42, 70, 144, 0.35); 
@@ -226,8 +240,13 @@
             border-color: rgba(157, 188, 255, 0.35); 
         }
 
-        .row-actions { display: inline-flex; gap: 5px; opacity: 0; transition: opacity 0.12s ease; pointer-events: none; }
-        tr:hover .row-actions { opacity: 1; pointer-events: auto; }
+        .row-actions { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            white-space: nowrap; 
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="bg-[#04060a] text-zinc-100 min-h-screen antialiased selection:bg-[#2a4690]/40 selection:text-[#9dbcff] relative">
@@ -389,13 +408,13 @@
                         <table class="w-full text-left text-sm text-zinc-200">
                             <thead>
                                 <tr class="bg-white/[0.02]">
-                                    <th class="w-[60px]">ID</th>
-                                    <th>Tên Lớp học</th>
-                                    <th>Môn học</th>
-                                    <th>Sĩ số SV</th>
-                                    <th>Khuôn mặt</th>
-                                    <th>Buổi học</th>
-                                    <th class="text-right w-[190px]">Thao tác</th>
+                                    <th class="w-[60px] whitespace-nowrap">ID</th>
+                                    <th class="min-w-[180px]">Tên Lớp học</th>
+                                    <th class="min-w-[160px]">Môn học</th>
+                                    <th class="w-[110px] whitespace-nowrap">Sĩ số SV</th>
+                                    <th class="w-[160px] min-w-[150px] whitespace-nowrap">Khuôn mặt</th>
+                                    <th class="w-[110px] whitespace-nowrap">Buổi học</th>
+                                    <th class="text-right w-[280px] min-w-[280px] whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="class-tbody">
@@ -487,13 +506,13 @@
                             <table class="w-full text-left text-sm text-zinc-200">
                                 <thead>
                                     <tr class="bg-white/[0.02]">
-                                        <th class="w-[60px]">ID</th>
-                                        <th>Ngày học</th>
-                                        <th>Khung giờ</th>
-                                        <th class="w-[120px]">Trạng thái</th>
-                                        <th class="w-[180px]">Tiến độ Điểm danh</th>
-                                        <th class="w-[180px]">Sổ Điểm danh</th>
-                                        <th class="text-right w-[90px]">Thao tác</th>
+                                        <th class="w-[60px] whitespace-nowrap">ID</th>
+                                        <th class="w-[130px] whitespace-nowrap">Ngày học</th>
+                                        <th class="w-[140px] whitespace-nowrap">Khung giờ</th>
+                                        <th class="w-[130px] whitespace-nowrap">Trạng thái</th>
+                                        <th class="w-[200px] min-w-[180px] whitespace-nowrap">Tiến độ Điểm danh</th>
+                                        <th class="w-[230px] min-w-[230px] whitespace-nowrap">Sổ Điểm danh</th>
+                                        <th class="text-right w-[90px] whitespace-nowrap">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody id="detail-lesson-tbody">
@@ -534,12 +553,12 @@
                             <table class="w-full text-left text-sm text-zinc-200">
                                 <thead>
                                     <tr class="bg-white/[0.02]">
-                                        <th class="w-[60px]">ID</th>
-                                        <th class="w-[120px]">MSSV</th>
-                                        <th>Họ và Tên</th>
-                                        <th class="w-[130px]">Khuôn mặt</th>
-                                        <th class="w-[160px]">Ngày đăng ký</th>
-                                        <th class="text-right w-[200px]">Hành động</th>
+                                        <th class="w-[60px] whitespace-nowrap">ID</th>
+                                        <th class="w-[130px] whitespace-nowrap">MSSV</th>
+                                        <th class="min-w-[160px]">Họ và Tên</th>
+                                        <th class="w-[140px] whitespace-nowrap">Khuôn mặt</th>
+                                        <th class="w-[160px] whitespace-nowrap">Ngày đăng ký</th>
+                                        <th class="text-right w-[240px] min-w-[240px] whitespace-nowrap">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody id="detail-student-tbody">
@@ -576,11 +595,11 @@
                     <table class="w-full text-left text-sm text-zinc-200">
                         <thead>
                             <tr class="bg-white/[0.02]">
-                                <th class="w-[60px]">ID</th>
-                                <th class="w-[140px]">Mã môn học</th>
-                                <th>Tên môn học</th>
-                                <th class="w-[140px]">Số lớp đang mở</th>
-                                <th class="text-right w-[200px]">Hành động</th>
+                                <th class="w-[60px] whitespace-nowrap">ID</th>
+                                <th class="w-[140px] whitespace-nowrap">Mã môn học</th>
+                                <th class="min-w-[180px]">Tên môn học</th>
+                                <th class="w-[150px] whitespace-nowrap">Số lớp đang mở</th>
+                                <th class="text-right w-[220px] min-w-[220px] whitespace-nowrap">Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="subject-tbody">
@@ -611,10 +630,10 @@
                     <table class="w-full text-left text-sm text-zinc-200">
                         <thead>
                             <tr class="bg-white/[0.02]">
-                                <th class="w-[130px]">MSSV</th>
-                                <th>Họ và tên</th>
-                                <th>Lớp đang học</th>
-                                <th class="w-[200px]">Trạng thái khuôn mặt</th>
+                                <th class="w-[130px] whitespace-nowrap">MSSV</th>
+                                <th class="min-w-[180px]">Họ và tên</th>
+                                <th class="min-w-[200px]">Lớp đang học</th>
+                                <th class="w-[260px] min-w-[260px] whitespace-nowrap">Trạng thái khuôn mặt</th>
                             </tr>
                         </thead>
                         <tbody id="all-students-tbody">
@@ -859,12 +878,12 @@
                 <table class="w-full text-left text-sm text-zinc-200">
                     <thead>
                         <tr class="bg-white/[0.04] text-zinc-400">
-                            <th class="p-2.5 w-28">MSSV</th>
-                            <th class="p-2.5">Họ và Tên</th>
-                            <th class="p-2.5 w-28">Trạng thái</th>
-                            <th class="p-2.5 w-24">Thời gian</th>
-                            <th class="p-2.5 w-28">Độ khớp</th>
-                            <th class="p-2.5 w-36 text-right">Thao tác</th>
+                            <th class="p-2.5 w-28 whitespace-nowrap">MSSV</th>
+                            <th class="p-2.5 min-w-[160px]">Họ và Tên</th>
+                            <th class="p-2.5 w-28 whitespace-nowrap">Trạng thái</th>
+                            <th class="p-2.5 w-28 whitespace-nowrap">Thời gian</th>
+                            <th class="p-2.5 w-32 whitespace-nowrap">Độ khớp</th>
+                            <th class="p-2.5 w-40 text-right whitespace-nowrap">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="attendance-tbody">
@@ -901,7 +920,7 @@
     <script src="/js/liquid-create.js?v=2.0"></script>
     <script src="/js/ui-components.js?v=5.4"></script>
     <script src="/js/api.js?v=5.4"></script>
-    <script src="/js/dashboard.js?v=5.5"></script>
+    <script src="/js/dashboard.js?v=5.6"></script>
     <script>
         const today = new Date().toISOString().split('T')[0];
         const dateInput = document.getElementById('new-lesson-date');

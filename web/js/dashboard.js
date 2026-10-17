@@ -113,16 +113,16 @@ class DashboardController {
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600;">#${s.id}</td>
-                    <td><span class="badge badge-neutral" style="font-family: var(--font-mono); font-size: 0.85rem;">${s.ma_mon}</span></td>
+                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${s.id}</td>
+                    <td style="white-space: nowrap;"><span class="badge badge-neutral" style="font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; flex-shrink: 0;">${s.ma_mon}</span></td>
                     <td style="font-weight:700;">${s.ten}</td>
-                    <td>
-                        <span class="badge ${classCount > 0 ? 'badge-success' : 'badge-neutral'}">
+                    <td style="white-space: nowrap;">
+                        <span class="badge ${classCount > 0 ? 'badge-success' : 'badge-neutral'}" style="white-space: nowrap; flex-shrink: 0;">
                             ${classCount} lớp học
                         </span>
                     </td>
-                    <td style="text-align: right;">
-                        <div style="display: inline-flex; gap: 8px;">
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 8px; white-space: nowrap; flex-shrink: 0;">
                             <button class="btn btn-secondary btn-sm" onclick="dashboard.toggleSubjectDrawer(${s.id})">
                                 Xem các lớp (${classCount})
                             </button>
@@ -248,21 +248,21 @@ class DashboardController {
 
                 const safeName = (s.ho_ten || '').replace(/'/g, "\\'");
                 const faceBadge = s.has_face
-                    ? `<div style="display:inline-flex; align-items:center; gap:8px;">
-                        <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 6px;"><span style="width:6px; height:6px; border-radius:50%; background:var(--accent-emerald);"></span> Đã có khuôn mặt</span>
-                        <button class="btn btn-secondary btn-sm" onclick="dashboard.viewFaceModal('${safeName}', '${s.mssv}')" style="display:inline-flex; align-items:center; gap:5px; padding: 2px 8px; font-size: 0.75rem;">
+                    ? `<div style="display:inline-flex; align-items:center; gap:8px; white-space:nowrap; flex-shrink:0;">
+                        <span class="badge badge-success" style="white-space:nowrap; flex-shrink:0;"><span class="badge-dot"></span>Đã có khuôn mặt</span>
+                        <button class="btn btn-secondary btn-sm" onclick="dashboard.viewFaceModal('${safeName}', '${s.mssv}')" style="display:inline-flex; align-items:center; gap:5px; padding: 2px 8px; font-size: 0.75rem; white-space:nowrap; flex-shrink:0;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></svg>
-                            Xem ảnh
+                            <span>Xem ảnh</span>
                         </button>
                     </div>`
-                    : '<span class="badge badge-neutral" style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim);"><span style="width:6px; height:6px; border-radius:50%; background:var(--text-dim);"></span> Chưa đăng ký</span>';
+                    : '<span class="badge badge-neutral" style="white-space:nowrap; flex-shrink:0;"><span class="badge-dot"></span>Chưa đăng ký</span>';
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:700; color: var(--primary);">${s.mssv}</td>
+                    <td style="font-family: var(--font-mono); font-weight:700; color: var(--primary); white-space: nowrap;">${s.mssv}</td>
                     <td style="font-weight:700; color:#fff;">${s.ho_ten}</td>
                     <td>${classBadges}</td>
-                    <td>${faceBadge}</td>
+                    <td style="white-space: nowrap;">${faceBadge}</td>
                 </tr>
                 `;
             })
@@ -403,20 +403,20 @@ class DashboardController {
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600;">#${c.id}</td>
+                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${c.id}</td>
                     <td>
                         <button onclick="dashboard.openClassDetail(${c.id})" style="background:none; text-align:left; color: inherit; cursor:pointer;">
-                            <div style="font-weight:700; font-size: 1rem; color: #fff; hover:color:var(--primary);">${c.ten}</div>
+                            <div style="font-weight:700; font-size: 1rem; color: #fff;">${c.ten}</div>
                         </button>
                     </td>
-                    <td>
-                        <span class="badge badge-neutral" style="font-family: var(--font-mono);">${c.ma_mon || ''}</span>
+                    <td style="white-space: nowrap;">
+                        <span class="badge badge-neutral" style="font-family: var(--font-mono); white-space: nowrap; flex-shrink: 0;">${c.ma_mon || ''}</span>
                         <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 6px;">${c.ten_mon || ''}</span>
                     </td>
-                    <td style="font-family: var(--font-mono); font-weight: 600;">
+                    <td style="font-family: var(--font-mono); font-weight: 600; white-space: nowrap;">
                         ${totalStudents} SV
                     </td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         <div class="attendance-progress">
                             <div class="attendance-progress-text">
                                 <span style="color: ${facePercent === 100 ? 'var(--accent-emerald)' : 'var(--text-muted)'};">${faces}/${totalStudents}</span>
@@ -427,20 +427,20 @@ class DashboardController {
                             </div>
                         </div>
                     </td>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">
+                    <td style="font-family: var(--font-mono); color: var(--text-muted); white-space: nowrap;">
                         ${totalLessons} buổi
                     </td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <div style="display: inline-flex; gap: 8px; white-space: nowrap;">
-                            <button class="btn btn-success btn-sm" onclick="dashboard.startTodayAttendance(${c.id})" title="Điểm danh hôm nay" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <div style="display: inline-flex; gap: 8px; white-space: nowrap; flex-shrink: 0;">
+                            <button class="btn btn-success btn-sm" onclick="dashboard.startTodayAttendance(${c.id})" title="Điểm danh hôm nay" style="display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                                 Điểm danh ngay
                             </button>
-                            <button class="btn btn-primary btn-sm" onclick="dashboard.openClassDetail(${c.id})">
+                            <button class="btn btn-primary btn-sm" onclick="dashboard.openClassDetail(${c.id})" style="white-space: nowrap;">
                                 Chi tiết lớp
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteClass(${c.id})">
+                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteClass(${c.id})" style="white-space: nowrap;">
                                 Xóa
                             </button>
                         </div>
@@ -624,19 +624,19 @@ class DashboardController {
 
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600;">#${l.id}</td>
-                    <td style="font-weight:700;">${l.ngay}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${l.id}</td>
+                    <td style="font-weight:700; white-space: nowrap;">${l.ngay}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); white-space: nowrap;">
                         ${l.bat_dau || '--:--'} - ${l.ket_thuc || '--:--'}
                     </td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         ${
                             isOpen
-                                ? `<span class="badge badge-success"><span class="badge-dot"></span>Đang mở</span>`
-                                : `<span class="badge badge-neutral"><span class="badge-dot"></span>Đã đóng</span>`
+                                ? `<span class="badge badge-success" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đang mở</span>`
+                                : `<span class="badge badge-neutral" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đã đóng</span>`
                         }
                     </td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         <div class="attendance-progress">
                             <div class="attendance-progress-text">
                                 <span style="font-weight: 700; color: ${percent > 0 ? 'var(--accent-emerald)' : 'var(--text-muted)'};">${presentCount}/${totalStudents} có mặt</span>
@@ -647,8 +647,8 @@ class DashboardController {
                             </div>
                         </div>
                     </td>
-                    <td>
-                        <div style="display: flex; gap: 8px;">
+                    <td style="white-space: nowrap;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0;">
                             ${
                                 isOpen
                                     ? `<button class="btn btn-secondary btn-sm" onclick="dashboard.toggleLessonStatus(${l.id}, 'closed')">Đóng buổi</button>`
@@ -659,7 +659,7 @@ class DashboardController {
                             </button>
                         </div>
                     </td>
-                    <td style="text-align: right;">
+                    <td style="text-align: right; white-space: nowrap;">
                         <button class="btn btn-danger btn-sm" onclick="dashboard.deleteLesson(${l.id})">
                             Xóa
                         </button>
@@ -740,22 +740,22 @@ class DashboardController {
 
                     return `
                     <tr>
-                        <td style="font-family: var(--font-mono); font-weight:700;">${r.mssv}</td>
+                        <td style="font-family: var(--font-mono); font-weight:700; white-space: nowrap;">${r.mssv}</td>
                         <td style="font-weight:600;">${r.ho_ten}</td>
-                        <td>
+                        <td style="white-space: nowrap;">
                             ${
                                 isPresent
-                                    ? `<span class="badge badge-success"><span class="badge-dot"></span>Có mặt</span>`
-                                    : `<span class="badge badge-danger"><span class="badge-dot"></span>Vắng</span>`
+                                    ? `<span class="badge badge-success" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Có mặt</span>`
+                                    : `<span class="badge badge-danger" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Vắng</span>`
                             }
                         </td>
-                        <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${r.thoi_gian || '-'}</td>
-                        <td style="font-family: var(--font-mono); font-size: 0.8rem;">${simScore} (${method})</td>
-                        <td style="text-align: right;">
+                        <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">${r.thoi_gian || '-'}</td>
+                        <td style="font-family: var(--font-mono); font-size: 0.8rem; white-space: nowrap;">${simScore} (${method})</td>
+                        <td style="text-align: right; white-space: nowrap;">
                             ${
                                 isPresent
-                                    ? `<button class="btn btn-danger btn-sm" onclick="dashboard.manualCancel(${r.sinh_vien_id})">Hủy có mặt</button>`
-                                    : `<button class="btn btn-success btn-sm" onclick="dashboard.manualCheckin(${r.sinh_vien_id})">Đánh dấu có mặt</button>`
+                                    ? `<button class="btn btn-danger btn-sm" onclick="dashboard.manualCancel(${r.sinh_vien_id})" style="white-space: nowrap;">Hủy có mặt</button>`
+                                    : `<button class="btn btn-success btn-sm" onclick="dashboard.manualCheckin(${r.sinh_vien_id})" style="white-space: nowrap;">Đánh dấu có mặt</button>`
                             }
                         </td>
                     </tr>
@@ -848,30 +848,32 @@ class DashboardController {
             .map((s) => {
                 const regDate = s.registered_at ? s.registered_at.split('T')[0] : '--';
 
+                const safeName = (s.ho_ten || '').replace(/'/g, "\\'");
+
                 return `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight:600;">#${s.id}</td>
-                    <td style="font-family: var(--font-mono); font-weight:700;">${s.mssv}</td>
+                    <td style="font-family: var(--font-mono); font-weight:600; white-space: nowrap;">#${s.id}</td>
+                    <td style="font-family: var(--font-mono); font-weight:700; white-space: nowrap;">${s.mssv}</td>
                     <td style="font-weight:600;">${s.ho_ten}</td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         ${
                             s.has_face
-                                ? `<span class="badge badge-success"><span class="badge-dot"></span>Đã có mặt</span>`
-                                : `<span class="badge badge-neutral"><span class="badge-dot"></span>Chưa có</span>`
+                                ? `<span class="badge badge-success" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đã có mặt</span>`
+                                : `<span class="badge badge-neutral" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Chưa có</span>`
                         }
                     </td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">${regDate}</td>
-                    <td style="text-align: right;">
-                        <div class="row-actions">
-                            <button class="btn ${s.has_face ? 'btn-secondary' : 'btn-primary'} btn-sm" onclick="dashboard.openFaceModal(${s.id}, '${s.ho_ten}', '${s.mssv}')">
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); white-space: nowrap;">${regDate}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div class="row-actions" style="display:inline-flex; align-items:center; gap:6px; white-space:nowrap; flex-shrink:0;">
+                            <button class="btn ${s.has_face ? 'btn-secondary' : 'btn-primary'} btn-sm" onclick="dashboard.openFaceModal(${s.id}, '${safeName}', '${s.mssv}')" style="white-space: nowrap;">
                                 ${s.has_face ? 'Chụp lại' : 'Chụp mặt'}
                             </button>
                             ${
                                 s.has_face
-                                    ? `<button class="btn btn-secondary btn-sm" onclick="dashboard.deleteFace(${s.id})">Xóa mặt</button>`
+                                    ? `<button class="btn btn-secondary btn-sm" onclick="dashboard.deleteFace(${s.id})" style="white-space: nowrap;">Xóa mặt</button>`
                                     : ''
                             }
-                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteStudent(${s.id})">
+                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteStudent(${s.id})" style="white-space: nowrap;">
                                 Xóa SV
                             </button>
                         </div>
