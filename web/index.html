@@ -83,27 +83,28 @@
 
         /* Raised Hand style student roster card */
         .live-item {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: #1c1d22;
+            border: none;
             border-radius: 14px;
-            padding: 8px 12px;
+            padding: 9px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            box-shadow: none;
             transition: all 0.15s ease;
         }
         .live-item:hover { 
-            background: rgba(255, 255, 255, 0.05); 
-            border-color: rgba(157, 188, 255, 0.2); 
+            background: #25262c;
             transform: translateY(-1px);
         }
         .live-item.is-present { 
-            background: rgba(16, 185, 129, 0.05); 
-            border-color: rgba(16, 185, 129, 0.22); 
+            background: #1c1d22;
+            border: none;
         }
         .live-item.is-absent { 
-            opacity: 0.85; 
+            background: #141519;
+            border: none;
+            opacity: 0.8; 
         }
         .live-item button[title="Hủy điểm danh"] {
             background: rgba(244, 63, 94, 0.1);
