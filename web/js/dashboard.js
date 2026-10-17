@@ -122,7 +122,7 @@ class DashboardController {
                         </span>
                     </td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <div style="display: inline-flex; gap: 8px; white-space: nowrap; flex-shrink: 0;">
+                        <div class="row-actions" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;">
                             <button class="btn btn-secondary btn-sm" onclick="dashboard.toggleSubjectDrawer(${s.id})">
                                 Xem các lớp (${classCount})
                             </button>
@@ -250,7 +250,7 @@ class DashboardController {
                 const faceBadge = s.has_face
                     ? `<div style="display:inline-flex; align-items:center; gap:8px; white-space:nowrap; flex-shrink:0;">
                         <span class="badge badge-success" style="white-space:nowrap; flex-shrink:0;"><span class="badge-dot"></span>Đã có khuôn mặt</span>
-                        <button class="btn btn-secondary btn-sm" onclick="dashboard.viewFaceModal('${safeName}', '${s.mssv}')" style="display:inline-flex; align-items:center; gap:5px; padding: 2px 8px; font-size: 0.75rem; white-space:nowrap; flex-shrink:0;">
+                        <button class="btn btn-secondary btn-sm" onclick="dashboard.viewFaceModal('${safeName}', '${s.mssv}')">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></svg>
                             <span>Xem ảnh</span>
                         </button>
@@ -431,16 +431,16 @@ class DashboardController {
                         ${totalLessons} buổi
                     </td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <div style="display: inline-flex; gap: 8px; white-space: nowrap; flex-shrink: 0;">
-                            <button class="btn btn-success btn-sm" onclick="dashboard.startTodayAttendance(${c.id})" title="Điểm danh hôm nay" style="display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
+                        <div class="row-actions" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;">
+                            <button class="btn btn-success btn-sm" onclick="dashboard.startTodayAttendance(${c.id})" title="Điểm danh hôm nay">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                                 Điểm danh ngay
                             </button>
-                            <button class="btn btn-primary btn-sm" onclick="dashboard.openClassDetail(${c.id})" style="white-space: nowrap;">
+                            <button class="btn btn-primary btn-sm" onclick="dashboard.openClassDetail(${c.id})">
                                 Chi tiết lớp
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteClass(${c.id})" style="white-space: nowrap;">
+                            <button class="btn btn-danger btn-sm" onclick="dashboard.deleteClass(${c.id})">
                                 Xóa
                             </button>
                         </div>
@@ -648,7 +648,7 @@ class DashboardController {
                         </div>
                     </td>
                     <td style="white-space: nowrap;">
-                        <div style="display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0;">
+                        <div class="row-actions" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;">
                             ${
                                 isOpen
                                     ? `<button class="btn btn-secondary btn-sm" onclick="dashboard.toggleLessonStatus(${l.id}, 'closed')">Đóng buổi</button>`

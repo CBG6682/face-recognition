@@ -133,9 +133,12 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 6px 14px;
-            font-size: 0.75rem;
+            height: 36px;
+            padding: 0 16px;
+            font-size: 0.8125rem;
             font-weight: 600;
+            line-height: 1;
+            box-sizing: border-box;
             border-radius: 10px;
             transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
@@ -193,10 +196,31 @@
             transform: translateY(-1px);
         }
         .btn-sm { 
-            padding: 4px 10px; 
-            font-size: 0.6875rem; 
+            height: 30px;
+            padding: 0 12px; 
+            font-size: 0.75rem; 
+            line-height: 1;
             border-radius: 8px; 
+            box-sizing: border-box;
             white-space: nowrap; 
+        }
+        .btn-xs {
+            height: 24px;
+            padding: 0 8px;
+            font-size: 0.6875rem;
+            line-height: 1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+        .row-actions .btn,
+        table .btn-sm {
+            height: 28px !important;
+            padding: 0 10px !important;
+            font-size: 0.6875rem !important;
+            line-height: 1 !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
         }
 
         /* navigation and subnav tab switch styles */
@@ -482,7 +506,7 @@
             <!-- Right: Actions -->
             <div class="flex items-center gap-2">
                 <div class="liquid-create-btn" data-label="Tạo mới"></div>
-                <a href="/" target="_blank" class="btn btn-secondary btn-sm" title="Mở trang quét camera điểm danh">
+                <a href="/" target="_blank" id="btn-to-camera" class="btn btn-secondary btn-sm" title="Mở trang quét camera điểm danh">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                         <circle cx="12" cy="13" r="4"></circle>
@@ -577,8 +601,8 @@
                             <p class="text-xs text-zinc-400">Bấm vào bất kỳ lớp nào để quản lý buổi học, điểm danh và sinh viên</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="filter-class-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] focus:ring-1 focus:ring-[#9dbcff]/30 transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
-                            <select id="filter-class-subject" class="px-3.5 py-1.5 bg-white/[0.04] border-none rounded-xl text-white text-xs outline-none transition duration-150 cursor-pointer" onchange="dashboard.filterClassesTable()">
+                            <input type="text" id="filter-class-search" class="w-48 h-9 px-3.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] focus:ring-1 focus:ring-[#9dbcff]/30 transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
+                            <select id="filter-class-subject" class="h-9 px-3.5 bg-white/[0.04] border-none rounded-xl text-white text-xs outline-none transition duration-150 cursor-pointer box-border" onchange="dashboard.filterClassesTable()">
                                 <option value="" class="bg-[#04060a] text-white">Tất cả môn học</option>
                             </select>
                             <button class="btn btn-primary" onclick="dashboard.openModal('modal-add-class')">
@@ -718,12 +742,12 @@
                                 <p class="text-xs text-zinc-400">Đăng ký nhận diện khuôn mặt qua webcam hoặc tải file CSV</p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <div class="flex gap-1 bg-white/[0.04] p-1 rounded-lg">
-                                    <button class="filter-pill active px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="all" onclick="dashboard.filterStudents('all')">Tất cả</button>
-                                    <button class="filter-pill px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="has_face" onclick="dashboard.filterStudents('has_face')">Đã có mặt</button>
-                                    <button class="filter-pill px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="no_face" onclick="dashboard.filterStudents('no_face')">Chưa có mặt</button>
+                                <div class="flex items-center h-[30px] gap-1 bg-white/[0.04] p-0.5 rounded-lg box-border">
+                                    <button class="filter-pill active h-full px-2.5 flex items-center justify-center text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="all" onclick="dashboard.filterStudents('all')">Tất cả</button>
+                                    <button class="filter-pill h-full px-2.5 flex items-center justify-center text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="has_face" onclick="dashboard.filterStudents('has_face')">Đã có mặt</button>
+                                    <button class="filter-pill h-full px-2.5 flex items-center justify-center text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="no_face" onclick="dashboard.filterStudents('no_face')">Chưa có mặt</button>
                                 </div>
-                                <input type="text" id="filter-student-search" class="w-36 px-3 py-1 bg-white/[0.04] border border-white/20 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm MSSV, Tên..." oninput="dashboard.renderStudentsTable()">
+                                <input type="text" id="filter-student-search" class="w-36 h-[30px] px-3 bg-white/[0.04] border border-white/20 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm MSSV, Tên..." oninput="dashboard.renderStudentsTable()">
                                 <button class="btn btn-secondary btn-sm" onclick="dashboard.openModal('modal-import-csv')">
                                     Import CSV
                                 </button>
@@ -768,7 +792,7 @@
                         <p class="text-xs text-zinc-400">Quản lý danh sách các môn giảng dạy và truy xuất ngược các lớp thuộc môn</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="filter-subject-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm mã hoặc tên môn..." oninput="dashboard.filterSubjectsTable()">
+                        <input type="text" id="filter-subject-search" class="w-48 h-9 px-3.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm mã hoặc tên môn..." oninput="dashboard.filterSubjectsTable()">
                         <button class="btn btn-primary" onclick="dashboard.openModal('modal-add-subject')">
                             + Thêm môn học
                         </button>
@@ -805,8 +829,8 @@
                         <p class="text-xs text-zinc-400">Dữ liệu sinh viên trên toàn hệ thống và trạng thái đăng ký khuôn mặt</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="filter-all-student-search" class="w-56 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm theo tên hoặc MSSV..." oninput="dashboard.filterAllStudentsTable()">
-                        <span id="all-students-count-badge" class="px-2.5 py-1 bg-white/[0.05] text-xs font-semibold text-[#9dbcff] rounded-lg tabular-nums">0 sinh viên</span>
+                        <input type="text" id="filter-all-student-search" class="w-56 h-9 px-3.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans box-border" placeholder="Tìm theo tên hoặc MSSV..." oninput="dashboard.filterAllStudentsTable()">
+                        <span id="all-students-count-badge" class="h-9 px-3 bg-white/[0.05] inline-flex items-center text-xs font-semibold text-[#9dbcff] rounded-xl tabular-nums box-border">0 sinh viên</span>
                     </div>
                 </div>
 
@@ -1036,7 +1060,7 @@
             </p>
 
             <div class="flex justify-end items-center gap-2">
-                <button class="btn btn-secondary btn-sm" onclick="dashboard.closeFaceModal()">Đóng</button>
+                <button class="btn btn-secondary" onclick="dashboard.closeFaceModal()">Đóng</button>
                 <button class="btn btn-primary" onclick="dashboard.captureFacePhoto()">Chụp &amp; Lưu mặt</button>
             </div>
         </div>
