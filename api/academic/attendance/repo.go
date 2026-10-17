@@ -19,7 +19,8 @@ func (r *Repo) ListByBuoi(ctx context.Context, buoiID int) ([]AttendanceRecord, 
 	rows, err := r.db.Read.QueryContext(ctx, `
 		select sv.id, sv.mssv, sv.ho_ten,
 		       case when dd.sinh_vien_id is not null then 'present' else 'absent' end,
-		       dd.thoi_gian, dd.similarity, dd.phuong_thuc
+		       case when dd.thoi_gian is not null then datetime(dd.thoi_gian, '+7 hours') else null end as thoi_gian,
+		       dd.similarity, dd.phuong_thuc
 		from buoi_hoc bh
 		join sinh_vien sv on bh.lop_hoc_id = sv.lop_hoc_id
 		left join diem_danh dd on bh.id = dd.buoi_hoc_id and sv.id = dd.sinh_vien_id

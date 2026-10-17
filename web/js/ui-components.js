@@ -382,7 +382,7 @@ class UIComponents {
         inputEl.parentNode.insertBefore(wrapper, inputEl);
         wrapper.appendChild(inputEl);
 
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = window.VNTime ? window.VNTime.getTodayDate() : new Date().toLocaleDateString('en-CA');
         if (!inputEl.value) {
             inputEl.value = todayStr;
         }

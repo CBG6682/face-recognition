@@ -43,14 +43,20 @@ func (r *Repo) ListByLop(ctx context.Context, lopID int) ([]BuoiHoc, error) {
 	return ds, rows.Err()
 }
 
+var vnLocation = time.FixedZone("Asia/Ho_Chi_Minh", 7*3600)
+
 func (r *Repo) ListOpen(ctx context.Context) ([]BuoiHoc, error) {
+	today := time.Now().In(vnLocation).Format("2006-01-02")
+	// auto-close unclosed lessons from past days
+	_, _ = r.db.Write.ExecContext(ctx, "update buoi_hoc set trang_thai = 'closed' where trang_thai = 'open' and ngay < ?", today)
+
 	rows, err := r.db.Read.QueryContext(ctx, `
 		select b.id, b.lop_hoc_id, l.ten, b.ngay, b.bat_dau, b.ket_thuc, b.trang_thai
 		from buoi_hoc b
 		join lop_hoc l on b.lop_hoc_id = l.id
-		where b.trang_thai = 'open'
+		where b.trang_thai = 'open' and b.ngay >= ?
 		order by b.id desc
-	`)
+	`, today)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +88,7 @@ func (r *Repo) GetByID(ctx context.Context, id int) (*BuoiHoc, error) {
 }
 
 func (r *Repo) GetOrCreateToday(ctx context.Context, lopID int) (*BuoiHoc, error) {
-	today := time.Now().Format("2006-01-02")
+	today := time.Now().In(vnLocation).Format("2006-01-02")
 	var b BuoiHoc
 	err := r.db.Read.QueryRowContext(ctx, `
 		select b.id, b.lop_hoc_id, coalesce(l.ten, ''), b.ngay, b.bat_dau, b.ket_thuc, b.trang_thai

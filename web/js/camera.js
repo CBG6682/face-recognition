@@ -178,11 +178,15 @@ class CameraController {
             this.kioskClassName.textContent = lesson.ten_lop || `Lớp #${lesson.lop_hoc_id}`;
         }
         if (this.kioskLessonDate) {
-            this.kioskLessonDate.textContent = `· ${lesson.ngay}`;
+            this.kioskLessonDate.textContent = `· ${lesson.ngay}${lesson.bat_dau ? ` (${lesson.bat_dau}-${lesson.ket_thuc || ''})` : ''}`;
+        }
+        const ev = window.VNTime ? window.VNTime.evaluateLesson(lesson) : { isLive: lesson.trang_thai === 'open', dotClass: 'bg-emerald-400', isPulse: true };
+        const headerDot = document.getElementById('kiosk-header-dot');
+        if (headerDot) {
+            headerDot.style.display = 'inline-block';
+            headerDot.className = `w-2 h-2 rounded-full shrink-0 ${ev.dotClass} ${ev.isPulse ? 'animate-pulse shadow-[0_0_8px_#34d399]' : 'shadow-none'}`;
         }
         const isOpen = lesson.trang_thai === 'open' || lesson.status === 'open';
-        const headerDot = document.getElementById('kiosk-header-dot');
-        if (headerDot) headerDot.style.display = isOpen ? 'inline-block' : 'none';
         if (this.finishLessonBtn) {
             this.finishLessonBtn.style.display = isOpen ? 'inline-flex' : 'none';
         }
@@ -498,7 +502,7 @@ class CameraController {
         const dateInput = document.getElementById('quick-lesson-date');
         if (dateInput) {
             if (!dateInput.value) {
-                dateInput.value = new Date().toISOString().split('T')[0];
+                dateInput.value = window.VNTime ? window.VNTime.getTodayDate() : new Date().toLocaleDateString('en-CA');
             }
             enhanceCustomDatePicker(dateInput);
         }
@@ -588,43 +592,58 @@ class CameraController {
             list.innerHTML = '';
 
             if (openLessons && openLessons.length > 0) {
-                const headerLive = document.createElement('div');
-                headerLive.className = 'text-[10px] font-bold text-emerald-400 uppercase tracking-wider px-2 py-1';
-                headerLive.textContent = 'Đang diễn ra (LIVE)';
-                list.appendChild(headerLive);
+                const evaluated = openLessons.map((l) => ({
+                    lesson: l,
+                    eval: window.VNTime ? window.VNTime.evaluateLesson(l) : { isLive: true, dotClass: 'bg-emerald-400', isPulse: true, label: 'Đang mở' }
+                }));
 
-                openLessons.forEach((l) => {
-                    const c = classMap.get(l.lop_hoc_id) || {};
-                    const isCurrent = this.currentLesson && this.currentLesson.id === l.id;
-                    const item = document.createElement('button');
-                    item.type = 'button';
-                    item.className = `lesson-menu-item w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer ${
-                        isCurrent
-                            ? 'bg-[#2a4690]/30 border border-[#3b5aa8]/40 text-white font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
-                            : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-200 border border-transparent'
-                    }`;
-                    item.innerHTML = `
-                        <div class="min-w-0 pr-2">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                                <span class="text-xs font-semibold truncate text-white">${l.ten_lop || c.ten || 'Lớp học'}</span>
+                const liveGroup = evaluated.filter((it) => it.eval.isLive);
+                const otherGroup = evaluated.filter((it) => !it.eval.isLive);
+
+                const renderGroup = (title, titleClass, items) => {
+                    if (!items.length) return;
+                    const header = document.createElement('div');
+                    header.className = `text-[10px] font-bold uppercase tracking-wider px-2 py-1 ${titleClass}`;
+                    header.textContent = title;
+                    list.appendChild(header);
+
+                    items.forEach(({ lesson: l, eval: ev }) => {
+                        const c = classMap.get(l.lop_hoc_id) || {};
+                        const isCurrent = this.currentLesson && this.currentLesson.id === l.id;
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = `lesson-menu-item w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer ${
+                            isCurrent
+                                ? 'bg-[#2a4690]/30 border border-[#3b5aa8]/40 text-white font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
+                                : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-200 border border-transparent'
+                        }`;
+                        item.innerHTML = `
+                            <div class="min-w-0 pr-2">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full ${ev.dotClass} ${ev.isPulse ? 'animate-pulse' : ''} shrink-0"></span>
+                                    <span class="text-xs font-semibold truncate text-white">${l.ten_lop || c.ten || 'Lớp học'}</span>
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded font-medium shrink-0 ${ev.isLive ? 'bg-emerald-500/20 text-emerald-300' : ev.code === 'past_shift' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/10 text-zinc-400'}">${ev.label}</span>
+                                </div>
+                                <div class="text-[10px] text-zinc-400 mt-0.5 truncate">${c.ten_mon || ''} · ${l.ngay || ''}${l.bat_dau ? ` (${l.bat_dau}-${l.ket_thuc || ''})` : ''}</div>
                             </div>
-                            <div class="text-[10px] text-zinc-400 mt-0.5 truncate">${c.ten_mon || ''} · ${l.ngay || ''}</div>
-                        </div>
-                        ${isCurrent ? '<span class="text-[10px] text-[#9dbcff] font-bold shrink-0">Đang chọn</span>' : ''}
-                    `;
-                    item.addEventListener('click', async () => {
-                        this.closeLessonMenu?.();
-                        await this.loadSpecificLesson(l.id);
-                        showToast(`Đã chuyển sang lớp: ${l.ten_lop || c.ten || ''}`, 'info');
+                            ${isCurrent ? '<span class="text-[10px] text-[#9dbcff] font-bold shrink-0">Đang chọn</span>' : ''}
+                        `;
+                        item.addEventListener('click', async () => {
+                            this.closeLessonMenu?.();
+                            await this.loadSpecificLesson(l.id);
+                            showToast(`Đã chuyển sang lớp: ${l.ten_lop || c.ten || ''}`, 'info');
+                        });
+                        list.appendChild(item);
                     });
-                    list.appendChild(item);
-                });
+                };
+
+                renderGroup('Đang trong ca (LIVE)', 'text-emerald-400', liveGroup);
+                renderGroup('Ca khác hôm nay', 'text-amber-400', otherGroup);
             } else {
                 const emptyNotice = document.createElement('div');
                 emptyNotice.className = 'text-[11px] text-zinc-400 p-3 text-center bg-white/[0.02] border border-white/5 rounded-xl';
                 emptyNotice.innerHTML = `
-                    <p class="mb-1">Chưa có buổi học nào đang mở</p>
+                    <p class="mb-1">Chưa có buổi học nào đang mở hôm nay</p>
                     <button type="button" class="text-xs text-[#9dbcff] hover:text-white font-semibold cursor-pointer underline" onclick="cameraCtrl.openSlideDrawer('lesson')">Bấm vào đây để tạo buổi</button>
                 `;
                 list.appendChild(emptyNotice);
@@ -733,7 +752,7 @@ class CameraController {
             await this.populateClassSelect('quick-lesson-class');
             const dateInput = document.getElementById('quick-lesson-date');
             if (dateInput && !dateInput.value) {
-                dateInput.value = new Date().toISOString().split('T')[0];
+                dateInput.value = window.VNTime ? window.VNTime.getTodayDate() : new Date().toLocaleDateString('en-CA');
             }
             const startInput = document.getElementById('quick-lesson-start');
             if (startInput && !startInput.value) {
@@ -1745,7 +1764,7 @@ class CameraController {
         const now = performance.now();
         const matchedIndices = new Set();
         const nowDate = new Date();
-        const timeStr = nowDate.toTimeString().split(' ')[0];
+        const timeStr = window.VNTime ? window.VNTime.getCurrentTimeFull() : nowDate.toTimeString().split(' ')[0];
         let hasNewCheckin = false;
 
         matches.forEach((m) => {

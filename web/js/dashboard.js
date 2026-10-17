@@ -35,7 +35,7 @@ class DashboardController {
         const dateInput = document.getElementById('new-lesson-date');
         if (dateInput) {
             if (!dateInput.value) {
-                dateInput.value = new Date().toISOString().split('T')[0];
+                dateInput.value = window.VNTime ? window.VNTime.getTodayDate() : new Date().toLocaleDateString('en-CA');
             }
             enhanceCustomDatePicker(dateInput);
         }
@@ -630,11 +630,19 @@ class DashboardController {
                         ${l.bat_dau || '--:--'} - ${l.ket_thuc || '--:--'}
                     </td>
                     <td style="white-space: nowrap;">
-                        ${
-                            isOpen
-                                ? `<span class="badge badge-success" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đang mở</span>`
-                                : `<span class="badge badge-neutral" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đã đóng</span>`
-                        }
+                        ${(() => {
+                            const ev = window.VNTime ? window.VNTime.evaluateLesson(l) : { isLive: isOpen, code: isOpen ? 'live' : 'closed' };
+                            if (ev.isLive) {
+                                return `<span class="badge badge-success" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đang mở (LIVE)</span>`;
+                            }
+                            if (isOpen && ev.code === 'past_shift') {
+                                return `<span class="badge badge-warning" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot" style="background:#fbbf24;"></span>Hết giờ ca</span>`;
+                            }
+                            if (isOpen && ev.code === 'past') {
+                                return `<span class="badge badge-neutral" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Ngày cũ</span>`;
+                            }
+                            return `<span class="badge badge-neutral" style="white-space: nowrap; flex-shrink: 0;"><span class="badge-dot"></span>Đã đóng</span>`;
+                        })()}
                     </td>
                     <td style="white-space: nowrap;">
                         <div class="attendance-progress">

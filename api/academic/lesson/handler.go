@@ -51,7 +51,7 @@ func (h *Handler) Create(c fiber.Ctx) error {
 	}
 	rq.Ngay = strings.TrimSpace(rq.Ngay)
 	if rq.Ngay == "" {
-		rq.Ngay = time.Now().Format("2006-01-02")
+		rq.Ngay = time.Now().In(vnLocation).Format("2006-01-02")
 	}
 
 	exists, err := h.repo.CheckLopHocExists(c.Context(), lopHocID)

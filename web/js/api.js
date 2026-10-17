@@ -216,3 +216,156 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 300);
     }, 3500);
 }
+
+// vietnam timezone helper
+window.VNTime = {
+    // get current YYYY-MM-DD in Vietnam timezone
+    getTodayDate() {
+        return new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(new Date());
+    },
+    // get current HH:MM in Vietnam timezone
+    getCurrentTime() {
+        return new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(new Date());
+    },
+    // get current HH:MM:SS in Vietnam timezone
+    getCurrentTimeFull() {
+        return new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).format(new Date());
+    },
+    // evaluate lesson status based on Vietnam date and shift hours
+    evaluateLesson(lesson) {
+        if (!lesson) {
+            return {
+                code: 'none',
+                isLive: false,
+                label: 'Chưa có buổi học',
+                badgeText: 'Chưa mở',
+                dotClass: 'bg-zinc-500',
+                isPulse: false
+            };
+        }
+        const today = this.getTodayDate();
+        const nowTime = this.getCurrentTime();
+        const lessonDate = lesson.ngay || '';
+        const isOpen = lesson.trang_thai === 'open' || lesson.status === 'open';
+
+        if (lessonDate < today) {
+            return {
+                code: 'past',
+                isLive: false,
+                label: 'Ngày cũ',
+                badgeText: 'Ngày cũ',
+                badgeClass: 'badge-neutral',
+                dotClass: 'bg-zinc-500',
+                isPulse: false,
+                desc: `Đã kết thúc (${lessonDate})`
+            };
+        }
+
+        if (lessonDate > today) {
+            return {
+                code: 'future',
+                isLive: false,
+                label: 'Sắp tới',
+                badgeText: 'Sắp tới',
+                badgeClass: 'badge-neutral',
+                dotClass: 'bg-blue-400',
+                isPulse: false,
+                desc: `Lịch ngày ${lessonDate}`
+            };
+        }
+
+        // today
+        if (!isOpen) {
+            return {
+                code: 'closed_today',
+                isLive: false,
+                label: 'Đã đóng',
+                badgeText: 'Đã đóng',
+                badgeClass: 'badge-neutral',
+                dotClass: 'bg-zinc-500',
+                isPulse: false,
+                desc: 'Đã đóng điểm danh'
+            };
+        }
+
+        const batDau = lesson.bat_dau || '';
+        const ketThuc = lesson.ket_thuc || '';
+
+        if (batDau && ketThuc) {
+            let isLive = false;
+            let isUpcoming = false;
+            let isPast = false;
+
+            if (batDau <= ketThuc) {
+                if (nowTime < batDau) isUpcoming = true;
+                else if (nowTime > ketThuc) isPast = true;
+                else isLive = true;
+            } else {
+                if (nowTime >= batDau || nowTime <= ketThuc) isLive = true;
+                else isPast = true;
+            }
+
+            if (isUpcoming) {
+                return {
+                    code: 'upcoming_shift',
+                    isLive: false,
+                    label: `Chưa tới giờ (${batDau})`,
+                    badgeText: 'Chưa tới ca',
+                    badgeClass: 'badge-info',
+                    dotClass: 'bg-sky-400',
+                    isPulse: false,
+                    desc: `Ca học: ${batDau} - ${ketThuc}`
+                };
+            }
+            if (isPast) {
+                return {
+                    code: 'past_shift',
+                    isLive: false,
+                    label: `Hết giờ ca (${ketThuc})`,
+                    badgeText: 'Hết giờ ca',
+                    badgeClass: 'badge-warning',
+                    dotClass: 'bg-amber-400',
+                    isPulse: false,
+                    desc: `Ca học đã qua: ${batDau} - ${ketThuc}`
+                };
+            }
+            return {
+                code: 'live_shift',
+                isLive: true,
+                label: 'Đang diễn ra (LIVE)',
+                badgeText: 'LIVE',
+                badgeClass: 'badge-success',
+                dotClass: 'bg-emerald-400',
+                isPulse: true,
+                desc: `Đang trong giờ ca: ${batDau} - ${ketThuc}`
+            };
+        }
+
+        return {
+            code: 'live_open',
+            isLive: true,
+            label: 'Đang diễn ra (LIVE)',
+            badgeText: 'LIVE',
+            badgeClass: 'badge-success',
+            dotClass: 'bg-emerald-400',
+            isPulse: true,
+            desc: 'Đang mở điểm danh hôm nay'
+        };
+    }
+};
