@@ -76,9 +76,9 @@ export function Create({ corner = CRT_CORNER }: { corner?: number } = {}) {
     }, 60);
   };
 
-  const pillW = 18 + 8 + sayW + 34;
+  const pillW = 14 + 6 + sayW + 24;
   const panelR = clamp(corner, 0, CRT_MAX);
-  const shutR = Math.min(19, panelR * (19 / CRT_CORNER));
+  const shutR = 8;
 
   return (
     <motion.div
@@ -89,7 +89,7 @@ export function Create({ corner = CRT_CORNER }: { corner?: number } = {}) {
       style={{
         "--pill-w": `${pillW}px`,
         "--crt-r": `${clamp(corner, 0, CRT_MAX)}px`,
-        "--crt-shut-r": `${Math.min(19, clamp(corner, 0, CRT_MAX) * (19 / CRT_CORNER)).toFixed(2)}px`,
+        "--crt-shut-r": `${shutR}px`,
         "--crt-row-r": `${Math.min(17, Math.max(0, clamp(corner, 0, CRT_MAX) - 10)).toFixed(2)}px`,
       } as React.CSSProperties}
     >
@@ -97,8 +97,8 @@ export function Create({ corner = CRT_CORNER }: { corner?: number } = {}) {
         <motion.div
           className="crt-body"
           animate={{
-            width: open ? 212 : pillW,
-            height: open ? 166 : 38,
+            width: open ? 206 : pillW,
+            height: open ? 160 : 30,
             borderRadius: open ? panelR : shutR,
           }}
           transition={LIQUID_STILL}
@@ -107,7 +107,7 @@ export function Create({ corner = CRT_CORNER }: { corner?: number } = {}) {
 
       <button className="crt-pill" onClick={press} aria-expanded={open}>
         <span className="crt-glyph" aria-hidden="true">
-          <Plus size={16} strokeWidth={2} />
+          <Plus size={13} strokeWidth={2.2} />
         </span>
         <span className="crt-say" style={{ width: sayW || undefined }}>
           <span ref={say}>Create</span>

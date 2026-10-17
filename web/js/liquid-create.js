@@ -1,7 +1,7 @@
 // liquid morphing create menu component
 (function() {
   const ICONS = {
-    plus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>',
+    plus: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>',
     document: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>',
     table: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></svg>',
     grid: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>',
@@ -35,7 +35,7 @@
         display: inline-flex;
         align-items: flex-start;
         justify-content: flex-start;
-        height: 38px;
+        height: 30px;
         user-select: none;
         z-index: 50;
       }
@@ -47,12 +47,12 @@
         z-index: 1;
       }
       .crt-body {
-        width: var(--pill-w, 106px);
-        height: 38px;
+        width: var(--pill-w, 92px);
+        height: 30px;
         background: linear-gradient(180deg, #3253a6 0%, #1f366e 100%);
         border: 1px solid rgba(157, 188, 255, 0.35);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px -4px rgba(42, 70, 144, 0.5);
-        border-radius: var(--crt-shut-r, 19px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px -2px rgba(42, 70, 144, 0.45);
+        border-radius: var(--crt-shut-r, 8px);
         transform-origin: top left;
         transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                     height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
@@ -62,33 +62,33 @@
                     box-shadow 0.2s ease;
       }
       .crt-stage[data-sink="true"] .crt-body {
-        transform: scale(0.95);
+        transform: scale(0.96);
       }
       .crt-stage[data-open="true"] {
         z-index: 90;
       }
       .crt-stage[data-open="true"] .crt-body {
-        width: 216px;
-        height: 172px;
-        border-radius: var(--crt-r, 20px);
+        width: 206px;
+        height: 160px;
+        border-radius: var(--crt-r, 16px);
         background: rgba(10, 14, 25, 0.95);
         backdrop-filter: blur(24px);
         border: 1px solid rgba(157, 188, 255, 0.22);
-        box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.85), 0 0 25px rgba(42, 70, 144, 0.35);
+        box-shadow: 0 18px 42px -8px rgba(0, 0, 0, 0.85), 0 0 22px rgba(42, 70, 144, 0.35);
       }
       .crt-pill {
         position: relative;
         z-index: 2;
-        height: 38px;
+        height: 30px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 0 16px;
+        gap: 6px;
+        padding: 0 11px;
         background: transparent;
         border: none;
         color: #ffffff;
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 500;
         cursor: pointer;
         outline: none;
         transition: opacity 0.15s ease, transform 0.15s ease;
@@ -119,16 +119,16 @@
         white-space: nowrap;
         overflow: hidden;
         color: #ffffff;
-        font-weight: 600;
+        font-weight: 500;
         letter-spacing: -0.01em;
       }
       .crt-panel {
         position: absolute;
         top: 0;
         left: 0;
-        width: 216px;
-        height: 172px;
-        padding: 8px;
+        width: 206px;
+        height: 160px;
+        padding: 6px;
         box-sizing: border-box;
         z-index: 3;
         pointer-events: none;
@@ -161,14 +161,14 @@
       }
       .crt-item-btn {
         width: 100%;
-        height: 36px;
+        height: 34px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 0 11px;
+        gap: 9px;
+        padding: 0 10px;
         background: transparent;
         border: none;
-        border-radius: var(--crt-row-r, 10px);
+        border-radius: var(--crt-row-r, 8px);
         color: #d1d5db;
         font-size: 12px;
         font-weight: 500;
@@ -196,15 +196,15 @@
     const items = opts.items || DEFAULT_ITEMS;
     const onSelect = opts.onSelect || (() => {});
 
-    const panelR = clamp(corner, 0, CRT_MAX);
-    const shutR = Math.min(19, panelR * (19 / CRT_CORNER));
-    const rowR = Math.min(17, Math.max(0, panelR - 10));
+    const panelR = 16;
+    const shutR = 8;
+    const rowR = 8;
 
     const stage = document.createElement('div');
     stage.className = 'crt-stage';
     stage.style.setProperty('--crt-r', `${panelR}px`);
-    stage.style.setProperty('--crt-shut-r', `${shutR.toFixed(2)}px`);
-    stage.style.setProperty('--crt-row-r', `${rowR.toFixed(2)}px`);
+    stage.style.setProperty('--crt-shut-r', `${shutR}px`);
+    stage.style.setProperty('--crt-row-r', `${rowR}px`);
 
     const menuItemsHtml = items
       .map((it, i) => {
@@ -243,8 +243,8 @@
 
     // measure text width for snug pill sizing
     const updatePillWidth = () => {
-      const sayW = (sayEl?.offsetWidth || 56) + 1;
-      const pillW = 18 + 8 + sayW + 34;
+      const sayW = (sayEl?.offsetWidth || 48) + 1;
+      const pillW = 14 + 6 + sayW + 24;
       stage.style.setProperty('--pill-w', `${pillW}px`);
     };
 
