@@ -162,6 +162,7 @@ class CameraController {
         if (this.liveCountEl) this.liveCountEl.textContent = '0/0';
         this.updateStatus('Chờ mở buổi học', 'paused');
         this.updateStatusBadge(false);
+        this.updateLessonPillWidth?.();
     }
 
     hideEmptyState() {
@@ -195,6 +196,7 @@ class CameraController {
             this.currentLessonLabel.textContent = `Buổi ngày ${lesson.ngay}`;
         }
         this.updateStatusBadge(isOpen);
+        this.updateLessonPillWidth?.();
     }
 
     stopCamera() {
@@ -521,27 +523,158 @@ class CameraController {
     }
 
     setupLessonMenuDropdown() {
+        const stage = document.getElementById('liquid-lesson-stage');
+        const bodyEl = document.getElementById('liquid-lesson-body');
         const btn = document.getElementById('btn-lesson-menu');
         const menu = document.getElementById('lesson-menu-dropdown');
         const chevron = document.getElementById('lesson-menu-chevron');
         const btnNew = document.getElementById('btn-dropdown-new-lesson');
         if (!btn || !menu) return;
 
+        const spring = {
+            w: { current: 160, target: 160, vel: 0 },
+            h: { current: 30, target: 30, vel: 0 },
+            r: { current: 999, target: 999, vel: 0 }
+        };
+        let raf = 0;
+        let prevNow = 0;
         let isOpen = false;
+        let sinkTimeout = 0;
+
+        const updatePillDims = () => {
+            if (!bodyEl || !stage) return;
+            const w = Math.max(120, btn.offsetWidth + 2);
+            stage.style.width = `${w}px`;
+            if (!isOpen) {
+                spring.w.current = w;
+                spring.w.target = w;
+                spring.h.current = 30;
+                spring.h.target = 30;
+                spring.r.current = 999;
+                spring.r.target = 999;
+                bodyEl.style.width = `${w}px`;
+                bodyEl.style.height = '30px';
+                bodyEl.style.borderRadius = '999px';
+            }
+        };
+
+        const stepAxis = (axis, dt) => {
+            const substeps = 4;
+            const sdt = dt / substeps;
+            for (let s = 0; s < substeps; s++) {
+                const force = -420 * (axis.current - axis.target);
+                const damping = -30 * axis.vel;
+                const accel = (force + damping) / 0.5;
+                axis.vel += accel * sdt;
+                axis.current += axis.vel * sdt;
+            }
+            if (Math.abs(axis.current - axis.target) < 0.05 && Math.abs(axis.vel) < 0.05) {
+                axis.current = axis.target;
+                axis.vel = 0;
+            }
+        };
+
+        const tickSpring = (now) => {
+            if (!bodyEl) return;
+            const dt = prevNow ? Math.min(0.05, (now - prevNow) / 1000) : 1 / 60;
+            prevNow = now;
+
+            stepAxis(spring.w, dt);
+            stepAxis(spring.h, dt);
+            stepAxis(spring.r, dt);
+
+            bodyEl.style.width = `${spring.w.current.toFixed(2)}px`;
+            bodyEl.style.height = `${spring.h.current.toFixed(2)}px`;
+            bodyEl.style.borderRadius = `${spring.r.current.toFixed(2)}px`;
+
+            const settled =
+                spring.w.current === spring.w.target &&
+                spring.h.current === spring.h.target &&
+                spring.r.current === spring.r.target &&
+                spring.w.vel === 0 &&
+                spring.h.vel === 0 &&
+                spring.r.vel === 0;
+
+            if (!settled) {
+                raf = requestAnimationFrame(tickSpring);
+            } else {
+                raf = 0;
+                prevNow = 0;
+            }
+        };
+
+        const animateSpringTo = (targetW, targetH, targetR) => {
+            spring.w.target = targetW;
+            spring.h.target = targetH;
+            spring.r.target = targetR;
+            if (!raf) {
+                prevNow = performance.now();
+                raf = requestAnimationFrame(tickSpring);
+            }
+        };
 
         this.closeLessonMenu = () => {
+            clearTimeout(sinkTimeout);
+            if (stage) {
+                stage.removeAttribute('data-sink');
+                stage.removeAttribute('data-open');
+            }
+            btn.setAttribute('aria-expanded', 'false');
             isOpen = false;
-            menu.classList.remove('opacity-100', 'translate-y-0');
-            menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
             if (chevron) chevron.classList.remove('rotate-180');
+
+            menu.style.opacity = '0';
+            menu.style.pointerEvents = 'none';
+
+            if (bodyEl) {
+                bodyEl.style.background = 'linear-gradient(180deg, #27272a 0%, #18181b 100%)';
+                bodyEl.style.borderColor = '#3f3f46';
+                const w = Math.max(120, btn.offsetWidth + 2);
+                animateSpringTo(w, 30, 999);
+            }
+
+            setTimeout(() => {
+                if (!isOpen) {
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.transform = 'scale(1)';
+                }
+            }, 80);
         };
 
         const openMenu = async () => {
-            isOpen = true;
-            menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
-            menu.classList.add('opacity-100', 'translate-y-0');
-            if (chevron) chevron.classList.add('rotate-180');
-            await this.renderLessonMenuList();
+            if (stage) stage.setAttribute('data-sink', 'true');
+            clearTimeout(sinkTimeout);
+            sinkTimeout = setTimeout(async () => {
+                if (stage) {
+                    stage.removeAttribute('data-sink');
+                    stage.setAttribute('data-open', 'true');
+                }
+                btn.setAttribute('aria-expanded', 'true');
+                isOpen = true;
+                if (chevron) chevron.classList.add('rotate-180');
+
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+                btn.style.transform = 'scale(0.95)';
+
+                if (bodyEl) {
+                    bodyEl.style.background = 'rgba(10, 13, 22, 0.95)';
+                    bodyEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                }
+
+                await this.renderLessonMenuList();
+
+                const panelH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
+                animateSpringTo(320, panelH, 20);
+
+                setTimeout(() => {
+                    if (isOpen) {
+                        menu.style.opacity = '1';
+                        menu.style.pointerEvents = 'auto';
+                    }
+                }, 70);
+            }, 50);
         };
 
         btn.addEventListener('click', (e) => {
@@ -550,8 +683,8 @@ class CameraController {
             else openMenu();
         });
 
-        document.addEventListener('click', (e) => {
-            if (isOpen && !menu.contains(e.target) && !btn.contains(e.target)) {
+        document.addEventListener('pointerdown', (e) => {
+            if (isOpen && stage && !stage.contains(e.target)) {
                 this.closeLessonMenu();
             }
         });
@@ -562,6 +695,12 @@ class CameraController {
                 this.closeLessonMenu();
                 this.ensureTeacherAuth(() => this.openSlideDrawer('lesson'));
             });
+        }
+
+        this.updateLessonPillWidth = updatePillDims;
+        setTimeout(updatePillDims, 100);
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(updatePillDims).catch(() => {});
         }
     }
 

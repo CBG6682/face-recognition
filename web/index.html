@@ -32,6 +32,28 @@
             color: #f4f4f5;
         }
 
+        /* liquid morphing lesson menu */
+        #liquid-lesson-stage {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            user-select: none;
+            z-index: 50;
+        }
+        #liquid-lesson-stage[data-sink="true"] #liquid-lesson-body {
+            transform: scale(0.96);
+        }
+        #liquid-lesson-stage[data-open="true"] {
+            z-index: 90;
+        }
+        #liquid-lesson-stage:not([data-open="true"]):hover #liquid-lesson-body {
+            border-color: #52525b;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 16px rgba(255, 255, 255, 0.08), 0 6px 18px -4px rgba(0, 0, 0, 0.75);
+            filter: brightness(1.08);
+        }
+
         .modal-backdrop { display: none; }
         .modal-backdrop.active { display: flex; }
 
@@ -391,31 +413,32 @@
             </a>
         </div>
 
-        <!-- Center: Lesson Selector Pill & Status -->
-        <div class="flex items-center gap-2 flex-1 justify-center max-w-[520px]" id="lesson-dropdown-container">
-            <div class="relative flex items-center">
-                <button id="btn-lesson-menu" type="button" class="btn btn-secondary inline-flex items-center gap-2 rounded-full px-3.5 h-[30px] text-xs font-semibold cursor-pointer outline-none">
+        <!-- center: lesson selector pill (liquid morphing) -->
+        <div class="flex items-center justify-center flex-1 max-w-[520px]" id="lesson-dropdown-container">
+            <div class="relative flex items-center justify-center" id="liquid-lesson-stage">
+                <!-- liquid morphing background blob -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-10" id="liquid-lesson-blob">
+                    <div id="liquid-lesson-body" class="h-[30px] rounded-full transition-transform duration-100 origin-center" style="background: linear-gradient(180deg, #27272a 0%, #18181b 100%); border: 1px solid #3f3f46; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 4px 12px -3px rgba(0, 0, 0, 0.6); backdrop-filter: blur(24px);"></div>
+                </div>
+
+                <!-- pill state (when closed) -->
+                <button id="btn-lesson-menu" type="button" class="relative z-20 inline-flex items-center gap-2 px-3.5 h-[30px] text-xs font-semibold cursor-pointer outline-none transition-all duration-150" aria-expanded="false">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="kiosk-header-dot" style="display: none;"></span>
                     <span class="text-xs font-semibold text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
                     <span class="text-xs text-[#9dbcff] font-medium whitespace-nowrap" id="kiosk-lesson-date"></span>
-                    <svg class="text-zinc-400 group-hover:text-zinc-200 transition-transform duration-150" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg class="text-zinc-400 group-hover:text-zinc-200 transition-transform duration-150 shrink-0" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
 
-                <!-- Floating Dropdown Menu for Lessons -->
-                <div id="lesson-menu-dropdown" class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 max-w-[90vw] bg-[#0a0d16]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] z-50 transition-all duration-150 opacity-0 pointer-events-none -translate-y-2">
+                <!-- expanded panel state (when open) -->
+                <div id="lesson-menu-dropdown" class="absolute top-0 left-1/2 -translate-x-1/2 w-80 max-w-[90vw] p-2.5 z-30 opacity-0 pointer-events-none transition-opacity duration-150">
                     <div class="px-2.5 py-1.5 flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                        <span>Chọn buổi điểm danh</span>
-                        <button id="btn-dropdown-new-lesson" type="button" class="text-[#9dbcff] hover:text-white font-medium text-xs cursor-pointer">+ Tạo mới</button>
+                        <span>Buổi điểm danh</span>
+                        <button id="btn-dropdown-new-lesson" type="button" class="btn btn-primary text-[11px] h-6 px-2.5 rounded-lg font-medium cursor-pointer shadow-none">+ Tạo mới</button>
                     </div>
-                    <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto mt-1 pr-0.5">
+                    <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto mt-1.5 pr-0.5">
                         <div class="text-xs text-zinc-500 p-3 text-center">Đang tải danh sách...</div>
                     </div>
                 </div>
-            </div>
-
-            <div class="lesson-status-pill badge badge-success inline-flex items-center gap-1.5 h-[30px] px-3 rounded-full text-xs font-semibold whitespace-nowrap shrink-0" id="lesson-status-pill" style="display: none;">
-                <span class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse" id="status-dot"></span>
-                <span id="lesson-status-text">Đang mở</span>
             </div>
         </div>
 
