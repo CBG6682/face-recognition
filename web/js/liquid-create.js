@@ -307,7 +307,10 @@
       }
     };
 
+    let isOpen = false;
+    let sinkTimeout = 0;
     let computedPillW = 92;
+
     const updatePillWidth = () => {
       const sayW = (sayEl?.offsetWidth || 48) + 1;
       computedPillW = 14 + 6 + sayW + 24;
@@ -323,9 +326,6 @@
     if (document.fonts?.ready) {
       document.fonts.ready.then(updatePillWidth).catch(() => {});
     }
-
-    let isOpen = false;
-    let sinkTimeout = 0;
 
     const openMenu = () => {
       stage.setAttribute('data-sink', 'true');
