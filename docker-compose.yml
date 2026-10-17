@@ -36,7 +36,6 @@ services:
             - JWT_SECRET=${JWT_SECRET}
         volumes:
             - ./data:/data
-            - ./web:/app/web
         logging:
             driver: "json-file"
             options:

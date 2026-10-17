@@ -11,3 +11,5 @@ server
 .vscode
 .agents
 .codex
+web/node_modules
+web/dist
