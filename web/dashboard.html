@@ -60,7 +60,7 @@
             letter-spacing: 0.06em;
             color: #71717a;
             font-family: 'Geist Mono', monospace;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: none;
         }
 
         td {
@@ -68,7 +68,7 @@
             font-size: 0.8125rem;
             vertical-align: middle;
             color: #f4f4f5;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+            border-bottom: none;
         }
 
         tbody tr {
@@ -118,14 +118,14 @@
             color: #fff;
             background: rgba(10, 13, 22, 0.95);
             pointer-events: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: none;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .toast.toast-success { border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
-        .toast.toast-error { border-color: rgba(244, 63, 94, 0.3); color: #fb7185; }
-        .toast.toast-info { border-color: rgba(157, 188, 255, 0.3); color: #9dbcff; }
+        .toast.toast-success { color: #34d399; }
+        .toast.toast-error { color: #fb7185; }
+        .toast.toast-info { color: #9dbcff; }
 
         /* unified raised tactile button styles */
         .btn {
@@ -290,13 +290,13 @@
             flex-shrink: 0;
             display: inline-block;
         }
-        .badge-success { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.28); color: #34d399; }
+        .badge-success { background: rgba(16, 185, 129, 0.14); color: #34d399; }
         .badge-success .badge-dot { background: #34d399; }
-        .badge-neutral { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: #a1a1aa; }
+        .badge-neutral { background: rgba(255, 255, 255, 0.06); color: #a1a1aa; }
         .badge-neutral .badge-dot { background: #71717a; }
-        .badge-danger { background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); color: #fb7185; }
+        .badge-danger { background: rgba(244, 63, 94, 0.14); color: #fb7185; }
         .badge-danger .badge-dot { background: #fb7185; }
-        .badge-warning { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); color: #fbbf24; }
+        .badge-warning { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
         .badge-warning .badge-dot { background: #fbbf24; }
 
         .attendance-progress { display: flex; flex-direction: column; gap: 4px; min-width: 110px; }
@@ -309,8 +309,8 @@
             align-items: center; 
             gap: 5px; 
             padding: 3px 9px; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
+            background: rgba(255, 255, 255, 0.06); 
+            border: none; 
             border-radius: 8px; 
             color: #d4d4d8; 
             font-size: 0.75rem; 
@@ -322,7 +322,6 @@
         .class-badge-link:hover { 
             background: rgba(42, 70, 144, 0.35); 
             color: #9dbcff; 
-            border-color: rgba(157, 188, 255, 0.35); 
         }
 
         .row-actions { 
@@ -355,7 +354,7 @@
 
         .prephub-card {
             background: rgba(10, 13, 22, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: none;
             border-radius: 20px;
             padding: 22px 24px;
             position: relative;
@@ -436,7 +435,7 @@
     </div>
 
     <!-- Top Navigation Header -->
-    <header class="sticky top-0 z-50 h-[56px] min-h-[56px] bg-[#07090e]/85 backdrop-blur-xl border-b border-white/[0.08]">
+    <header class="sticky top-0 z-50 h-[56px] min-h-[56px] bg-[#07090e]/85 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-full flex justify-between items-center">
             <!-- Brand -->
             <div class="flex items-center gap-2.5">
@@ -446,13 +445,13 @@
                         <span class="text-xs font-bold tracking-tight text-white flex items-center gap-1">
                             <span>Face</span><b class="text-[#9dbcff] font-bold">Attendance</b>
                         </span>
-                        <span class="text-[9px] font-semibold text-[#9dbcff]/80 bg-[#2a4690]/25 px-1.5 py-0.5 rounded border border-[#9dbcff]/20 tracking-wider">PORTAL</span>
+                        <span class="text-[9px] font-semibold text-[#9dbcff]/80 bg-[#2a4690]/25 px-1.5 py-0.5 rounded tracking-wider">PORTAL</span>
                     </div>
                 </a>
             </div>
 
             <!-- Root Tabs: Lớp học & Môn học & Sinh viên -->
-            <nav class="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
+            <nav class="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl">
                 <a href="#classes" class="nav-tab active" data-tab="classes" onclick="dashboard.switchMainTab('classes'); return false;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -568,7 +567,7 @@
                 </div>
 
                 <!-- Classes Main Card -->
-                <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
+                <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
                     <!-- Classes Table Toolbar -->
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div>
@@ -578,8 +577,8 @@
                             <p class="text-xs text-zinc-400">Bấm vào bất kỳ lớp nào để quản lý buổi học, điểm danh và sinh viên</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="filter-class-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/10 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff]/50 focus:ring-1 focus:ring-[#2a4690]/30 transition duration-150 placeholder:text-zinc-600" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
-                            <select id="filter-class-subject" class="px-3.5 py-1.5 bg-[#0a0d16] border border-white/10 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 cursor-pointer" onchange="dashboard.filterClassesTable()">
+                            <input type="text" id="filter-class-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] focus:ring-1 focus:ring-[#9dbcff]/30 transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm tên lớp hoặc môn..." oninput="dashboard.filterClassesTable()">
+                            <select id="filter-class-subject" class="px-3.5 py-1.5 bg-white/[0.04] border-none rounded-xl text-white text-xs outline-none transition duration-150 cursor-pointer" onchange="dashboard.filterClassesTable()">
                                 <option value="" class="bg-[#04060a] text-white">Tất cả môn học</option>
                             </select>
                             <button class="btn btn-primary" onclick="dashboard.openModal('modal-add-class')">
@@ -589,7 +588,7 @@
                     </div>
 
                     <!-- Classes Table -->
-                    <div class="w-full overflow-x-auto rounded-xl border border-white/[0.06]">
+                    <div class="w-full overflow-x-auto rounded-xl">
                         <table class="w-full text-left text-sm text-zinc-200">
                             <thead>
                                 <tr class="bg-white/[0.02]">
@@ -614,7 +613,7 @@
             <div id="view-class-detail" style="display: none;">
                 <!-- Breadcrumb Bar -->
                 <div class="flex items-center gap-2 mb-3">
-                    <button class="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] hover:border-white/15 transition duration-150 cursor-pointer" onclick="dashboard.backToClassesList()">
+                    <button class="btn btn-secondary btn-sm" onclick="dashboard.backToClassesList()">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
@@ -626,7 +625,7 @@
                 </div>
 
                 <!-- Class Detail Hero Banner -->
-                <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)] flex flex-wrap justify-between items-center gap-4">
+                <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)] flex flex-wrap justify-between items-center gap-4">
                     <div>
                         <div class="flex items-center gap-2.5 mb-1">
                             <h2 id="detail-class-name" class="text-xl sm:text-2xl font-bold text-white tracking-tight">Tên Lớp</h2>
@@ -639,11 +638,11 @@
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             <span>Điểm danh hôm nay</span>
                         </button>
-                        <div class="text-right pl-3 border-l border-white/[0.08]">
+                        <div class="text-right pl-3">
                             <div class="text-base font-bold text-white leading-none tabular-nums" id="detail-stat-students">0 SV</div>
                             <div class="text-[10px] font-medium text-zinc-400 mt-1" id="detail-stat-faces">0 có mặt</div>
                         </div>
-                        <div class="text-right pl-3 border-l border-white/[0.08]">
+                        <div class="text-right pl-3">
                             <div class="text-base font-bold text-[#9dbcff] leading-none tabular-nums" id="detail-stat-lessons">0 buổi</div>
                             <div class="text-[10px] font-medium text-zinc-400 mt-1">Tổng số buổi</div>
                         </div>
@@ -651,7 +650,7 @@
                 </div>
 
                 <!-- Subnav Tabs: Buổi học vs Sinh viên -->
-                <div class="flex items-center gap-1.5 mb-3 bg-white/[0.04] p-1 rounded-xl w-fit border border-white/[0.08]">
+                <div class="flex items-center gap-1.5 mb-3 bg-white/[0.04] p-1 rounded-xl w-fit">
                     <button class="subnav-tab active" data-subtab="lessons" onclick="dashboard.switchSubTab('lessons')">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -674,7 +673,7 @@
 
                 <!-- SUB-PANE 1: BUỔI HỌC CỦA LỚP NÀY -->
                 <div id="subpane-lessons" class="sub-pane active">
-                    <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
+                    <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
                         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-white tracking-tight">
@@ -687,7 +686,7 @@
                             </button>
                         </div>
 
-                        <div class="w-full overflow-x-auto rounded-xl border border-white/[0.06]">
+                        <div class="w-full overflow-x-auto rounded-xl">
                             <table class="w-full text-left text-sm text-zinc-200">
                                 <thead>
                                     <tr class="bg-white/[0.02]">
@@ -710,7 +709,7 @@
 
                 <!-- SUB-PANE 2: SINH VIÊN CỦA LỚP NÀY -->
                 <div id="subpane-students" class="sub-pane">
-                    <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
+                    <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
                         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-white tracking-tight">
@@ -719,12 +718,12 @@
                                 <p class="text-xs text-zinc-400">Đăng ký nhận diện khuôn mặt qua webcam hoặc tải file CSV</p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <div class="flex gap-1 bg-white/[0.04] p-1 rounded-lg border border-white/[0.06]">
+                                <div class="flex gap-1 bg-white/[0.04] p-1 rounded-lg">
                                     <button class="filter-pill active px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="all" onclick="dashboard.filterStudents('all')">Tất cả</button>
                                     <button class="filter-pill px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="has_face" onclick="dashboard.filterStudents('has_face')">Đã có mặt</button>
                                     <button class="filter-pill px-2.5 py-1 text-xs font-medium rounded-md text-zinc-400 hover:text-white transition duration-150 [&.active]:bg-[#2a4690] [&.active]:text-white [&.active]:font-semibold cursor-pointer" data-filter="no_face" onclick="dashboard.filterStudents('no_face')">Chưa có mặt</button>
                                 </div>
-                                <input type="text" id="filter-student-search" class="w-36 px-3 py-1 bg-white/[0.04] border border-white/10 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600 font-sans" placeholder="Tìm MSSV, Tên..." oninput="dashboard.renderStudentsTable()">
+                                <input type="text" id="filter-student-search" class="w-36 px-3 py-1 bg-white/[0.04] border border-white/20 rounded-lg text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm MSSV, Tên..." oninput="dashboard.renderStudentsTable()">
                                 <button class="btn btn-secondary btn-sm" onclick="dashboard.openModal('modal-import-csv')">
                                     Import CSV
                                 </button>
@@ -734,7 +733,7 @@
                             </div>
                         </div>
 
-                        <div class="w-full overflow-x-auto rounded-xl border border-white/[0.06]">
+                        <div class="w-full overflow-x-auto rounded-xl">
                             <table class="w-full text-left text-sm text-zinc-200">
                                 <thead>
                                     <tr class="bg-white/[0.02]">
@@ -760,7 +759,7 @@
 
         <!-- TAB 2: MÔN HỌC (SUBJECTS & REVERSE LOOKUP) -->
         <section id="tab-subjects" class="tab-pane">
-            <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
+            <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <div>
                         <h2 class="text-base font-bold text-white tracking-tight">
@@ -769,14 +768,14 @@
                         <p class="text-xs text-zinc-400">Quản lý danh sách các môn giảng dạy và truy xuất ngược các lớp thuộc môn</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="filter-subject-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/10 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600" placeholder="Tìm mã hoặc tên môn..." oninput="dashboard.filterSubjectsTable()">
+                        <input type="text" id="filter-subject-search" class="w-48 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm mã hoặc tên môn..." oninput="dashboard.filterSubjectsTable()">
                         <button class="btn btn-primary" onclick="dashboard.openModal('modal-add-subject')">
                             + Thêm môn học
                         </button>
                     </div>
                 </div>
 
-                <div class="w-full overflow-x-auto rounded-xl border border-white/[0.06]">
+                <div class="w-full overflow-x-auto rounded-xl">
                     <table class="w-full text-left text-sm text-zinc-200">
                         <thead>
                             <tr class="bg-white/[0.02]">
@@ -797,7 +796,7 @@
 
         <!-- TAB 3: SINH VIÊN (GLOBAL STUDENTS DIRECTORY) -->
         <section id="tab-students" class="tab-pane">
-            <div class="bg-[#0a0d16]/80 border border-white/[0.08] backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
+            <div class="bg-[#0a0d16]/80 backdrop-blur-xl rounded-[24px] p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_50px_rgba(0,0,0,0.7)]">
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <div>
                         <h2 class="text-base font-bold text-white tracking-tight">
@@ -806,12 +805,12 @@
                         <p class="text-xs text-zinc-400">Dữ liệu sinh viên trên toàn hệ thống và trạng thái đăng ký khuôn mặt</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="filter-all-student-search" class="w-56 px-3.5 py-1.5 bg-white/[0.04] border border-white/10 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff]/50 transition duration-150 placeholder:text-zinc-600 font-sans" placeholder="Tìm theo tên hoặc MSSV..." oninput="dashboard.filterAllStudentsTable()">
-                        <span id="all-students-count-badge" class="px-2.5 py-1 bg-white/[0.05] border border-white/[0.08] text-xs font-semibold text-[#9dbcff] rounded-lg tabular-nums">0 sinh viên</span>
+                        <input type="text" id="filter-all-student-search" class="w-56 px-3.5 py-1.5 bg-white/[0.04] border border-white/20 rounded-xl text-white text-xs outline-none focus:border-[#9dbcff] transition duration-150 placeholder:text-zinc-500 font-sans" placeholder="Tìm theo tên hoặc MSSV..." oninput="dashboard.filterAllStudentsTable()">
+                        <span id="all-students-count-badge" class="px-2.5 py-1 bg-white/[0.05] text-xs font-semibold text-[#9dbcff] rounded-lg tabular-nums">0 sinh viên</span>
                     </div>
                 </div>
 
-                <div class="w-full overflow-x-auto rounded-xl border border-white/[0.06]">
+                <div class="w-full overflow-x-auto rounded-xl">
                     <table class="w-full text-left text-sm text-zinc-200">
                         <thead>
                             <tr class="bg-white/[0.02]">
@@ -835,8 +834,8 @@
 
     <!-- Modal: Thêm Môn học -->
     <div id="modal-add-subject" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <h3 class="text-sm font-semibold text-white tracking-tight">Thêm Môn học Mới</h3>
                 <button class="text-zinc-500 hover:text-white text-lg leading-none cursor-pointer" onclick="dashboard.closeModal('modal-add-subject')">&times;</button>
             </div>
@@ -857,8 +856,8 @@
 
     <!-- Modal: Thêm Lớp học -->
     <div id="modal-add-class" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[460px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[460px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <div>
                     <h3 class="text-sm font-semibold text-white tracking-tight">Tạo Lớp học Mới</h3>
                     <p class="text-xs text-zinc-400">Tạo lớp, chọn môn và nạp danh sách SV</p>
@@ -901,8 +900,8 @@
 
     <!-- Modal: Thêm Sinh viên -->
     <div id="modal-add-student" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <h3 class="text-sm font-semibold text-white tracking-tight">Thêm Sinh viên vào Lớp</h3>
                 <button class="text-zinc-500 hover:text-white text-lg leading-none cursor-pointer" onclick="dashboard.closeModal('modal-add-student')">&times;</button>
             </div>
@@ -923,8 +922,8 @@
 
     <!-- Modal: Import CSV -->
     <div id="modal-import-csv" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[520px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[520px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <div>
                     <h3 class="text-sm font-semibold text-white tracking-tight">Nạp Danh sách Sinh viên</h3>
                     <p class="text-xs text-zinc-400" id="import-csv-class-name">Nạp danh sách lớp nhanh</p>
@@ -990,8 +989,8 @@
 
     <!-- Modal: Tạo Buổi học -->
     <div id="modal-add-lesson" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[420px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <h3 class="text-sm font-semibold text-white tracking-tight">Tạo Buổi học Mới</h3>
                 <button class="text-zinc-500 hover:text-white text-lg leading-none cursor-pointer" onclick="dashboard.closeModal('modal-add-lesson')">&times;</button>
             </div>
@@ -1018,8 +1017,8 @@
 
     <!-- Modal: Đăng ký Khuôn mặt -->
     <div id="modal-face-reg" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[480px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[480px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <div>
                     <h3 class="text-sm font-semibold text-white tracking-tight">Đăng ký Khuôn mặt</h3>
                     <p class="text-xs text-[#9dbcff] font-semibold tracking-wide" id="face-modal-sv-name">Sinh viên</p>
@@ -1045,8 +1044,8 @@
 
     <!-- Modal: Sổ Điểm danh Chi tiết -->
     <div id="modal-attendance" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[760px] p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[760px] p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <div>
                     <h3 class="text-sm font-semibold text-white tracking-tight" id="att-modal-title">Sổ Điểm danh</h3>
                     <p class="text-xs text-zinc-400">Trạng thái điểm danh sinh viên trong buổi học</p>
@@ -1081,8 +1080,8 @@
 
     <!-- Modal: Xem Khuôn mặt Sinh viên -->
     <div id="modal-view-face" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0d16] border border-white/[0.1] rounded-[24px] w-full max-w-[380px] p-5 shadow-2xl text-center">
-            <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-white/[0.08]">
+        <div class="bg-[#0a0d16] rounded-[24px] w-full max-w-[380px] p-5 shadow-2xl text-center">
+            <div class="flex items-center justify-between mb-3 pb-2.5">
                 <div class="text-left">
                     <h3 class="text-sm font-semibold text-white tracking-tight" id="view-face-title">Ảnh Khuôn mặt</h3>
                     <p class="text-xs text-[#9dbcff] font-semibold tracking-wide" id="view-face-subtitle">Sinh viên</p>
