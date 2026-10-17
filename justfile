@@ -27,3 +27,8 @@ test:
 
 dev:
     @just api && just infer
+
+# dev: react frontend with vite and proxy to api:8080
+web-dev:
+    @cd frontend && bun run dev
+
