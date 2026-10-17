@@ -50,7 +50,7 @@
         width: var(--pill-w, 92px);
         height: 30px;
         background: linear-gradient(180deg, #3253a6 0%, #1f366e 100%);
-        border: 1px solid rgba(157, 188, 255, 0.35);
+        border: none;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px -2px rgba(42, 70, 144, 0.45);
         border-radius: var(--crt-shut-r, 8px);
         transform-origin: top left;
@@ -73,7 +73,7 @@
         border-radius: var(--crt-r, 16px);
         background: rgba(10, 14, 25, 0.95);
         backdrop-filter: blur(24px);
-        border: 1px solid rgba(157, 188, 255, 0.22);
+        border: none;
         box-shadow: 0 18px 42px -8px rgba(0, 0, 0, 0.85), 0 0 22px rgba(42, 70, 144, 0.35);
       }
       .crt-pill {

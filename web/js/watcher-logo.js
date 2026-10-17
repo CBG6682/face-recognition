@@ -74,12 +74,7 @@
       }
       .eyt-body-path {
         fill: url(#eyt-default-grad);
-        stroke: rgba(157, 188, 255, 0.38);
-        stroke-width: 1.5;
-        transition: stroke 0.2s ease;
-      }
-      .eyt-wrap:hover .eyt-body-path {
-        stroke: rgba(157, 188, 255, 0.65);
+        stroke: none;
       }
       .eyt-eye-rect {
         fill: #ffffff;
