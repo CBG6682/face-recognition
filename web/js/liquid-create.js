@@ -19,10 +19,6 @@
     { icon: 'lesson', label: 'Tạo buổi học', action: 'create-lesson' }
   ];
 
-  const CRT_CORNER = 20;
-  const CRT_MAX = 40;
-  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-
   let styleInjected = false;
   function injectStyles() {
     if (styleInjected || typeof document === 'undefined') return;
@@ -54,10 +50,8 @@
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px -2px rgba(42, 70, 144, 0.45);
         border-radius: var(--crt-shut-r, 8px);
         transform-origin: top left;
-        transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                    height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                    border-radius 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 0.12s cubic-bezier(0.16, 1, 0.3, 1),
+        will-change: width, height, border-radius;
+        transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1),
                     background 0.2s ease,
                     box-shadow 0.2s ease;
       }
@@ -68,9 +62,6 @@
         z-index: 90;
       }
       .crt-stage[data-open="true"] .crt-body {
-        width: 206px;
-        height: 160px;
-        border-radius: var(--crt-r, 16px);
         background: rgba(10, 14, 25, 0.95);
         backdrop-filter: blur(24px);
         border: none;
@@ -91,7 +82,9 @@
         font-weight: 500;
         cursor: pointer;
         outline: none;
-        transition: opacity 0.15s ease, transform 0.15s ease;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition: opacity 0.14s ease 0.08s, transform 0.14s ease 0.08s;
       }
       .crt-pill:hover {
         color: #ffffff;
@@ -99,7 +92,8 @@
       .crt-stage[data-open="true"] .crt-pill {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-4px);
+        transform: translateY(-4px) scale(0.95);
+        transition: opacity 0.08s ease, transform 0.08s ease;
       }
       .crt-glyph {
         display: flex;
@@ -133,11 +127,15 @@
         z-index: 3;
         pointer-events: none;
         opacity: 0;
-        transition: opacity 0.16s ease;
+        overflow: hidden;
+        transform: scale(0.96);
+        transition: opacity 0.1s ease-out, transform 0.12s ease-out;
       }
       .crt-stage[data-open="true"] .crt-panel {
         pointer-events: auto;
         opacity: 1;
+        transform: scale(1);
+        transition: opacity 0.14s ease 0.04s, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) 0.02s;
       }
       .crt-menu {
         list-style: none;
@@ -150,15 +148,20 @@
         justify-content: center;
       }
       .crt-item {
-        transform: translateY(6px);
+        transform: translateY(4px);
         opacity: 0;
-        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.1s ease-out, transform 0.1s ease-out;
       }
       .crt-stage[data-open="true"] .crt-item {
         transform: translateY(0);
         opacity: 1;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
+      .crt-stage[data-open="true"] .crt-item:nth-child(1) { transition-delay: 26ms; }
+      .crt-stage[data-open="true"] .crt-item:nth-child(2) { transition-delay: 48ms; }
+      .crt-stage[data-open="true"] .crt-item:nth-child(3) { transition-delay: 70ms; }
+      .crt-stage[data-open="true"] .crt-item:nth-child(4) { transition-delay: 92ms; }
       .crt-item-btn {
         width: 100%;
         height: 34px;
@@ -191,7 +194,6 @@
   function createLiquidMenu(container, opts = {}) {
     injectStyles();
 
-    const corner = opts.corner ?? CRT_CORNER;
     const label = opts.label || 'Tạo mới';
     const items = opts.items || DEFAULT_ITEMS;
     const onSelect = opts.onSelect || (() => {});
@@ -207,10 +209,10 @@
     stage.style.setProperty('--crt-row-r', `${rowR}px`);
 
     const menuItemsHtml = items
-      .map((it, i) => {
+      .map((it) => {
         const iconSvg = ICONS[it.icon] || it.iconHtml || ICONS.plus;
         return `
-          <li class="crt-item" style="transition-delay: ${30 + i * 22}ms">
+          <li class="crt-item">
             <button class="crt-item-btn" type="button" data-action="${it.action || ''}">
               ${iconSvg}
               <span>${it.label}</span>
@@ -240,12 +242,81 @@
     const sayEl = stage.querySelector('.crt-say span');
     const pillBtn = stage.querySelector('.crt-pill');
     const panelEl = stage.querySelector('.crt-panel');
+    const bodyEl = stage.querySelector('.crt-body');
 
-    // measure text width for snug pill sizing
+    // spring physics state corresponding to framer motion liquid still
+    const spring = {
+      w: { current: 92, target: 92, vel: 0 },
+      h: { current: 30, target: 30, vel: 0 },
+      r: { current: 8, target: 8, vel: 0 }
+    };
+    let raf = 0;
+    let prevNow = 0;
+
+    const stepAxis = (axis, dt) => {
+      const substeps = 4;
+      const sdt = dt / substeps;
+      for (let s = 0; s < substeps; s++) {
+        const force = -420 * (axis.current - axis.target);
+        const damping = -30 * axis.vel;
+        const accel = (force + damping) / 0.5;
+        axis.vel += accel * sdt;
+        axis.current += axis.vel * sdt;
+      }
+      if (Math.abs(axis.current - axis.target) < 0.05 && Math.abs(axis.vel) < 0.05) {
+        axis.current = axis.target;
+        axis.vel = 0;
+      }
+    };
+
+    const tickSpring = (now) => {
+      const dt = prevNow ? Math.min(0.05, (now - prevNow) / 1000) : 1 / 60;
+      prevNow = now;
+
+      stepAxis(spring.w, dt);
+      stepAxis(spring.h, dt);
+      stepAxis(spring.r, dt);
+
+      bodyEl.style.width = `${spring.w.current.toFixed(2)}px`;
+      bodyEl.style.height = `${spring.h.current.toFixed(2)}px`;
+      bodyEl.style.borderRadius = `${spring.r.current.toFixed(2)}px`;
+
+      const settled =
+        spring.w.current === spring.w.target &&
+        spring.h.current === spring.h.target &&
+        spring.r.current === spring.r.target &&
+        spring.w.vel === 0 &&
+        spring.h.vel === 0 &&
+        spring.r.vel === 0;
+
+      if (!settled) {
+        raf = requestAnimationFrame(tickSpring);
+      } else {
+        raf = 0;
+        prevNow = 0;
+      }
+    };
+
+    const animateSpringTo = (targetW, targetH, targetR) => {
+      spring.w.target = targetW;
+      spring.h.target = targetH;
+      spring.r.target = targetR;
+      if (!raf) {
+        prevNow = performance.now();
+        raf = requestAnimationFrame(tickSpring);
+      }
+    };
+
+    let computedPillW = 92;
     const updatePillWidth = () => {
       const sayW = (sayEl?.offsetWidth || 48) + 1;
-      const pillW = 14 + 6 + sayW + 24;
-      stage.style.setProperty('--pill-w', `${pillW}px`);
+      computedPillW = 14 + 6 + sayW + 24;
+      stage.style.setProperty('--pill-w', `${computedPillW}px`);
+      if (!isOpen) {
+        spring.w.current = computedPillW;
+        spring.w.target = computedPillW;
+        bodyEl.style.width = `${computedPillW}px`;
+      }
     };
 
     updatePillWidth();
@@ -264,6 +335,7 @@
         stage.setAttribute('data-open', 'true');
         pillBtn.setAttribute('aria-expanded', 'true');
         isOpen = true;
+        animateSpringTo(206, 160, 16);
       }, 60);
     };
 
@@ -273,6 +345,7 @@
       stage.removeAttribute('data-open');
       pillBtn.setAttribute('aria-expanded', 'false');
       isOpen = false;
+      animateSpringTo(computedPillW, 30, 8);
     };
 
     pillBtn.addEventListener('click', (e) => {
@@ -313,6 +386,7 @@
       open: openMenu,
       close: closeMenu,
       destroy() {
+        if (raf) cancelAnimationFrame(raf);
         clearTimeout(sinkTimeout);
         document.removeEventListener('pointerdown', handleOutsideClick);
       }
@@ -328,7 +402,6 @@
       createLiquidMenu(el, {
         label,
         onSelect: (item, action) => {
-          // dispatch global custom event or trigger dashboard handlers
           const event = new CustomEvent('liquid-create-action', {
             detail: { item, action },
             bubbles: true
