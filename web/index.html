@@ -32,25 +32,69 @@
             color: #f4f4f5;
         }
 
-        /* liquid morphing lesson menu */
-        #liquid-lesson-stage {
+        /* hide scrollbars globally */
+        * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+        *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        /* fluid hardware-accelerated lesson menu dropdown */
+        #lesson-dropdown-container {
             position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 30px;
-            user-select: none;
-            z-index: 50;
         }
-        #liquid-lesson-stage[data-sink="true"] #liquid-lesson-body {
-            transform: scale(0.96);
+        #btn-lesson-menu {
+            transition: all 0.24s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        #liquid-lesson-stage[data-open="true"] {
-            z-index: 90;
+        #btn-lesson-menu[aria-expanded="true"] {
+            border-color: rgba(99, 140, 245, 0.5);
+            background: linear-gradient(180deg, #2a2c33 0%, #1c1d22 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 8px rgba(0, 0, 0, 0.45);
         }
-        #liquid-lesson-stage:not([data-open="true"]):hover #liquid-lesson-body {
-            border-color: #4b4d57;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 3px 8px rgba(0, 0, 0, 0.45);
+        #btn-lesson-menu[aria-expanded="true"] #lesson-menu-chevron {
+            transform: rotate(180deg);
+            color: #9dbcff;
+        }
+        #lesson-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform-origin: top center;
+            transform: translateX(-50%) translateY(-6px) scale(0.96);
+            width: 320px;
+            max-width: 92vw;
+            background: rgba(14, 18, 28, 0.96);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+                        visibility 0.26s;
+            z-index: 100;
+        }
+        #lesson-menu-dropdown.is-open {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+            pointer-events: auto;
+            visibility: visible;
+        }
+        #lesson-menu-dropdown.is-open .lesson-menu-item {
+            animation: menuItemFadeIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes menuItemFadeIn {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-backdrop { display: none; }
@@ -393,31 +437,24 @@
             </a>
         </div>
 
-        <!-- center: lesson selector pill (liquid morphing) -->
-        <div class="flex items-center justify-center flex-1 max-w-[520px]" id="lesson-dropdown-container">
-            <div class="relative flex items-center justify-center" id="liquid-lesson-stage">
-                <!-- liquid morphing background blob -->
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-10" id="liquid-lesson-blob">
-                    <div id="liquid-lesson-body" class="h-[30px] rounded-full transition-transform duration-100 origin-center" style="background: linear-gradient(180deg, #222328 0%, #16171b 100%); border: 1px solid #32343c; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.4); backdrop-filter: blur(24px);"></div>
+        <!-- center: lesson selector pill and dropdown -->
+        <div class="relative flex items-center justify-center flex-1 max-w-[520px]" id="lesson-dropdown-container">
+            <!-- pill button -->
+            <button id="btn-lesson-menu" type="button" class="btn btn-secondary inline-flex items-center gap-2 px-3.5 h-[30px] rounded-full text-xs font-semibold cursor-pointer outline-none transition-transform duration-100 active:scale-95" aria-expanded="false">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="kiosk-header-dot" style="display: none;"></span>
+                <span class="text-xs font-semibold text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
+                <span class="text-xs text-[#9dbcff] font-medium whitespace-nowrap" id="kiosk-lesson-date"></span>
+                <svg class="text-zinc-400 group-hover:text-zinc-200 transition-transform duration-150 shrink-0" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <!-- fast hardware-accelerated dropdown menu -->
+            <div id="lesson-menu-dropdown" class="flex flex-col">
+                <div class="px-2 py-1 flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+                    <span>Buổi điểm danh</span>
+                    <button id="btn-dropdown-new-lesson" type="button" class="btn btn-primary text-[11px] h-6 px-2.5 rounded-lg font-medium cursor-pointer shadow-none">+ Tạo mới</button>
                 </div>
-
-                <!-- pill state (when closed) -->
-                <button id="btn-lesson-menu" type="button" class="relative z-20 inline-flex items-center gap-2 px-3.5 h-[30px] text-xs font-semibold cursor-pointer outline-none transition-all duration-150" aria-expanded="false">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" id="kiosk-header-dot" style="display: none;"></span>
-                    <span class="text-xs font-semibold text-zinc-200 whitespace-nowrap" id="kiosk-class-name">Chưa mở buổi học</span>
-                    <span class="text-xs text-[#9dbcff] font-medium whitespace-nowrap" id="kiosk-lesson-date"></span>
-                    <svg class="text-zinc-400 group-hover:text-zinc-200 transition-transform duration-150 shrink-0" id="lesson-menu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-
-                <!-- expanded panel state (when open) -->
-                <div id="lesson-menu-dropdown" class="absolute top-0 left-1/2 -translate-x-1/2 w-80 max-w-[90vw] p-2.5 z-30 opacity-0 pointer-events-none transition-opacity duration-150">
-                    <div class="px-2.5 py-1.5 flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                        <span>Buổi điểm danh</span>
-                        <button id="btn-dropdown-new-lesson" type="button" class="btn btn-primary text-[11px] h-6 px-2.5 rounded-lg font-medium cursor-pointer shadow-none">+ Tạo mới</button>
-                    </div>
-                    <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto mt-1.5 pr-0.5">
-                        <div class="text-xs text-zinc-500 p-3 text-center">Đang tải danh sách...</div>
-                    </div>
+                <div id="lesson-menu-list" class="flex flex-col gap-1 max-h-64 overflow-y-auto mt-1.5 pr-0.5">
+                    <div class="text-xs text-zinc-500 p-3 text-center">Đang tải danh sách...</div>
                 </div>
             </div>
         </div>

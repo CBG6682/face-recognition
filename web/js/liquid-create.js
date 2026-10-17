@@ -35,14 +35,8 @@
         user-select: none;
         z-index: 50;
       }
-      .crt-blobs {
-        position: absolute;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 1;
-      }
       .crt-body {
+        position: relative;
         width: var(--pill-w, 92px);
         height: 30px;
         background: linear-gradient(180deg, #2a4897 0%, #1e3674 100%);
@@ -50,26 +44,31 @@
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 2px 6px rgba(0, 0, 0, 0.35);
         border-radius: var(--crt-shut-r, 8px);
         transform-origin: top left;
+        overflow: hidden;
         will-change: width, height, border-radius;
-        transition: transform 0.1s ease,
-                    background 0.18s ease,
-                    box-shadow 0.18s ease;
-      }
-      .crt-stage[data-sink="true"] .crt-body {
-        transform: scale(0.97);
+        transition: width 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+                    height 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+                    border-radius 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+                    background 0.22s ease,
+                    box-shadow 0.26s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .crt-stage[data-open="true"] {
         z-index: 90;
       }
       .crt-stage[data-open="true"] .crt-body {
+        width: 206px;
+        height: 160px;
+        border-radius: 14px;
         background: rgba(11, 15, 25, 0.96);
         backdrop-filter: blur(24px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
       }
       .crt-pill {
-        position: relative;
-        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         height: 30px;
         display: inline-flex;
         align-items: center;
@@ -84,7 +83,9 @@
         outline: none;
         opacity: 1;
         transform: translateY(0) scale(1);
-        transition: opacity 0.1s ease, transform 0.1s ease;
+        transition: opacity 0.14s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 2;
+        box-sizing: border-box;
       }
       .crt-pill:hover {
         color: #ffffff;
@@ -92,8 +93,8 @@
       .crt-stage[data-open="true"] .crt-pill {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-2px) scale(0.96);
-        transition: opacity 0.08s ease, transform 0.08s ease;
+        transform: translateY(-4px) scale(0.95);
+        transition: opacity 0.1s ease, transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .crt-glyph {
         display: flex;
@@ -127,14 +128,15 @@
         z-index: 3;
         pointer-events: none;
         opacity: 0;
-        overflow: hidden;
-        transform: scale(0.97);
-        transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+        transform: translateY(6px) scale(0.97);
+        transition: opacity 0.1s ease, transform 0.14s ease;
       }
       .crt-stage[data-open="true"] .crt-panel {
         pointer-events: auto;
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
+        transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+                    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.06s;
       }
       .crt-menu {
         list-style: none;
@@ -147,9 +149,9 @@
         justify-content: center;
       }
       .crt-item {
-        transform: translateY(2px);
+        transform: translateY(3px);
         opacity: 0;
-        transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+        transition: opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .crt-stage[data-open="true"] .crt-item {
         transform: translateY(0);
@@ -216,17 +218,16 @@
       .join('');
 
     stage.innerHTML = `
-      <div class="crt-blobs" aria-hidden="true">
-        <div class="crt-body"></div>
-      </div>
-      <button class="crt-pill" type="button" aria-expanded="false">
-        <span class="crt-glyph" aria-hidden="true">${ICONS.plus}</span>
-        <span class="crt-say"><span>${label}</span></span>
-      </button>
-      <div class="crt-panel">
-        <ul class="crt-menu">
-          ${menuItemsHtml}
-        </ul>
+      <div class="crt-body">
+        <button class="crt-pill" type="button" aria-expanded="false">
+          <span class="crt-glyph" aria-hidden="true">${ICONS.plus}</span>
+          <span class="crt-say"><span>${label}</span></span>
+        </button>
+        <div class="crt-panel">
+          <ul class="crt-menu">
+            ${menuItemsHtml}
+          </ul>
+        </div>
       </div>
     `;
 
@@ -237,69 +238,6 @@
     const panelEl = stage.querySelector('.crt-panel');
     const bodyEl = stage.querySelector('.crt-body');
 
-    // spring physics state corresponding to framer motion liquid still
-    const spring = {
-      w: { current: 92, target: 92, vel: 0 },
-      h: { current: 30, target: 30, vel: 0 },
-      r: { current: 8, target: 8, vel: 0 }
-    };
-    let raf = 0;
-    let prevNow = 0;
-
-    const stepAxis = (axis, dt) => {
-      const substeps = 4;
-      const sdt = dt / substeps;
-      for (let s = 0; s < substeps; s++) {
-        const force = -750 * (axis.current - axis.target);
-        const damping = -48 * axis.vel;
-        const accel = (force + damping) / 0.42;
-        axis.vel += accel * sdt;
-        axis.current += axis.vel * sdt;
-      }
-      if (Math.abs(axis.current - axis.target) < 0.05 && Math.abs(axis.vel) < 0.05) {
-        axis.current = axis.target;
-        axis.vel = 0;
-      }
-    };
-
-    const tickSpring = (now) => {
-      const dt = prevNow ? Math.min(0.05, (now - prevNow) / 1000) : 1 / 60;
-      prevNow = now;
-
-      stepAxis(spring.w, dt);
-      stepAxis(spring.h, dt);
-      stepAxis(spring.r, dt);
-
-      bodyEl.style.width = `${spring.w.current.toFixed(2)}px`;
-      bodyEl.style.height = `${spring.h.current.toFixed(2)}px`;
-      bodyEl.style.borderRadius = `${spring.r.current.toFixed(2)}px`;
-
-      const settled =
-        spring.w.current === spring.w.target &&
-        spring.h.current === spring.h.target &&
-        spring.r.current === spring.r.target &&
-        spring.w.vel === 0 &&
-        spring.h.vel === 0 &&
-        spring.r.vel === 0;
-
-      if (!settled) {
-        raf = requestAnimationFrame(tickSpring);
-      } else {
-        raf = 0;
-        prevNow = 0;
-      }
-    };
-
-    const animateSpringTo = (targetW, targetH, targetR) => {
-      spring.w.target = targetW;
-      spring.h.target = targetH;
-      spring.r.target = targetR;
-      if (!raf) {
-        prevNow = performance.now();
-        raf = requestAnimationFrame(tickSpring);
-      }
-    };
-
     let isOpen = false;
     let computedPillW = 92;
 
@@ -307,11 +245,6 @@
       const sayW = (sayEl?.offsetWidth || 48) + 1;
       computedPillW = 14 + 6 + sayW + 24;
       stage.style.setProperty('--pill-w', `${computedPillW}px`);
-      if (!isOpen) {
-        spring.w.current = computedPillW;
-        spring.w.target = computedPillW;
-        bodyEl.style.width = `${computedPillW}px`;
-      }
     };
 
     updatePillWidth();
@@ -323,14 +256,12 @@
       stage.setAttribute('data-open', 'true');
       pillBtn.setAttribute('aria-expanded', 'true');
       isOpen = true;
-      animateSpringTo(206, 160, 14);
     };
 
     const closeMenu = () => {
       stage.removeAttribute('data-open');
       pillBtn.setAttribute('aria-expanded', 'false');
       isOpen = false;
-      animateSpringTo(computedPillW, 30, 8);
     };
 
     pillBtn.addEventListener('click', (e) => {

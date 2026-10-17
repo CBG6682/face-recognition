@@ -523,144 +523,28 @@ class CameraController {
     }
 
     setupLessonMenuDropdown() {
-        const stage = document.getElementById('liquid-lesson-stage');
-        const bodyEl = document.getElementById('liquid-lesson-body');
         const btn = document.getElementById('btn-lesson-menu');
         const menu = document.getElementById('lesson-menu-dropdown');
         const chevron = document.getElementById('lesson-menu-chevron');
         const btnNew = document.getElementById('btn-dropdown-new-lesson');
         if (!btn || !menu) return;
 
-        const spring = {
-            w: { current: 160, target: 160, vel: 0 },
-            h: { current: 30, target: 30, vel: 0 },
-            r: { current: 999, target: 999, vel: 0 }
-        };
-        let raf = 0;
-        let prevNow = 0;
         let isOpen = false;
 
-        const updatePillDims = () => {
-            if (!bodyEl || !stage) return;
-            const w = Math.max(120, btn.offsetWidth + 2);
-            stage.style.width = `${w}px`;
-            if (!isOpen) {
-                spring.w.current = w;
-                spring.w.target = w;
-                spring.h.current = 30;
-                spring.h.target = 30;
-                spring.r.current = 999;
-                spring.r.target = 999;
-                bodyEl.style.width = `${w}px`;
-                bodyEl.style.height = '30px';
-                bodyEl.style.borderRadius = '999px';
-            }
-        };
-
-        const stepAxis = (axis, dt) => {
-            const substeps = 4;
-            const sdt = dt / substeps;
-            for (let s = 0; s < substeps; s++) {
-                const force = -750 * (axis.current - axis.target);
-                const damping = -48 * axis.vel;
-                const accel = (force + damping) / 0.42;
-                axis.vel += accel * sdt;
-                axis.current += axis.vel * sdt;
-            }
-            if (Math.abs(axis.current - axis.target) < 0.05 && Math.abs(axis.vel) < 0.05) {
-                axis.current = axis.target;
-                axis.vel = 0;
-            }
-        };
-
-        const tickSpring = (now) => {
-            if (!bodyEl) return;
-            const dt = prevNow ? Math.min(0.05, (now - prevNow) / 1000) : 1 / 60;
-            prevNow = now;
-
-            stepAxis(spring.w, dt);
-            stepAxis(spring.h, dt);
-            stepAxis(spring.r, dt);
-
-            bodyEl.style.width = `${spring.w.current.toFixed(2)}px`;
-            bodyEl.style.height = `${spring.h.current.toFixed(2)}px`;
-            bodyEl.style.borderRadius = `${spring.r.current.toFixed(2)}px`;
-
-            const settled =
-                spring.w.current === spring.w.target &&
-                spring.h.current === spring.h.target &&
-                spring.r.current === spring.r.target &&
-                spring.w.vel === 0 &&
-                spring.h.vel === 0 &&
-                spring.r.vel === 0;
-
-            if (!settled) {
-                raf = requestAnimationFrame(tickSpring);
-            } else {
-                raf = 0;
-                prevNow = 0;
-            }
-        };
-
-        const animateSpringTo = (targetW, targetH, targetR) => {
-            spring.w.target = targetW;
-            spring.h.target = targetH;
-            spring.r.target = targetR;
-            if (!raf) {
-                prevNow = performance.now();
-                raf = requestAnimationFrame(tickSpring);
-            }
-        };
-
         this.closeLessonMenu = () => {
-            if (stage) {
-                stage.removeAttribute('data-open');
-            }
-            btn.setAttribute('aria-expanded', 'false');
+            if (!isOpen) return;
             isOpen = false;
+            btn.setAttribute('aria-expanded', 'false');
+            menu.classList.remove('is-open');
             if (chevron) chevron.classList.remove('rotate-180');
-
-            menu.style.opacity = '0';
-            menu.style.pointerEvents = 'none';
-
-            if (bodyEl) {
-                bodyEl.style.background = 'linear-gradient(180deg, #222328 0%, #16171b 100%)';
-                bodyEl.style.borderColor = '#32343c';
-                const w = Math.max(120, btn.offsetWidth + 2);
-                animateSpringTo(w, 30, 999);
-            }
-
-            btn.style.opacity = '1';
-            btn.style.pointerEvents = 'auto';
-            btn.style.transform = 'scale(1)';
         };
 
-        const openMenu = async () => {
-            if (stage) stage.setAttribute('data-open', 'true');
-            btn.setAttribute('aria-expanded', 'true');
+        const openMenu = () => {
             isOpen = true;
+            btn.setAttribute('aria-expanded', 'true');
+            menu.classList.add('is-open');
             if (chevron) chevron.classList.add('rotate-180');
-
-            btn.style.opacity = '0';
-            btn.style.pointerEvents = 'none';
-
-            if (bodyEl) {
-                bodyEl.style.background = 'rgba(11, 15, 25, 0.96)';
-                bodyEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            }
-
-            const panelH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
-            animateSpringTo(320, panelH, 16);
-
-            menu.style.opacity = '1';
-            menu.style.pointerEvents = 'auto';
-
-            await this.renderLessonMenuList();
-
-            const newH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
-            if (newH !== panelH && isOpen) {
-                animateSpringTo(320, newH, 16);
-            }
+            this.renderLessonMenuList(true);
         };
 
         btn.addEventListener('click', (e) => {
@@ -670,7 +554,7 @@ class CameraController {
         });
 
         document.addEventListener('pointerdown', (e) => {
-            if (isOpen && stage && !stage.contains(e.target)) {
+            if (isOpen && !menu.contains(e.target) && !btn.contains(e.target)) {
                 this.closeLessonMenu();
             }
         });
@@ -683,17 +567,17 @@ class CameraController {
             });
         }
 
-        this.updateLessonPillWidth = updatePillDims;
-        setTimeout(updatePillDims, 100);
-        if (document.fonts?.ready) {
-            document.fonts.ready.then(updatePillDims).catch(() => {});
-        }
+        this.updateLessonPillWidth = () => {};
+        // prefetch list quietly so menu opens with zero layout flicker
+        this.renderLessonMenuList(true);
     }
 
-    async renderLessonMenuList() {
+    async renderLessonMenuList(silent = false) {
         const list = document.getElementById('lesson-menu-list');
         if (!list) return;
-        list.innerHTML = '<div class="text-[11px] text-slate-500 p-2.5 text-center">Đang tải danh sách...</div>';
+        if (!silent && !list.children.length) {
+            list.innerHTML = '<div class="text-[11px] text-slate-500 p-2.5 text-center">Đang tải danh sách...</div>';
+        }
 
         try {
             const openLessons = await API.listOpenLessons().catch(() => []);
@@ -714,7 +598,7 @@ class CameraController {
                     const isCurrent = this.currentLesson && this.currentLesson.id === l.id;
                     const item = document.createElement('button');
                     item.type = 'button';
-                    item.className = `w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer ${
+                    item.className = `lesson-menu-item w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer ${
                         isCurrent
                             ? 'bg-[#2a4690]/30 border border-[#3b5aa8]/40 text-white font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
                             : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-200 border border-transparent'
