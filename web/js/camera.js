@@ -539,7 +539,6 @@ class CameraController {
         let raf = 0;
         let prevNow = 0;
         let isOpen = false;
-        let sinkTimeout = 0;
 
         const updatePillDims = () => {
             if (!bodyEl || !stage) return;
@@ -562,9 +561,9 @@ class CameraController {
             const substeps = 4;
             const sdt = dt / substeps;
             for (let s = 0; s < substeps; s++) {
-                const force = -420 * (axis.current - axis.target);
-                const damping = -30 * axis.vel;
-                const accel = (force + damping) / 0.5;
+                const force = -750 * (axis.current - axis.target);
+                const damping = -48 * axis.vel;
+                const accel = (force + damping) / 0.42;
                 axis.vel += accel * sdt;
                 axis.current += axis.vel * sdt;
             }
@@ -614,9 +613,7 @@ class CameraController {
         };
 
         this.closeLessonMenu = () => {
-            clearTimeout(sinkTimeout);
             if (stage) {
-                stage.removeAttribute('data-sink');
                 stage.removeAttribute('data-open');
             }
             btn.setAttribute('aria-expanded', 'false');
@@ -627,54 +624,43 @@ class CameraController {
             menu.style.pointerEvents = 'none';
 
             if (bodyEl) {
-                bodyEl.style.background = 'linear-gradient(180deg, #27272a 0%, #18181b 100%)';
-                bodyEl.style.borderColor = '#3f3f46';
+                bodyEl.style.background = 'linear-gradient(180deg, #222328 0%, #16171b 100%)';
+                bodyEl.style.borderColor = '#32343c';
                 const w = Math.max(120, btn.offsetWidth + 2);
                 animateSpringTo(w, 30, 999);
             }
 
-            setTimeout(() => {
-                if (!isOpen) {
-                    btn.style.opacity = '1';
-                    btn.style.pointerEvents = 'auto';
-                    btn.style.transform = 'scale(1)';
-                }
-            }, 80);
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+            btn.style.transform = 'scale(1)';
         };
 
         const openMenu = async () => {
-            if (stage) stage.setAttribute('data-sink', 'true');
-            clearTimeout(sinkTimeout);
-            sinkTimeout = setTimeout(async () => {
-                if (stage) {
-                    stage.removeAttribute('data-sink');
-                    stage.setAttribute('data-open', 'true');
-                }
-                btn.setAttribute('aria-expanded', 'true');
-                isOpen = true;
-                if (chevron) chevron.classList.add('rotate-180');
+            if (stage) stage.setAttribute('data-open', 'true');
+            btn.setAttribute('aria-expanded', 'true');
+            isOpen = true;
+            if (chevron) chevron.classList.add('rotate-180');
 
-                btn.style.opacity = '0';
-                btn.style.pointerEvents = 'none';
-                btn.style.transform = 'scale(0.95)';
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
 
-                if (bodyEl) {
-                    bodyEl.style.background = 'rgba(10, 13, 22, 0.95)';
-                    bodyEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                }
+            if (bodyEl) {
+                bodyEl.style.background = 'rgba(11, 15, 25, 0.96)';
+                bodyEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
 
-                await this.renderLessonMenuList();
+            const panelH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
+            animateSpringTo(320, panelH, 16);
 
-                const panelH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
-                animateSpringTo(320, panelH, 20);
+            menu.style.opacity = '1';
+            menu.style.pointerEvents = 'auto';
 
-                setTimeout(() => {
-                    if (isOpen) {
-                        menu.style.opacity = '1';
-                        menu.style.pointerEvents = 'auto';
-                    }
-                }, 70);
-            }, 50);
+            await this.renderLessonMenuList();
+
+            const newH = Math.min(360, Math.max(160, menu.offsetHeight || 180));
+            if (newH !== panelH && isOpen) {
+                animateSpringTo(320, newH, 16);
+            }
         };
 
         btn.addEventListener('click', (e) => {

@@ -45,27 +45,27 @@
       .crt-body {
         width: var(--pill-w, 92px);
         height: 30px;
-        background: linear-gradient(180deg, #3253a6 0%, #1f366e 100%);
-        border: none;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px -2px rgba(42, 70, 144, 0.45);
+        background: linear-gradient(180deg, #2a4897 0%, #1e3674 100%);
+        border: 1px solid rgba(75, 114, 219, 0.35);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 2px 6px rgba(0, 0, 0, 0.35);
         border-radius: var(--crt-shut-r, 8px);
         transform-origin: top left;
         will-change: width, height, border-radius;
-        transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1),
-                    background 0.2s ease,
-                    box-shadow 0.2s ease;
+        transition: transform 0.1s ease,
+                    background 0.18s ease,
+                    box-shadow 0.18s ease;
       }
       .crt-stage[data-sink="true"] .crt-body {
-        transform: scale(0.96);
+        transform: scale(0.97);
       }
       .crt-stage[data-open="true"] {
         z-index: 90;
       }
       .crt-stage[data-open="true"] .crt-body {
-        background: rgba(10, 14, 25, 0.95);
+        background: rgba(11, 15, 25, 0.96);
         backdrop-filter: blur(24px);
-        border: none;
-        box-shadow: 0 18px 42px -8px rgba(0, 0, 0, 0.85), 0 0 22px rgba(42, 70, 144, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
       }
       .crt-pill {
         position: relative;
@@ -84,7 +84,7 @@
         outline: none;
         opacity: 1;
         transform: translateY(0) scale(1);
-        transition: opacity 0.14s ease 0.08s, transform 0.14s ease 0.08s;
+        transition: opacity 0.1s ease, transform 0.1s ease;
       }
       .crt-pill:hover {
         color: #ffffff;
@@ -92,7 +92,7 @@
       .crt-stage[data-open="true"] .crt-pill {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-4px) scale(0.95);
+        transform: translateY(-2px) scale(0.96);
         transition: opacity 0.08s ease, transform 0.08s ease;
       }
       .crt-glyph {
@@ -100,7 +100,7 @@
         align-items: center;
         justify-content: center;
         color: #ffffff;
-        transition: transform 0.2s ease;
+        transition: transform 0.18s ease;
       }
       .crt-stage:hover .crt-glyph {
         transform: rotate(90deg);
@@ -128,14 +128,13 @@
         pointer-events: none;
         opacity: 0;
         overflow: hidden;
-        transform: scale(0.96);
-        transition: opacity 0.1s ease-out, transform 0.12s ease-out;
+        transform: scale(0.97);
+        transition: opacity 0.1s ease-out, transform 0.1s ease-out;
       }
       .crt-stage[data-open="true"] .crt-panel {
         pointer-events: auto;
         opacity: 1;
         transform: scale(1);
-        transition: opacity 0.14s ease 0.04s, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) 0.02s;
       }
       .crt-menu {
         list-style: none;
@@ -148,20 +147,14 @@
         justify-content: center;
       }
       .crt-item {
-        transform: translateY(4px);
+        transform: translateY(2px);
         opacity: 0;
-        transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+        transition: opacity 0.12s ease-out, transform 0.12s ease-out;
       }
       .crt-stage[data-open="true"] .crt-item {
         transform: translateY(0);
         opacity: 1;
-        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      .crt-stage[data-open="true"] .crt-item:nth-child(1) { transition-delay: 26ms; }
-      .crt-stage[data-open="true"] .crt-item:nth-child(2) { transition-delay: 48ms; }
-      .crt-stage[data-open="true"] .crt-item:nth-child(3) { transition-delay: 70ms; }
-      .crt-stage[data-open="true"] .crt-item:nth-child(4) { transition-delay: 92ms; }
       .crt-item-btn {
         width: 100%;
         height: 34px;
@@ -257,9 +250,9 @@
       const substeps = 4;
       const sdt = dt / substeps;
       for (let s = 0; s < substeps; s++) {
-        const force = -420 * (axis.current - axis.target);
-        const damping = -30 * axis.vel;
-        const accel = (force + damping) / 0.5;
+        const force = -750 * (axis.current - axis.target);
+        const damping = -48 * axis.vel;
+        const accel = (force + damping) / 0.42;
         axis.vel += accel * sdt;
         axis.current += axis.vel * sdt;
       }
@@ -308,7 +301,6 @@
     };
 
     let isOpen = false;
-    let sinkTimeout = 0;
     let computedPillW = 92;
 
     const updatePillWidth = () => {
@@ -328,20 +320,13 @@
     }
 
     const openMenu = () => {
-      stage.setAttribute('data-sink', 'true');
-      clearTimeout(sinkTimeout);
-      sinkTimeout = setTimeout(() => {
-        stage.removeAttribute('data-sink');
-        stage.setAttribute('data-open', 'true');
-        pillBtn.setAttribute('aria-expanded', 'true');
-        isOpen = true;
-        animateSpringTo(206, 160, 16);
-      }, 60);
+      stage.setAttribute('data-open', 'true');
+      pillBtn.setAttribute('aria-expanded', 'true');
+      isOpen = true;
+      animateSpringTo(206, 160, 14);
     };
 
     const closeMenu = () => {
-      clearTimeout(sinkTimeout);
-      stage.removeAttribute('data-sink');
       stage.removeAttribute('data-open');
       pillBtn.setAttribute('aria-expanded', 'false');
       isOpen = false;
