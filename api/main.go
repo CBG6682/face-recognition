@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 
 	"github.com/gofiber/fiber/v3"
@@ -70,12 +71,16 @@ func main() {
 	// web ui
 	webDir := utils.GetEnv("WEB_DIR", "")
 	if webDir == "" {
-		if _, err := os.Stat("./web"); err == nil {
+		if _, err := os.Stat("./web/dist"); err == nil {
+			webDir = "./web/dist"
+		} else if _, err := os.Stat("../web/dist"); err == nil {
+			webDir = "../web/dist"
+		} else if _, err := os.Stat("./web"); err == nil {
 			webDir = "./web"
 		} else if _, err := os.Stat("../web"); err == nil {
 			webDir = "../web"
 		} else {
-			webDir = "./web"
+			webDir = "./web/dist"
 		}
 	}
 
@@ -151,6 +156,15 @@ func main() {
 	// face
 	protected.Post("/sinh-vien/:id/face", faceHandler.RegisterFace)
 	protected.Delete("/sinh-vien/:id/face", faceHandler.DeleteFace)
+
+	// spa fallback for react routes
+	app.Get("*", func(c fiber.Ctx) error {
+		indexPath := filepath.Join(webDir, "index.html")
+		if _, err := os.Stat(indexPath); err == nil {
+			return c.SendFile(indexPath)
+		}
+		return c.Next()
+	})
 
 	go func() {
 		port := utils.GetEnv("PORT", "8080")
