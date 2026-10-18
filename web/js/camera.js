@@ -128,7 +128,7 @@ class CameraController {
                 await this.loadSpecificLesson(openLessons[0].id);
                 return;
             }
-            this.showEmptyState('Chưa mở buổi điểm danh nào', 'Bấm "Tạo buổi học ngay" để bắt đầu điểm danh qua camera');
+            this.showEmptyState('Chưa mở ca điểm danh', 'Khởi tạo ca học mới hoặc chọn lớp từ danh sách để bắt đầu nhận diện');
         } catch (err) {
             this.showEmptyState('Chưa kết nối máy chủ', 'Vui lòng kiểm tra kết nối mạng');
         }
