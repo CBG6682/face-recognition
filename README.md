@@ -20,5 +20,5 @@ Hoặc:
 docker compose up
 ```
 
-- Infer: http://localhost:8080/
+- Infer: http://localhost:8000/
 - Web: http://localhost:8080/ (tài khoản mặc định: gv / gv123)
